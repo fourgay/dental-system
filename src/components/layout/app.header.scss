@@ -1,0 +1,43 @@
+.bold {
+  font-weight: bold;
+}
+
+.header-container {
+  padding: 0 100px;
+  .page-header {
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+    background-color: #e6f6fe;
+    border-radius: 10px;
+    height: 80px;
+    &__logo {
+      font-size: 30px;
+      width: 30%;
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      gap: 10px;
+      span {
+        font-weight: bold;
+      }
+      cursor: pointer;
+    }
+    &__detail {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      width: 40%;
+      div {
+        cursor: pointer;
+      }
+    }
+
+    &__auth {
+      display: flex;
+      justify-content: end;
+      gap: 10px;
+      width: 30%;
+    }
+  }
+}
