@@ -1,0 +1,13 @@
+.home-page {
+  padding: 0 100px;
+  .welcome {
+    &__img {
+      img {
+        height: 600px;
+        position: absolute;
+        bottom: 0;
+        right: 100px;
+      }
+    }
+  }
+}

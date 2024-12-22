@@ -6,12 +6,14 @@ import Layout from "./layout";
 import "./styles/global.scss";
 import { RegisterPage } from "./pages/client/auth/register";
 import { LoginPage } from "./pages/client/auth/login";
+import { HomePage } from "./pages/client/home";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
+      { index: true, element: <HomePage /> },
       {
         path: "/register",
         element: <RegisterPage />,
