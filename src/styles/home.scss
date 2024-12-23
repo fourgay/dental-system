@@ -1,6 +1,7 @@
 .home-page {
   padding: 0 100px;
   .welcome {
+    margin: 100px;
     &__img {
       img {
         height: 600px;
@@ -8,6 +9,126 @@
         bottom: 0;
         right: 100px;
       }
+    }
+    &__content {
+      width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      .title {
+        font-size: 50px;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+      .doctor {
+        width: 350px;
+        box-shadow: 0px 9px 42px 0 rgb(0 0 0 / 0.08);
+        border-radius: 10px;
+        margin-top: 30px;
+      }
+      button {
+        padding: 25px;
+      }
+    }
+  }
+
+  .top-services {
+    display: flex;
+    gap: 20px;
+    padding: 50px 30px;
+    background-color: #e6f6fe;
+    &__card {
+      padding: 40px;
+      background-color: #fff;
+      width: 33%;
+      text-align: center;
+      border-radius: 10px;
+      .name {
+        font-weight: bold;
+        font-size: 20px;
+      }
+    }
+  }
+
+  .call-us {
+    display: flex;
+    align-items: center;
+    padding: 50px;
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 50%;
+      .title {
+        font-size: 40px;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+    }
+    &__img {
+      width: 50%;
+      display: flex;
+      justify-content: end;
+    }
+  }
+
+  .why-choose {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #e6f6fe;
+    padding: 50px 100px;
+    &__img {
+      width: 40%;
+      img {
+        height: 400px;
+      }
+    }
+    &__content {
+      width: 40%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-right: 100px;
+      .title {
+        font-size: 40px;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+      .list-why {
+        .why {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 15px;
+          svg {
+            color: #1376f8;
+          }
+        }
+      }
+    }
+  }
+
+  .precise-smile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 50px;
+    &__content {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 45%;
+      .title {
+        font-size: 40px;
+        font-weight: bold;
+        text-transform: capitalize;
+      }
+    }
+    &__img {
+      width: 50%;
+      display: flex;
+      justify-content: end;
     }
   }
 }

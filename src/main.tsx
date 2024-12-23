@@ -7,13 +7,22 @@ import "./styles/global.scss";
 import { RegisterPage } from "./pages/client/auth/register";
 import { LoginPage } from "./pages/client/auth/login";
 import { HomePage } from "./pages/client/home";
+import { AppFooter } from "./components/layout/app.footer";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <HomePage /> },
+      {
+        index: true,
+        element: (
+          <>
+            <HomePage />
+            <AppFooter />
+          </>
+        ),
+      },
       {
         path: "/register",
         element: <RegisterPage />,
