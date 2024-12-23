@@ -6,12 +6,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'phone', 'password']
+        fields = ['fullname', 'phone', 'password']
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=validated_data['username'],
+            fullname=validated_data['fullname'],
             phone=validated_data['phone'],
             password=validated_data['password']
         )
         return user
+
+
+    def validate_phone(self, value):
+        if User.objects.filter(phone=value).exists():
+            raise serializers.ValidationError("Số điện thoại đã tồn tại.")
+        return value

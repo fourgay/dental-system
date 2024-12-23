@@ -10,7 +10,7 @@ def register(request):
         if serializer.is_valid():
             user = serializer.save()
             return Response({
-                'message': 'User created successfully!',
+                'message': 'Tạo người dùng thành công!',
                 'user': serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
