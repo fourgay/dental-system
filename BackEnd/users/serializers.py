@@ -15,7 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
-
+    
 
     def validate_phone(self, value):
         if User.objects.filter(phone=value).exists():
