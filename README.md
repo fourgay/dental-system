@@ -1,83 +1,94 @@
-# 📘 **API Register Documentation**
+```markdown
+# Đăng ký API
 
-## **Mục lục**
-1. [Giới thiệu](#giới-thiệu)
-2. [Endpoint](#endpoint)
-3. [Request Method](#request-method)
-4. [Request Body](#request-body)
-5. [Response](#response)
-6. [Lỗi phổ biến](#lỗi-phổ-biến)
+API này cho phép người dùng đăng ký tài khoản mới.
 
----
+## URL
 
-## **Giới thiệu**
-API Register được sử dụng để **đăng ký người dùng mới** trong hệ thống. API này yêu cầu thông tin cơ bản của người dùng như `username`, `phone`, và `password`.
+`POST /api/accounts/register/`
 
----
+## Headers
 
-## **Endpoint**
-- URL: `/api/register/`
+- `Content-Type: application/json`
 
----
+## Body
 
-## **Request Method**
-- **POST**
+Yêu cầu phải gửi dữ liệu dưới dạng JSON với các trường sau:
 
----
+- `fullname`: Tên đầy đủ của người dùng (bắt buộc)
+- `phone`: Số điện thoại của người dùng (bắt buộc)
+- `password`: Mật khẩu của người dùng (bắt buộc)
 
-## **Request Body**
-Dữ liệu đầu vào phải ở định dạng JSON và chứa các trường sau:
-
-| Trường      | Kiểu dữ liệu | Bắt buộc | Mô tả                     |
-|-------------|--------------|----------|---------------------------|
-| `username`  | String       | Có       | Tên người dùng, phải duy nhất |
-| `phone`     | String       | Có       | Số điện thoại, phải duy nhất |
-| `password`  | String       | Có       | Mật khẩu cho tài khoản    |
-
-**Ví dụ:**
+### Ví dụ
 
 ```json
 {
-  "username": "john_doe",
-  "phone": "123123123",
-  "password": "securepassword"
+  "fullname": "Nguyễn Văn A",
+  "phone": "0123456789",
+  "password": "matkhaucuaban"
 }
-Response
-Thành công
-HTTP Status Code: 201 Created
-json
+```
 
+## Response
+
+### Thành công
+
+- **Status**: `201 Created`
+- **Body**:
+
+```json
 {
-  "message": "User created successfully!",
+  "message": "Tạo người dùng thành công!",
   "user": {
-    "username": "john_doe",
-    "phone": "123123123"
+    "fullname": "Nguyễn Văn A",
+    "phone": "0123456789"
   }
 }
+```
 
-1. Thiếu trường hoặc định dạng không hợp lệ
-HTTP Status Code: 400 Bad Request
-json
+### Thất bại
+
+- **Status**: `400 Bad Request`
+- **Body**:
+
+```json
 {
-  "username": ["This field is required."],
-  "phone": ["This field is required."],
-  "password": ["This field is required."]
+  "fullname": [
+    "Tên đầy đủ đã tồn tại."
+  ],
+  "phone": [
+    "Số điện thoại đã tồn tại."
+  ]
 }
-2. username hoặc phone đã tồn tại
-HTTP Status Code: 400 Bad Request
-json
+```
 
-{
-  "username": ["A user with that username already exists."],
-  "phone": ["A user with that phone number already exists."]
-}
-Lỗi phổ biến
-Thiếu dữ liệu đầu vào:
+## Chạy dự án
 
-Đảm bảo gửi đủ 3 trường username, phone, và password.
-Thông tin trùng lặp:
+1. Tạo và kích hoạt môi trường ảo:
 
-username và phone phải là duy nhất trong cơ sở dữ liệu.
-Sai định dạng JSON:
+```sh
+python -m venv venv
+source venv/bin/activate  # Trên Windows: venv\Scripts\activate
+```
 
-Kiểm tra xem dữ liệu gửi lên có đúng định dạng JSON không.
+2. Cài đặt các gói phụ thuộc:
+
+```sh
+pip install -r requirements.txt
+```
+
+3. Chạy các lệnh migrate để tạo các bảng cơ sở dữ liệu:
+
+```sh
+python manage.py makemigrations
+python manage.py migrate
+```
+
+4. Chạy server:
+
+```sh
+python manage.py runserver
+```
+
+5. Sử dụng Postman hoặc công cụ tương tự để gửi yêu cầu đăng ký tới `http://127.0.0.1:8000/api/accounts/register/`.
+
