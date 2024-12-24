@@ -1,13 +1,13 @@
 import { Button, Flex, Space, Input, Form } from "antd";
-import welcome from "../../assets/home/welcome.png";
-import welcomeDoctor from "../../assets/home/welcome-doctor.png";
-import rootCanal from "../../assets/home/root-canal-treatment.png";
-import dentalImplans from "../../assets/home/cosmetic-dentist.png";
-import cosmeticDentist from "../../assets/home/cosmetic-dentist.png";
-import callUs from "../../assets/home/call-us.png";
-import whyChoose from "../../assets/home/why-choose.png";
-import preciseSmile from "../../assets/home/precise-smile.png";
-import "../../styles/home.scss";
+import welcome from "assets/home/welcome.png";
+import welcomeDoctor from "assets/home/welcome-doctor.png";
+import rootCanal from "assets/home/root-canal-treatment.png";
+import dentalImplans from "assets/home/cosmetic-dentist.png";
+import cosmeticDentist from "assets/home/cosmetic-dentist.png";
+import callUs from "assets/home/call-us.png";
+import whyChoose from "assets/home/why-choose.png";
+import preciseSmile from "assets/home/precise-smile.png";
+import "styles/home.scss";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { GoShieldCheck } from "react-icons/go";
 

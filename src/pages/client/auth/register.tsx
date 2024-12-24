@@ -1,5 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
-import register from "../../../assets/register/register.png";
+import register from "assets/register/register.png";
 import "./register.scss";
 import { Input, Form, Divider, Button } from "antd";
 import { useState } from "react";

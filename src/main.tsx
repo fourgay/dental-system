@@ -2,12 +2,12 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { App } from "antd";
-import Layout from "./layout";
-import "./styles/global.scss";
-import { RegisterPage } from "./pages/client/auth/register";
-import { LoginPage } from "./pages/client/auth/login";
-import { HomePage } from "./pages/client/home";
-import { AppFooter } from "./components/layout/app.footer";
+import Layout from "@/layout";
+import "styles/global.scss";
+import { RegisterPage } from "pages/client/auth/register";
+import { LoginPage } from "pages/client/auth/login";
+import { HomePage } from "pages/client/home";
+import { AppFooter } from "components/layout/app.footer";
 
 const router = createBrowserRouter([
   {

@@ -1,5 +1,5 @@
 import { useNavigate, Link } from "react-router-dom";
-import login from "../../../assets/login/login.png";
+import login from "assets/login/login.png";
 import "./login.scss";
 import { Input, Form, Divider, Button } from "antd";
 import { useState } from "react";
