@@ -4,7 +4,6 @@ declare global {
   interface IBackendRes<T> {
     error?: string | string[];
     message: string;
-    statusCode: number | string;
     data?: T;
   }
 
@@ -31,9 +30,9 @@ declare global {
   }
 
   interface IRegister {
-    _id: string;
-    email: string;
+    id: string;
     fullName: string;
+    phone: string;
   }
 
   interface IUser {

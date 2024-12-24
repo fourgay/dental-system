@@ -1,8 +1,10 @@
 import { useNavigate, Link } from "react-router-dom";
 import register from "assets/register/register.png";
 import "./register.scss";
-import { Input, Form, Divider, Button } from "antd";
+import { Input, Form, Divider, Button, App } from "antd";
+import type { FormProps } from "antd";
 import { useState } from "react";
+import { registerAPI } from "services/api";
 
 type FieldType = {
   fullName: string;
@@ -12,7 +14,24 @@ type FieldType = {
 
 export const RegisterPage = () => {
   const [isSubmit, setIsSubmit] = useState(false);
+  const { message } = App.useApp();
   const navigate = useNavigate();
+
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    setIsSubmit(true);
+    const { fullName, phone, password } = values;
+
+    const res = await registerAPI(fullName, phone, password);
+
+    if (res.data) {
+      message.success("Đăng ký user thành công");
+      navigate("/login");
+    } else {
+      message.error(res.message);
+    }
+    setIsSubmit(false);
+  };
+
   return (
     <div className="register-page">
       <div className="register-page__img">
@@ -24,7 +43,7 @@ export const RegisterPage = () => {
           Tham gia cùng chúng tôi ngay hôm nay để có những trải nghiệm tốt nhất!
         </div>
 
-        <Form name="form-register" autoComplete="off">
+        <Form name="form-register" onFinish={onFinish} autoComplete="off">
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
             label="Họ Và Tên"
