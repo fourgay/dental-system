@@ -53,9 +53,6 @@ Yêu cầu phải gửi dữ liệu dưới dạng JSON với các trường sau
 
 ```json
 {
-  "fullname": [
-    "Tên đầy đủ đã tồn tại."
-  ],
   "phone": [
     "Số điện thoại đã tồn tại."
   ]
