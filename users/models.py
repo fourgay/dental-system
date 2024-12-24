@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, fullname, phone, password=None):
@@ -19,10 +19,12 @@ class CustomUserManager(BaseUserManager):
         data.save(using=self._db)
         return data
 
-class Data(AbstractBaseUser):
+class Data(AbstractBaseUser, PermissionsMixin):
     fullname = models.CharField(max_length=255)
     phone = models.CharField(max_length=15, unique=True)
     password = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
