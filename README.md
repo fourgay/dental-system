@@ -1,7 +1,3 @@
-Sure, here is the updated README with your GitHub username:
-
----
-
 # 🦷 Dental System API
 
 Welcome to the **Dental System API**! This project provides a simple API for user registration and login using Django and Django REST framework.
