@@ -5,6 +5,7 @@ import { Input, Form, Divider, Button, App } from "antd";
 import type { FormProps } from "antd";
 import { useState } from "react";
 import { registerAPI } from "services/api";
+import { userCurrentApp } from "@/components/context/app.context";
 
 type FieldType = {
   fullname: string;
@@ -14,11 +15,13 @@ type FieldType = {
 
 export const RegisterPage = () => {
   const [isSubmit, setIsSubmit] = useState(false);
+  const { setIsAppLoading } = userCurrentApp();
   const { notification } = App.useApp();
   const navigate = useNavigate();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     setIsSubmit(true);
+    setIsAppLoading(true);
     const { fullname, phone, password } = values;
 
     const res = await registerAPI(fullname, phone, password);
@@ -35,6 +38,7 @@ export const RegisterPage = () => {
         placement: "bottomLeft",
       });
     }
+    setIsAppLoading(false);
     setIsSubmit(false);
   };
 
