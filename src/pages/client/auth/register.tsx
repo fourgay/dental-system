@@ -7,27 +7,33 @@ import { useState } from "react";
 import { registerAPI } from "services/api";
 
 type FieldType = {
-  fullName: string;
+  fullname: string;
   phone: string;
   password: string;
 };
 
 export const RegisterPage = () => {
   const [isSubmit, setIsSubmit] = useState(false);
-  const { message } = App.useApp();
+  const { notification } = App.useApp();
   const navigate = useNavigate();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     setIsSubmit(true);
-    const { fullName, phone, password } = values;
+    const { fullname, phone, password } = values;
 
-    const res = await registerAPI(fullName, phone, password);
+    const res = await registerAPI(fullname, phone, password);
 
     if (res.data) {
-      message.success("Đăng ký user thành công");
+      notification.success({
+        message: res.message,
+        placement: "bottomLeft",
+      });
       navigate("/login");
     } else {
-      message.error(res.message);
+      notification.error({
+        message: res.message,
+        placement: "bottomLeft",
+      });
     }
     setIsSubmit(false);
   };
@@ -47,7 +53,7 @@ export const RegisterPage = () => {
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
             label="Họ Và Tên"
-            name="fullName"
+            name="fullname"
             rules={[{ required: true, message: "Họ tên không được để trống" }]}
           >
             <Input size="large" />

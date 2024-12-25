@@ -19,28 +19,33 @@ declare global {
 
   interface ILogin {
     access_token: string;
+    refresh_token: string;
     user: {
-      email: string;
-      phone: string;
-      fullName: string;
-      role: string;
-      avatar: string;
       id: string;
+      fullname: string;
+      phone: string;
+      avatar: string;
     };
   }
 
   interface IRegister {
-    id: string;
-    fullName: string;
+    fullname: string;
     phone: string;
+    password: string;
   }
 
   interface IUser {
     email: string;
     phone: string;
-    fullName: string;
+    fullname: string;
     role: string;
     avatar: string;
     id: string;
+  }
+}
+
+{
+  "errors": {
+      "phone": ["This field must be unique."]
   }
 }
