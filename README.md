@@ -1,93 +1,148 @@
-```markdown
-# Đăng ký API
+# 🦷 Dental System API
 
-API này cho phép người dùng đăng ký tài khoản mới.
+Welcome to the **Dental System API**! This project provides a simple API for user registration and login using Django and Django REST framework.
 
-## URL
+![Django](https://img.shields.io/badge/Django-3.2-green)
+![DRF](https://img.shields.io/badge/DRF-3.12-red)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-`POST /api/accounts/register/`
+## ✨ Features
 
-## Headers
+- **User Registration**: Create a new user account.
+- **User Login**: Authenticate a user and provide a JWT token.
 
-- `Content-Type: application/json`
+## 📚 Table of Contents
 
-## Body
+- Installation
+- API Endpoints
+  - Register
+  - Login
+- Usage
+- Contributing
+- License
 
-Yêu cầu phải gửi dữ liệu dưới dạng JSON với các trường sau:
+## 🛠️ Installation
 
-- `fullname`: Tên đầy đủ của người dùng (bắt buộc)
-- `phone`: Số điện thoại của người dùng (bắt buộc)
-- `password`: Mật khẩu của người dùng (bắt buộc)
+1. **Clone the repository**:
+    ```sh
+    git clone https://github.com/fourgay/dental-system.git
+    cd dental-system
+    ```
 
-### Ví dụ
+2. **Create a virtual environment**:
+    ```sh
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
 
-```json
-{
-  "fullname": "Nguyễn Văn A",
-  "phone": "0123456789",
-  "password": "matkhaucuaban"
-}
-```
+3. **Install dependencies**:
+    ```sh
+    pip install -r requirements.txt
+    ```
 
-## Response
+4. **Apply migrations**:
+    ```sh
+    python manage.py migrate
+    ```
 
-### Thành công
+5. **Run the development server**:
+    ```sh
+    python manage.py runserver
+    ```
 
-- **Status**: `201 Created`
-- **Body**:
+## 🔗 API Endpoints
 
-```json
-{
-  "message": "Tạo người dùng thành công!",
-  "user": {
-    "fullname": "Nguyễn Văn A",
-    "phone": "0123456789"
-  }
-}
-```
+### 📝 Register
 
-### Thất bại
+- **URL**: `/api/accounts/register/`
+- **Method**: `POST`
+- **Description**: Create a new user account.
+- **Request Body**:
+    ```json
+    {
+        "fullname": "John Doe",
+        "phone": "1234567890",
+        "password": "yourpassword"
+    }
+    ```
+- **Response**:
+    - **Success** (201 Created):
+        ```json
+        {
+            "message": "Tạo người dùng thành công!",
+            "data": {
+                "id": 1,
+                "fullname": "John Doe",
+                "phone": "1234567890"
+            }
+        }
+        ```
+    - **Error** (400 Bad Request):
+        ```json
+        {
+            "errors": {
+                "phone": ["This field must be unique."]
+            }
+        }
+        ```
 
-- **Status**: `400 Bad Request`
-- **Body**:
+### 🔐 Login
 
-```json
-{
-  "fullname": [
-    "Tên đầy đủ đã tồn tại."
-  ],
-  "phone": [
-    "Số điện thoại đã tồn tại."
-  ]
-}
-```
+- **URL**: `/api/accounts/login/`
+- **Method**: `POST`
+- **Description**: Authenticate a user and provide a JWT token.
+- **Request Body**:
+    ```json
+    {
+        "phone": "1234567890",
+        "password": "yourpassword"
+    }
+    ```
+- **Response**:
+    - **Success** (200 OK):
+        ```json
+        {
+            "refresh": "your_refresh_token",
+            "access": "your_access_token"
+        }
+        ```
+    - **Error** (401 Unauthorized):
+        ```json
+        {
+            "detail": "Invalid credentials"
+        }
+        ```
 
-## Chạy dự án
+## 🚀 Usage
 
-1. Tạo và kích hoạt môi trường ảo:
+### Register a New User
 
+To register a new user, send a `POST` request to `/api/accounts/register/` with the user's details in the request body.
+
+Example using `curl`:
 ```sh
-python -m venv venv
-source venv/bin/activate  # Trên Windows: venv\Scripts\activate
+curl -X POST http://127.0.0.1:8000/api/accounts/register/ \
+-H "Content-Type: application/json" \
+-d '{"fullname": "John Doe", "phone": "1234567890", "password": "yourpassword"}'
 ```
 
-2. Cài đặt các gói phụ thuộc:
+### Login
 
+To log in, send a `POST` request to `/api/accounts/login/` with the user's phone number and password in the request body.
+
+Example using `curl`:
 ```sh
-pip install -r requirements.txt
+curl -X POST http://127.0.0.1:8000/api/accounts/login/ \
+-H "Content-Type: application/json" \
+-d '{"phone": "1234567890", "password": "yourpassword"}'
 ```
 
-3. Chạy các lệnh migrate để tạo các bảng cơ sở dữ liệu:
+## 🤝 Contributing
 
-```sh
-python manage.py makemigrations
-python manage.py migrate
-```
+We welcome contributions! Please read our Contributing Guidelines before submitting a pull request.
 
-4. Chạy server:
+## 📄 License
 
-```sh
-python manage.py runserver
-```
+This project is licensed under the MIT License. See the LICENSE file for more details.
 
-5. Sử dụng Postman hoặc công cụ tương tự để gửi yêu cầu đăng ký tới `http://127.0.0.1:8000/api/accounts/register/`.
+---
