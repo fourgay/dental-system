@@ -1,148 +1,164 @@
-# 🦷 Dental System API
+```markdown
+# Dental System
 
-Welcome to the **Dental System API**! This project provides a simple API for user registration and login using Django and Django REST framework.
+This is a dental system application built with Django and Django REST framework.
 
-![Django](https://img.shields.io/badge/Django-3.2-green)
-![DRF](https://img.shields.io/badge/DRF-3.12-red)
-![License](https://img.shields.io/badge/License-MIT-blue)
+## Features
 
-## ✨ Features
+- User registration with default avatar and role
+- User login with JWT authentication
+- Retrieve user information
+- Error handling with detailed messages
 
-- **User Registration**: Create a new user account.
-- **User Login**: Authenticate a user and provide a JWT token.
+## Installation
 
-## 📚 Table of Contents
+1. Clone the repository:
 
-- Installation
-- API Endpoints
-  - Register
-  - Login
-- Usage
-- Contributing
-- License
+```bash
+git clone https://github.com/yourusername/dental-system.git
+cd dental-system
+```
 
-## 🛠️ Installation
+2. Create a virtual environment and activate it:
 
-1. **Clone the repository**:
-    ```sh
-    git clone https://github.com/fourgay/dental-system.git
-    cd dental-system
-    ```
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+```
 
-2. **Create a virtual environment**:
-    ```sh
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
+3. Install the dependencies:
 
-3. **Install dependencies**:
-    ```sh
-    pip install -r requirements.txt
-    ```
+```bash
+pip install -r requirements.txt
+```
 
-4. **Apply migrations**:
-    ```sh
-    python manage.py migrate
-    ```
+4. Apply the migrations:
 
-5. **Run the development server**:
-    ```sh
-    python manage.py runserver
-    ```
+```bash
+python manage.py migrate
+```
 
-## 🔗 API Endpoints
+5. Create a superuser:
 
-### 📝 Register
+```bash
+python manage.py createsuperuser
+```
 
-- **URL**: `/api/accounts/register/`
-- **Method**: `POST`
-- **Description**: Create a new user account.
-- **Request Body**:
-    ```json
-    {
-        "fullname": "John Doe",
-        "phone": "1234567890",
-        "password": "yourpassword"
+6. Run the development server:
+
+```bash
+python manage.py runserver
+```
+
+## API Endpoints
+
+### Register
+
+- **URL:** `/api/register/`
+- **Method:** `POST`
+- **Payload:**
+
+```json
+{
+    "fullname": "Nguyen Van A",
+    "phone": "0123456789",
+    "password": "securepassword123"
+}
+```
+
+- **Response:**
+
+```json
+{
+    "message": "Tạo người dùng thành công!",
+    "data": {
+        "id": "1",
+        "fullname": "Nguyen Van A",
+        "phone": "0123456789",
+        "avatar": "avatar-1",
+        "role": "USER"
     }
-    ```
-- **Response**:
-    - **Success** (201 Created):
-        ```json
-        {
-            "message": "Tạo người dùng thành công!",
-            "data": {
-                "id": 1,
-                "fullname": "John Doe",
-                "phone": "1234567890"
-            }
-        }
-        ```
-    - **Error** (400 Bad Request):
-        ```json
-        {
-            "errors": {
-                "phone": ["This field must be unique."]
-            }
-        }
-        ```
-
-### 🔐 Login
-
-- **URL**: `/api/accounts/login/`
-- **Method**: `POST`
-- **Description**: Authenticate a user and provide a JWT token.
-- **Request Body**:
-    ```json
-    {
-        "phone": "1234567890",
-        "password": "yourpassword"
-    }
-    ```
-- **Response**:
-    - **Success** (200 OK):
-        ```json
-        {
-            "refresh": "your_refresh_token",
-            "access": "your_access_token"
-        }
-        ```
-    - **Error** (401 Unauthorized):
-        ```json
-        {
-            "detail": "Invalid credentials"
-        }
-        ```
-
-## 🚀 Usage
-
-### Register a New User
-
-To register a new user, send a `POST` request to `/api/accounts/register/` with the user's details in the request body.
-
-Example using `curl`:
-```sh
-curl -X POST http://127.0.0.1:8000/api/accounts/register/ \
--H "Content-Type: application/json" \
--d '{"fullname": "John Doe", "phone": "1234567890", "password": "yourpassword"}'
+}
 ```
 
 ### Login
 
-To log in, send a `POST` request to `/api/accounts/login/` with the user's phone number and password in the request body.
+- **URL:** `/api/login/`
+- **Method:** `POST`
+- **Payload:**
 
-Example using `curl`:
-```sh
-curl -X POST http://127.0.0.1:8000/api/accounts/login/ \
--H "Content-Type: application/json" \
--d '{"phone": "1234567890", "password": "yourpassword"}'
+```json
+{
+    "phone": "0123456789",
+    "password": "securepassword123"
+}
 ```
 
-## 🤝 Contributing
+- **Response:**
 
-We welcome contributions! Please read our Contributing Guidelines before submitting a pull request.
+```json
+{
+    "message": "Đăng nhập thành công",
+    "data": {
+        "access_token": "your_access_token",
+        "user": {
+            "id": "1",
+            "fullname": "Nguyen Van A",
+            "phone": "0123456789",
+            "role": "USER",
+            "avatar": "avatar-1"
+        }
+    }
+}
+```
 
-## 📄 License
+### Get User Info
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+- **URL:** `/api/user-info/`
+- **Method:** `GET`
+- **Headers:**
 
----
+```http
+Authorization: Bearer your_access_token
+```
+
+- **Response:**
+
+```json
+{
+    "id": "1",
+    "fullname": "Nguyen Van A",
+    "phone": "0123456789",
+    "avatar": "avatar-1",
+    "role": "USER"
+}
+```
+
+## Error Handling
+
+- **Duplicate Phone Number:**
+
+```json
+{
+    "message": "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.",
+    "errors": {
+        "phone": ["Số điện thoại đã tồn tại."]
+    }
+}
+```
+
+- **Invalid Login:**
+
+```json
+{
+    "message": "Thông tin đăng nhập không chính xác"
+}
+```
+
+## License
+
+This project is licensed under the MIT License.
+```
+
+This `README.md` file provides an overview of the project, installation instructions, API endpoints, and error handling details. Adjust the repository URL and any other specific details as needed.
+This `README.md` file provides an overview of the project, installation instructions, API endpoints, and error handling details. Adjust the repository URL and any other specific details as needed.
