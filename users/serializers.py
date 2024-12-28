@@ -2,12 +2,14 @@ from rest_framework import serializers
 from .models import Data
 
 class DataSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = Data
-        fields = ['id', 'fullname', 'phone', 'avatar']
+        fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password']
 
     def create(self, validated_data):
-        validated_data['avatar'] = 'avatar-1'
+        validated_data['avatar'] = 'avatars/avatar-1.png' 
         data = Data.objects.create_user(
             fullname=validated_data['fullname'],
             phone=validated_data['phone'],
