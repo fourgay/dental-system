@@ -23,7 +23,14 @@ export const AppHeader = () => {
             </div>
             <div className="services">Dịch Vụ</div>
             <div className="blogs">Blogs</div>
-            <div className="about-us">Giới Thiệu</div>
+            <div
+              className={
+                location.pathname == "/aboutus" ? "aboutus bold" : "aboutus"
+              }
+              onClick={() => navigate("/aboutus")}
+            >
+              Giới Thiệu
+            </div>
             <div className="contact">Liên Hệ</div>
           </div>
           <div className="page-header__auth">

@@ -1,3 +1,4 @@
+import { Spin } from "antd";
 import { createContext, useContext, useState } from "react";
 
 interface IAppContext {
@@ -32,6 +33,7 @@ export const AppProvider = (props: TProps) => {
       }}
     >
       {props.children}
+      <Spin tip="Loading..." fullscreen spinning={isAppLoading} size="large" />
     </CurrentAppContext.Provider>
   );
 };

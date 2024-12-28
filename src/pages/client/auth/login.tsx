@@ -1,8 +1,11 @@
 import { useNavigate, Link } from "react-router-dom";
 import login from "assets/login/login.png";
 import "./login.scss";
-import { Input, Form, Divider, Button } from "antd";
+import { Input, Form, Divider, Button, App } from "antd";
+import type { FormProps } from "antd";
 import { useState } from "react";
+import { userCurrentApp } from "@/components/context/app.context";
+import { loginAPI } from "@/services/api";
 
 type FieldType = {
   phone: string;
@@ -11,7 +14,35 @@ type FieldType = {
 
 export const LoginPage = () => {
   const [isSubmit, setIsSubmit] = useState(false);
+  const { notification } = App.useApp();
+  const { setIsAuthenticated, setIsAppLoading, setUser } = userCurrentApp();
   const navigate = useNavigate();
+
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    setIsSubmit(true);
+    setIsAppLoading(true);
+    const { phone, password } = values;
+    const res = await loginAPI(phone, password);
+
+    if (res?.data) {
+      setIsAuthenticated(true);
+      setUser(res.data.user);
+      localStorage.setItem("access_token", res.data.access_token);
+      notification.success({
+        message: res.message,
+        placement: "bottomLeft",
+      });
+      navigate("/");
+    } else {
+      notification.error({
+        message: res.message,
+        placement: "bottomLeft",
+      });
+    }
+
+    setIsAppLoading(false);
+    setIsSubmit(false);
+  };
   return (
     <div className="login-page">
       <div className="login-page__img">
@@ -23,7 +54,7 @@ export const LoginPage = () => {
           Well Well Well, xem ai quay lại kìa
         </div>
 
-        <Form name="login-register" autoComplete="off">
+        <Form name="login-register" onFinish={onFinish} autoComplete="off">
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
             label="Số điện thoại"

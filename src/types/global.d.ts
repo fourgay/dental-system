@@ -2,7 +2,6 @@ export {};
 
 declare global {
   interface IBackendRes<T> {
-    error?: string | string[];
     message: string;
     data?: T;
   }
@@ -19,13 +18,7 @@ declare global {
 
   interface ILogin {
     access_token: string;
-    refresh_token: string;
-    user: {
-      id: string;
-      fullname: string;
-      phone: string;
-      avatar: string;
-    };
+    user: IUser;
   }
 
   interface IRegister {
@@ -35,12 +28,11 @@ declare global {
   }
 
   interface IUser {
-    email: string;
-    phone: string;
+    id: string;
     fullname: string;
+    phone: string;
     role: string;
     avatar: string;
-    id: string;
   }
 }
 
