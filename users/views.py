@@ -1,11 +1,11 @@
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import DataSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Data
+from .serializers import DataSerializer
 
 @api_view(['POST'])
 def register(request):
@@ -27,10 +27,20 @@ def login(request):
     user = authenticate(request, phone=phone, password=password)
     if user is not None:
         refresh = RefreshToken.for_user(user)
+        user_data = DataSerializer(user).data
         return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        })
+            'message': 'Đăng nhập thành công',
+            'data': {
+                'access_token': str(refresh.access_token),
+                'refresh_token': str(refresh),
+                'user': {
+                    'id': user_data['id'],
+                    'fullName': user_data['fullname'],
+                    'phone': user_data['phone'],
+                    'avatar': user_data.get('avatar', 'default_avatar.png')  # Đảm bảo avatar có giá trị mặc định
+                }
+            }
+        }, status=status.HTTP_200_OK)
     return Response({'detail': 'Thông tin đăng nhập không chính xác'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['GET'])
