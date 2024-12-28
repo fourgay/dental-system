@@ -18,7 +18,7 @@ def register(request):
                 'message': 'Tạo người dùng thành công!',
                 'data': response_serializer.data
             }, status=status.HTTP_201_CREATED)
-        return Response({'message': 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Số điện thoại đã tồn tại.'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def login(request):
