@@ -81,10 +81,11 @@ WSGI_APPLICATION = 'dental.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "dental",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "127.0.0.1"
+        "NAME": "defaultdb",
+        "USER": "avnadmin",
+        "PASSWORD": "AVNS_CSK97rafQJP52LY6YE9",
+        "HOST": "dental-st-dental-st.g.aivencloud.com",
+        "PORT": "13647",
     }
 }
 
