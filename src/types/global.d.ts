@@ -34,10 +34,8 @@ declare global {
     role: string;
     avatar: string;
   }
-}
 
-{
-  "errors": {
-      "phone": ["This field must be unique."]
+  interface IFetchAccount {
+    user: IUser;
   }
 }

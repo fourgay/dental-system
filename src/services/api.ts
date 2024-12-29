@@ -11,10 +11,15 @@ export const registerAPI = async (
   password: string
 ) => {
   const urlBackend = "/api/accounts/register/";
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Thêm độ trễ
+  // await new Promise((resolve) => setTimeout(resolve, 1000)); // Thêm độ trễ
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
     fullname,
     phone,
     password,
   });
+};
+
+export const fetchAccountAPI = () => {
+  const urlBackend = "/api/accounts/user/";
+  return axios.get<IBackendRes<IFetchAccount>>(urlBackend);
 };

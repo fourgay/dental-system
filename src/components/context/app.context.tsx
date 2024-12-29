@@ -1,11 +1,12 @@
-import { Spin } from "antd";
-import { createContext, useContext, useState } from "react";
+import { fetchAccountAPI } from "@/services/api";
+import { createContext, useContext, useEffect, useState } from "react";
+import { ClimbingBoxLoader } from "react-spinners";
 
 interface IAppContext {
   isAuthenticated: boolean;
   setIsAuthenticated: (v: boolean) => void;
   user: IUser | null;
-  setUser: (v: IUser) => void;
+  setUser: (v: IUser | null) => void;
   isAppLoading: boolean;
   setIsAppLoading: (v: boolean) => void;
 }
@@ -21,20 +22,49 @@ export const AppProvider = (props: TProps) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isAppLoading, setIsAppLoading] = useState<boolean>(false);
 
+  useEffect(() => {
+    const fetchAccount = async () => {
+      setIsAppLoading(true);
+      //await new Promise((resolve) => setTimeout(resolve, 1000)); // Thêm độ trễ
+      const res = await fetchAccountAPI();
+      console.log(res);
+
+      if (res.data) {
+        setUser(res.data?.user);
+        setIsAuthenticated(true);
+      }
+      setIsAppLoading(false);
+    };
+    fetchAccount();
+  }, []);
   return (
-    <CurrentAppContext.Provider
-      value={{
-        isAuthenticated,
-        user,
-        isAppLoading,
-        setIsAuthenticated,
-        setUser,
-        setIsAppLoading,
-      }}
-    >
-      {props.children}
-      <Spin tip="Loading..." fullscreen spinning={isAppLoading} size="large" />
-    </CurrentAppContext.Provider>
+    <>
+      {isAppLoading === false ? (
+        <CurrentAppContext.Provider
+          value={{
+            isAuthenticated,
+            user,
+            setIsAuthenticated,
+            setUser,
+            isAppLoading,
+            setIsAppLoading,
+          }}
+        >
+          {props.children}
+        </CurrentAppContext.Provider>
+      ) : (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <ClimbingBoxLoader size={30} color="#1376F8" />
+        </div>
+      )}
+    </>
   );
 };
 

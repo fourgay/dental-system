@@ -2,10 +2,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./app.header.scss";
 import { FaFoursquare } from "react-icons/fa";
 import { Button } from "antd";
+import { userCurrentApp } from "../context/app.context";
 
 export const AppHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isAuthenticated, user, setIsAuthenticated, setUser } =
+    userCurrentApp();
+
   return (
     <>
       <div className="header-container">
@@ -34,20 +38,30 @@ export const AppHeader = () => {
             <div className="contact">Liên Hệ</div>
           </div>
           <div className="page-header__auth">
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => navigate("/login")}
-            >
-              Đăng Nhập
-            </Button>
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => navigate("/register")}
-            >
-              Đăng Ký
-            </Button>
+            {!isAuthenticated ? (
+              <div>
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={() => navigate("/login")}
+                >
+                  Đăng Nhập
+                </Button>
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={() => navigate("/register")}
+                >
+                  Đăng Ký
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button type="primary" size="large">
+                  {user?.fullname}
+                </Button>
+              </div>
+            )}
           </div>
         </header>
       </div>

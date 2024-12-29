@@ -38,6 +38,10 @@
       justify-content: end;
       gap: 10px;
       width: 30%;
+      div {
+        display: flex;
+        gap: 10px;
+      }
     }
   }
 }
