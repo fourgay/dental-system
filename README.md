@@ -11,11 +11,12 @@ This is a dental system application built with Django and Django REST framework.
 - Error handling with detailed messages
 
 ## Installation
-
+```
 1. Clone the repository:
+```
 
 ```bash
-git clone https://github.com/yourusername/dental-system.git
+git clone https://github.com/fourgay/dental-system.git
 cd dental-system
 ```
 
@@ -35,6 +36,7 @@ pip install -r requirements.txt
 4. Apply the migrations:
 
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
@@ -54,7 +56,7 @@ python manage.py runserver
 
 ### Register
 
-- **URL:** `/api/register/`
+- **URL:** `/api/accounts/register/`
 - **Method:** `POST`
 - **Payload:**
 
@@ -75,7 +77,7 @@ python manage.py runserver
         "id": "1",
         "fullname": "Nguyen Van A",
         "phone": "0123456789",
-        "avatar": "avatar-1",
+        "avatar": "avatars/avatar-1.png",
         "role": "USER"
     }
 }
@@ -83,7 +85,7 @@ python manage.py runserver
 
 ### Login
 
-- **URL:** `/api/login/`
+- **URL:** `/api/accounts/login/`
 - **Method:** `POST`
 - **Payload:**
 
@@ -106,7 +108,7 @@ python manage.py runserver
             "fullname": "Nguyen Van A",
             "phone": "0123456789",
             "role": "USER",
-            "avatar": "avatar-1"
+            "avatar": "avatars/avatar-1.png"
         }
     }
 }
@@ -114,7 +116,34 @@ python manage.py runserver
 
 ### Get User Info
 
-- **URL:** `/api/user-info/`
+- **URL:** `/api/accounts/user/`
+- **Method:** `GET`
+- **Headers:**
+
+```http
+Authorization: Bearer your_access_token
+```
+
+- **Response:**
+
+```json
+{
+    "message": "",
+    "data": {
+        "user": {
+            "id": "1",
+            "fullname": "Nguyen Van A",
+            "phone": "0123456789",
+            "role": "USER",
+            "avatar": "avatars/avatar-1.png"
+        }
+    }
+}
+```
+
+### Get User Profile
+
+- **URL:** `/api/accounts/user/<user_id>/`
 - **Method:** `GET`
 - **Headers:**
 
@@ -129,8 +158,8 @@ Authorization: Bearer your_access_token
     "id": "1",
     "fullname": "Nguyen Van A",
     "phone": "0123456789",
-    "avatar": "avatar-1",
-    "role": "USER"
+    "role": "USER",
+    "avatar": "avatars/avatar-1.png"
 }
 ```
 
@@ -140,7 +169,7 @@ Authorization: Bearer your_access_token
 
 ```json
 {
-    "message": "Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.",
+    "message": "Đăng ký không thành công.",
     "errors": {
         "phone": ["Số điện thoại đã tồn tại."]
     }
@@ -152,6 +181,14 @@ Authorization: Bearer your_access_token
 ```json
 {
     "message": "Thông tin đăng nhập không chính xác"
+}
+```
+
+- **Unauthorized Access:**
+
+```json
+{
+    "message": "Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)"
 }
 ```
 
