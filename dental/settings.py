@@ -81,12 +81,14 @@ WSGI_APPLICATION = 'dental.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "dental",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "Localhost",
+        "NAME": "dental_harborrope",
+        "USER": "dental_harborrope",
+        "PASSWORD": "401840545c4e7a3070d35288f403773a98da46e6",
+        "HOST": "qx7rb.h.filess.io",
+        "PORT": "3307",     
     }
 }
+
 
 
 # Password validation
