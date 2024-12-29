@@ -24,7 +24,7 @@ class Data(AbstractBaseUser):
     fullname = models.CharField(max_length=255)
     phone = models.CharField(max_length=15, unique=True)
     avatar = models.CharField(max_length=255, default='default_avatar.png')
-    role = models.CharField(max_length=50, default='USER')  
+    role = models.CharField(max_length=50, default='USER')
 
     objects = CustomUserManager()
 

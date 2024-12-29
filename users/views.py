@@ -9,16 +9,18 @@ from .serializers import DataSerializer
 
 @api_view(['POST'])
 def register(request):
-    if request.method == 'POST':
-        serializer = DataSerializer(data=request.data)
-        if serializer.is_valid():
-            data = serializer.save()
-            response_serializer = DataSerializer(data)
-            return Response({
-                'message': 'Tạo người dùng thành công!',
-                'data': response_serializer.data
-            }, status=status.HTTP_201_CREATED)
-        return Response({'message': 'Số điện thoại đã tồn tại 👍💩💩.'}, status=status.HTTP_400_BAD_REQUEST)
+    serializer = DataSerializer(data=request.data)
+    if serializer.is_valid():
+        data = serializer.save()
+        response_serializer = DataSerializer(data)
+        return Response({
+            'message': 'Tạo người dùng thành công!',
+            'data': response_serializer.data
+        }, status=status.HTTP_201_CREATED)
+    return Response({
+        'message': 'Đăng ký không thành công.',
+        'errors': serializer.errors  # Include detailed error messages
+    }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def login(request):
@@ -48,7 +50,18 @@ def login(request):
 def get_user_info(request):
     user = request.user
     serializer = DataSerializer(user)
-    return Response(serializer.data)
+    return Response({
+        'message': '',
+        'data': {
+            'user': {
+                'id': serializer.data['id'],
+                'fullname': serializer.data['fullname'],
+                'phone': serializer.data['phone'],
+                'role': serializer.data['role'],
+                'avatar': serializer.data['avatar']
+            }
+        }
+    }, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

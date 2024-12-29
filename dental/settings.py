@@ -81,11 +81,10 @@ WSGI_APPLICATION = 'dental.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "defaultdb",
-        "USER": "avnadmin",
-        "PASSWORD": "AVNS_CSK97rafQJP52LY6YE9",
-        "HOST": "dental-st-dental-st.g.aivencloud.com",
-        "PORT": "13647",
+        "NAME": "dental",
+        "USER": "root",
+        "PASSWORD": "",
+        "HOST": "Localhost",
     }
 }
 
@@ -151,7 +150,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4000",
     "http://127.0.0.1:4000",
 ]
-
-# Hoặc nếu bạn muốn cho phép tất cả các nguồn (không khuyến khích trong môi trường sản xuất)
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
