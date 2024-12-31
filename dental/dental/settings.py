@@ -81,7 +81,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "defaultdb",
         "USER": "avnadmin",
-        "PASSWORD": "",
+        "PASSWORD": "zzzpasss",
         "HOST": "dental-st-dental-st.g.aivencloud.com",
         "PORT": "13647",
         "OPTIONS": {
