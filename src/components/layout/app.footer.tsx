@@ -18,7 +18,7 @@ export const AppFooter = () => {
           <div className="page-footer-1">
             <div className="page-footer-1__logo" onClick={() => navigate("/")}>
               <FaFoursquare className="logo" />
-              <span>FourGay</span>
+              <span>ThreeGay</span>
             </div>
             <div className="page-footer-1__detail">
               <div className="home" onClick={() => navigate("/")}>

@@ -3,6 +3,7 @@ import introduce from "assets/about-us/about-us.png";
 import doctor1 from "assets/about-us/doctor-1.png";
 import doctor2 from "assets/about-us/doctor-2.png";
 import doctor3 from "assets/about-us/doctor-3.png";
+import technology from "assets/about-us/latest-technology.png";
 
 import "styles/about.us.scss";
 
@@ -114,6 +115,51 @@ export const AboutUs = () => {
                 dentist.
               </div>
               <Button type="primary">Đặt lịch với bác sĩ này!</Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="technology">
+        <div className="technology__title">Latest Technology</div>
+        <div className="technology__detail">
+          Thanks to major technological advancements, dentistry allows treating
+          the most complex cases with less time and more efficiency.
+        </div>
+        <div className="technology__content">
+          <div className="img">
+            <img src={technology} />
+          </div>
+          <div className="main">
+            <div
+              style={{
+                fontWeight: "500",
+                fontSize: "20px",
+                textTransform: "capitalize",
+                marginBottom: "20px",
+              }}
+            >
+              The Future of Dentistry is Digital:
+            </div>
+            <div>
+              <div>
+                Dentists today already utilize software to capture insights in
+                clinical decision-making. These practices will continue to
+                develop to integrate AI algorithms that enable clinicians to
+                find the best modalities for their patients.
+              </div>
+              <div style={{ margin: "30px 0" }}>
+                In the 21st century, digital radiographs and 3D imaging have
+                become the standard of dental care. Using an intraoral scanner
+                with digitized data for 3D dental impressions (vs. polyvinyl
+                siloxane and rubber base impressions) for a dental crown is now
+                commonplace.
+              </div>
+              <div>
+                Artificial intelligence is laying the groundwork for the future
+                of the dental industry. Dental robots can now perform functions
+                such as filling cavities and cleaning or extracting teeth
+              </div>
             </div>
           </div>
         </div>

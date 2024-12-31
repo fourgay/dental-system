@@ -10,13 +10,19 @@ export const AppHeader = () => {
   const { isAuthenticated, user, setIsAuthenticated, setUser } =
     userCurrentApp();
 
+  //tạm logout
+  const handleLogout = () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem("access_token");
+  };
   return (
     <>
       <div className="header-container">
         <header className="page-header">
           <div className="page-header__logo" onClick={() => navigate("/")}>
             <FaFoursquare className="logo" />
-            <span>FourGay</span>
+            <span>ThreeGay</span>
           </div>
           <div className="page-header__detail">
             <div
@@ -57,7 +63,11 @@ export const AppHeader = () => {
               </div>
             ) : (
               <div>
-                <Button type="primary" size="large">
+                <Button
+                  type="primary"
+                  size="large"
+                  onClick={() => handleLogout()}
+                >
                   {user?.fullname}
                 </Button>
               </div>
