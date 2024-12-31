@@ -25,11 +25,31 @@ class Data(AbstractBaseUser):
     phone = models.CharField(max_length=15, unique=True)
     avatar = models.CharField(max_length=255, default='default_avatar.png')
     role = models.CharField(max_length=50, default='USER')
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['fullname']
+
+    def __str__(self):
+        return self.fullname
+
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
+
+    def is_doctor(self):
+        return self.role == 'DOCTOR'
+
+class Doctor(models.Model):
+    fullname = models.CharField(max_length=255)
+    work = models.CharField(max_length=255)
+    img = models.CharField(max_length=255)
 
     def __str__(self):
         return self.fullname

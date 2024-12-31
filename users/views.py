@@ -1,11 +1,19 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import Data
-from .serializers import DataSerializer
+from .models import Data, Doctor
+from .serializers import DataSerializer, DoctorSerializer
+
+class IsDoctor(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_doctor()
+
+class IsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'ADMIN'
 
 @api_view(['POST'])
 def register(request):
@@ -72,3 +80,18 @@ def get_user_profile(request, user_id):
         return Response({'message': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     serializer = DataSerializer(user)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def get_all_doctors(request):
+    if request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    doctors = Doctor.objects.all()
+    serializer = DoctorSerializer(doctors, many=True)
+    return Response({
+        'message': '',
+        'data': serializer.data
+    }, status=status.HTTP_200_OK)

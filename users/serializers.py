@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Data
+from .models import Data, Doctor
 
 class DataSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -21,3 +21,8 @@ class DataSerializer(serializers.ModelSerializer):
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại.")
         return value
+
+class DoctorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ['fullname', 'work', 'img']

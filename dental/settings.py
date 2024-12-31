@@ -81,10 +81,15 @@ WSGI_APPLICATION = 'dental.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "dental",
-        "USER": "root",
-        "PASSWORD": "",
-        "HOST": "Localhost",
+        "NAME": "defaultdb",
+        "USER": "avnadmin",
+        "PASSWORD": "AVNS_rkAhzlA5uDwLOFROT3g",
+        "HOST": "mysql-3f4adfe0-dental-st.g.aivencloud.com",
+        "PORT": "13647",
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -150,5 +155,4 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4000",
     "http://127.0.0.1:4000",
 ]
-CORS_ALLOW_ALL_ORIGINS = True
-
+# CORS_ALLOW_ALL_ORIGINS = True
