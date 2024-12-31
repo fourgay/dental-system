@@ -38,4 +38,10 @@ declare global {
   interface IFetchAccount {
     user: IUser;
   }
+
+  interface IDoctor {
+    fullname: string;
+    work: string;
+    img: string;
+  }
 }

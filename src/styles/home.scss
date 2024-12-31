@@ -131,4 +131,38 @@
       justify-content: end;
     }
   }
+
+  .specialists {
+    background-color: #e6f6fe;
+    padding: 50px 0;
+    &__title {
+      font-weight: bold;
+      font-size: 40px;
+      width: 400px;
+      text-align: center;
+      margin: 0 auto;
+    }
+    &__detail {
+      width: 400px;
+      text-align: center;
+      margin: 20px auto;
+    }
+  }
+
+  .question {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 0;
+    &__title {
+      font-size: 40px;
+      font-weight: bold;
+    }
+    &__detail {
+      width: 460px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+  }
 }

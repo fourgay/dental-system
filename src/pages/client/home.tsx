@@ -1,4 +1,4 @@
-import { Button, Flex, Space, Input, Form } from "antd";
+import { Button, Flex, Space, Input, Form, Collapse, Card } from "antd";
 import welcome from "assets/home/welcome.png";
 import welcomeDoctor from "assets/home/welcome-doctor.png";
 import rootCanal from "assets/home/root-canal-treatment.png";
@@ -10,8 +10,24 @@ import preciseSmile from "assets/home/precise-smile.png";
 import "styles/home.scss";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { GoShieldCheck } from "react-icons/go";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { FreeMode, Pagination, Autoplay } from "swiper/modules";
+
+import "swiper/swiper-bundle.css";
+import Meta from "antd/es/card/Meta";
 
 export const HomePage = () => {
+  // const [doctors, setDoctors] = useState<IDoctor[]>([]);
+
+  // useEffect(() => {
+  //   const getDataDoctor = async () => {
+  //     const res = await getAllDoctorAPI();
+  //     if (res?.data) {
+  //       setDoctors(res.data);
+  //     }
+  //   };
+  //   getDataDoctor();
+  // }, []);
   return (
     <div className="home-page">
       <div className="welcome">
@@ -165,6 +181,104 @@ export const HomePage = () => {
         <div className="precise-smile__img">
           <img src={preciseSmile} />
         </div>
+      </div>
+      <div className="specialists">
+        <div className="specialists__title">Meet our specialists</div>
+        <div className="specialists__detail">
+          We use only the best quality materials on the market in order to
+          provide the best products to our patients.
+        </div>
+        <div className="specialists__content">
+          <Swiper
+            slidesPerView={3}
+            spaceBetween={1}
+            freeMode={true}
+            loop={true}
+            autoplay={{
+              delay: 1000,
+              disableOnInteraction: false,
+            }}
+            pagination={{
+              clickable: true,
+            }}
+            modules={[Autoplay, FreeMode, Pagination]}
+            className="mySwiper"
+          >
+            <SwiperSlide>
+              <Card
+                hoverable
+                style={{ width: 240 }}
+                cover={
+                  <img alt="example" src="https://i.imgur.com/V6vsg6o.png" />
+                }
+              >
+                <Meta title="Doctor 1" description="working" />
+              </Card>
+            </SwiperSlide>
+
+            <SwiperSlide>
+              <Card
+                hoverable
+                style={{ width: 240 }}
+                cover={
+                  <img alt="example" src="https://i.imgur.com/LV2W6ub.png" />
+                }
+              >
+                <Meta title="Doctor 2" description="working" />
+              </Card>
+            </SwiperSlide>
+
+            <SwiperSlide>
+              <Card
+                hoverable
+                style={{ width: 240 }}
+                cover={
+                  <img alt="example" src="https://i.imgur.com/fQDbbJv.png" />
+                }
+              >
+                <Meta title="Doctor 3" description="working" />
+              </Card>
+            </SwiperSlide>
+
+            <SwiperSlide>
+              <Card
+                hoverable
+                style={{ width: 240 }}
+                cover={
+                  <img alt="example" src="https://i.imgur.com/wzktDHu.png" />
+                }
+              >
+                <Meta title="Doctor 4" description="working" />
+              </Card>
+            </SwiperSlide>
+          </Swiper>
+        </div>
+      </div>
+      <div className="question">
+        <div className="question__title">Frequently Ask Question</div>
+        <div className="question__detail">
+          We use only the best quality materials on the market in order to
+          provide the best products to our patients.
+        </div>
+        <Collapse
+          accordion
+          size="large"
+          style={{ width: "800px" }}
+          items={[
+            {
+              key: "1",
+              label: "Can I see who reads my email campaigns?",
+              children: (
+                <p>
+                  Lorem ipsum dolor sit amet consectetur. Convallis cras
+                  placerat dignissim aliquam massa. Aliquet volutpat rhoncus in
+                  convallis consectetur. Cras adipiscing volutpat non hac enim
+                  odio enim.
+                </p>
+              ),
+            },
+          ]}
+        />
       </div>
     </div>
   );

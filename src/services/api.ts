@@ -23,3 +23,8 @@ export const fetchAccountAPI = () => {
   const urlBackend = "/api/accounts/user/";
   return axios.get<IBackendRes<IFetchAccount>>(urlBackend);
 };
+
+export const getAllDoctorAPI = () => {
+  const urlBackend = "/api/admin/get-all-doctor/";
+  return axios.get<IBackendRes<IDoctor[]>>(urlBackend);
+};

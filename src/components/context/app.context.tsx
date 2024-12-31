@@ -35,7 +35,7 @@ export const AppProvider = (props: TProps) => {
       }
       setIsAppLoading(false);
     };
-    //fetchAccount();
+    fetchAccount();
   }, []);
   return (
     <>
