@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'dental.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "defaultdb",
+        "NAME": "dbdental",
         "USER": "avnadmin",
         "PASSWORD": "AVNS_rkAhzlA5uDwLOFROT3g",
         "HOST": "mysql-3f4adfe0-dental-st.g.aivencloud.com",

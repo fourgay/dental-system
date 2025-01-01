@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Data, Doctor
+from .models import Data, Doctor, Service
 
 class DataSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -26,3 +26,8 @@ class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ['fullname', 'work', 'img']
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['id', 'name', 'title', 'detail', 'img']

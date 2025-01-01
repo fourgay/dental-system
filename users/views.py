@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import Data, Doctor
-from .serializers import DataSerializer, DoctorSerializer
+from .models import Data, Doctor, Service
+from .serializers import DataSerializer, DoctorSerializer, ServiceSerializer
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
@@ -91,6 +91,15 @@ def get_all_doctors(request):
     
     doctors = Doctor.objects.all()
     serializer = DoctorSerializer(doctors, many=True)
+    return Response({
+        'message': '',
+        'data': serializer.data
+    }, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_services(request):
+    services = Service.objects.all()
+    serializer = ServiceSerializer(services, many=True)
     return Response({
         'message': '',
         'data': serializer.data

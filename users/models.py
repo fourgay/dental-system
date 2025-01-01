@@ -53,3 +53,12 @@ class Doctor(models.Model):
 
     def __str__(self):
         return self.fullname
+
+class Service(models.Model):
+    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
+    detail = models.TextField()
+    img = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name

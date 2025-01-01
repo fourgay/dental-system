@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'users',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -79,9 +80,9 @@ WSGI_APPLICATION = 'dental.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "defaultdb",
+        "NAME": "dbdental",
         "USER": "avnadmin",
-        "PASSWORD": "zzzpasss",
+        "PASSWORD": "AVNS_rkAhzlA5uDwLOFROT3g",
         "HOST": "dental-st-dental-st.g.aivencloud.com",
         "PORT": "13647",
         "OPTIONS": {

@@ -6,20 +6,6 @@
                 "enableSsl": "Disabled"
             },
             "previewLimit": 50,
-            "server": "qx7rb.h.filess.io",
-            "port": 3307,
-            "driver": "MySQL",
-            "name": "dental_harborrope",
-            "database": "dental_harborrope",
-            "username": "dental_harborrope",
-            "password": "401840545c4e7a3070d35288f403773a98da46e6"
-        },
-        {
-            "mysqlOptions": {
-                "authProtocol": "default",
-                "enableSsl": "Disabled"
-            },
-            "previewLimit": 50,
             "server": "mysql-3f4adfe0-dental-st.g.aivencloud.com",
             "port": 13647,
             "driver": "MySQL",
