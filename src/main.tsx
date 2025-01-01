@@ -13,6 +13,7 @@ import { AppProvider } from "components/context/app.context";
 import { Blogs } from "pages/client/blogs";
 import { Booking } from "pages/client/booking";
 import enUS from "antd/locale/en_US";
+import { ProtectedRoute } from "./components/auth";
 
 const router = createBrowserRouter([
   {
@@ -49,9 +50,9 @@ const router = createBrowserRouter([
       {
         path: "/booking",
         element: (
-          <>
+          <ProtectedRoute>
             <Booking />
-          </>
+          </ProtectedRoute>
         ),
       },
       {
