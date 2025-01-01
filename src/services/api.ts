@@ -28,3 +28,8 @@ export const getAllDoctorAPI = () => {
   const urlBackend = "/api/admin/get-all-doctor/";
   return axios.get<IBackendRes<IDoctor[]>>(urlBackend);
 };
+
+export const getListServicesAPI = () => {
+  const urlBackend = "/api/services/";
+  return axios.get<IBackendRes<IServices[]>>(urlBackend);
+};

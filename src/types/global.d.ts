@@ -44,4 +44,12 @@ declare global {
     work: string;
     img: string;
   }
+
+  interface IServices {
+    id: number;
+    name: string;
+    title: string;
+    detail: string;
+    img: string;
+  }
 }

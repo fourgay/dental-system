@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { App } from "antd";
+import { App, ConfigProvider } from "antd";
 import Layout from "@/layout";
 import "styles/global.scss";
 import { RegisterPage } from "pages/client/auth/register";
@@ -11,6 +11,8 @@ import { AboutUs } from "@/pages/client/about.us";
 import { AppFooter } from "components/layout/app.footer";
 import { AppProvider } from "components/context/app.context";
 import { Blogs } from "pages/client/blogs";
+import { Booking } from "pages/client/booking";
+import enUS from "antd/locale/en_US";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +47,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/booking",
+        element: (
+          <>
+            <Booking />
+          </>
+        ),
+      },
+      {
         path: "/register",
         element: <RegisterPage />,
       },
@@ -60,7 +70,9 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App>
       <AppProvider>
-        <RouterProvider router={router} />
+        <ConfigProvider locale={enUS}>
+          <RouterProvider router={router} />
+        </ConfigProvider>
       </AppProvider>
     </App>
   </StrictMode>

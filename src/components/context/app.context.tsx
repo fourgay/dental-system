@@ -27,8 +27,6 @@ export const AppProvider = (props: TProps) => {
       setIsAppLoading(true);
       //await new Promise((resolve) => setTimeout(resolve, 1000)); // Thêm độ trễ
       const res = await fetchAccountAPI();
-      console.log(res);
-
       if (res.data) {
         setUser(res.data?.user);
         setIsAuthenticated(true);

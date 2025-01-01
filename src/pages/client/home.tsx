@@ -15,6 +15,8 @@ import { FreeMode, Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/swiper-bundle.css";
 import Meta from "antd/es/card/Meta";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const HomePage = () => {
   // const [doctors, setDoctors] = useState<IDoctor[]>([]);
@@ -25,9 +27,16 @@ export const HomePage = () => {
   //     if (res?.data) {
   //       setDoctors(res.data);
   //     }
+  //     console.log(doctors);
   //   };
   //   getDataDoctor();
   // }, []);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="home-page">
       <div className="welcome">
@@ -44,7 +53,11 @@ export const HomePage = () => {
             anything and book yourself.
           </div>
           <Flex align="center" gap={20}>
-            <Button type="primary" size="large">
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => navigate("/booking")}
+            >
               Đặt lịch ngay!
             </Button>
             <Button

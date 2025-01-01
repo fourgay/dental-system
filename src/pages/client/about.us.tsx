@@ -4,10 +4,14 @@ import doctor1 from "assets/about-us/doctor-1.png";
 import doctor2 from "assets/about-us/doctor-2.png";
 import doctor3 from "assets/about-us/doctor-3.png";
 import technology from "assets/about-us/latest-technology.png";
+import { useEffect } from "react";
 
 import "styles/about.us.scss";
 
 export const AboutUs = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <div className="about-us-page">
       <div className="introduce">
