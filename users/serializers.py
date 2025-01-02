@@ -31,3 +31,8 @@ class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ['id', 'name', 'title', 'detail', 'img']
+
+class Dataserializer(serializers.ModelSerializer):
+    class Meta:
+        model = Data
+        fields = ['id', 'fullname', 'phone', 'avatar', 'role']
