@@ -62,6 +62,26 @@ def login(request):
         }, status=status.HTTP_200_OK)
     return Response({'message': 'Thông tin đăng nhập không chính xác'}, status=status.HTTP_401_UNAUTHORIZED)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_register(request):
+    if request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    serializer = DataSerializer(data=request.data)
+    if serializer.is_valid():
+        data = serializer.save()
+        response_serializer = DataSerializer(data)
+        return Response({
+            'message': 'Tạo người dùng thành công!',
+            'data': response_serializer.data
+        }, status=status.HTTP_201_CREATED)
+    return Response({
+        'message': 'Đăng ký không thành công.',
+        'errors': serializer.errors  # Include detailed error messages
+    }, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_user_info(request):
@@ -132,3 +152,24 @@ def get_all_users(request):
     paginated_users = paginator.paginate_queryset(users, request)
     serializer = DataSerializer(paginated_users, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def admin_delete(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    phone = request.query_params.get('phone')
+    fullname = request.query_params.get('fullname') 
+    if not phone:
+        return Response({"error": "Thiếu tham số phone trong query params."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Data.objects.get(phone=phone)
+        user.delete()
+        fullname_display = fullname if fullname else user.fullname
+        return Response({"message": f"User với tên là {fullname_display} và phone {phone} đã được xoá thành công."}, status=status.HTTP_200_OK)
+    except Data.DoesNotExist:
+        return Response({"error": f"Không tìm thấy user với phone {phone}."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"Đã xảy ra lỗi: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
