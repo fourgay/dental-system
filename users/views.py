@@ -8,6 +8,7 @@ from .models import Data, Doctor, Service
 from .serializers import DataSerializer, DoctorSerializer, ServiceSerializer
 from rest_framework.pagination import PageNumberPagination
 import random
+from .pagination import CustomPagination
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
@@ -18,9 +19,10 @@ class IsAdmin(BasePermission):
         return request.user.is_authenticated and request.user.role == 'ADMIN'
 
 class StandardresultsSetPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 3
     page_size_query_param = 'page_size'
     max_page_size = 100
+
 
 @api_view(['POST'])
 def register(request):
@@ -126,18 +128,7 @@ def get_all_users(request):
                 'message': random.choice(messages)  
             }, status=status.HTTP_401_UNAUTHORIZED)
     users = Data.objects.all()
-    paginator = StandardresultsSetPagination()
+    paginator = CustomPagination()
     paginated_users = paginator.paginate_queryset(users, request)
     serializer = DataSerializer(paginated_users, many=True)
-    return paginator.get_paginated_response({
-        'message': '',
-        'data': {
-            'meta': {
-                'current': paginator.page.number,
-                'pageSize': paginator.page_size,
-                'pages': paginator.page.paginator.num_pages,
-                'total': paginator.page.paginator.count
-            },
-            'results': serializer.data
-        }
-    })
+    return paginator.get_paginated_response(serializer.data)
