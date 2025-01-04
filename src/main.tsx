@@ -13,7 +13,12 @@ import { AppProvider } from "components/context/app.context";
 import { Blogs } from "pages/client/blogs";
 import { Booking } from "pages/client/booking";
 import enUS from "antd/locale/en_US";
-import { ProtectedRoute } from "./components/auth";
+import { ProtectedRoute } from "components/auth";
+import { LayoutAdmin } from "components/layout/layout.admin";
+import DashBoardPage from "./pages/admin/dashboard";
+import { ManageUserPage } from "./pages/admin/manage.user";
+import { ManageDoctorPage } from "./pages/admin/manage.doctor";
+import { ManageBookingPage } from "./pages/admin/manage.booking";
 
 const router = createBrowserRouter([
   {
@@ -30,7 +35,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/aboutus",
+        path: "aboutus",
         element: (
           <>
             <AboutUs />
@@ -39,7 +44,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/blogs",
+        path: "blogs",
         element: (
           <>
             <Blogs />
@@ -48,7 +53,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/booking",
+        path: "booking",
         element: (
           <ProtectedRoute>
             <Booking />
@@ -56,12 +61,50 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/register",
+        path: "register",
         element: <RegisterPage />,
       },
       {
-        path: "/login",
+        path: "login",
         element: <LoginPage />,
+      },
+    ],
+  },
+  {
+    path: "admin",
+    element: <LayoutAdmin />,
+    children: [
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <DashBoardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "user",
+        element: (
+          <ProtectedRoute>
+            <ManageUserPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "doctor",
+        element: (
+          <ProtectedRoute>
+            <ManageDoctorPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "booking",
+        element: (
+          <ProtectedRoute>
+            <ManageBookingPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

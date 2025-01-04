@@ -33,3 +33,8 @@ export const getListServicesAPI = () => {
   const urlBackend = "/api/services/";
   return axios.get<IBackendRes<IServices[]>>(urlBackend);
 };
+
+export const getUsersAPI = (page: number) => {
+  const urlBackend = `/api/users/?page=${page}`;
+  return axios.get<IBackendRes<IModePaginate<IUser>>>(urlBackend);
+};

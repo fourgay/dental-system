@@ -53,7 +53,7 @@ export const Booking = () => {
         submitter={{
           render: ({ form, onSubmit, step, onPre }) => {
             return [
-              step > 0 && step < 4 && (
+              step > 0 && step < 3 && (
                 <Button
                   key="pre"
                   onClick={() => {

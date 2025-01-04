@@ -13,7 +13,7 @@ declare global {
       pages: number;
       total: number;
     };
-    results: T[];
+    result: T[];
   }
 
   interface ILogin {
