@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import Data, Doctor, Service
+from .models import Data, Service
 from .serializers import DataSerializer, DoctorSerializer, ServiceSerializer
 from rest_framework.pagination import PageNumberPagination
 import random
@@ -111,19 +111,22 @@ def get_user_profile(request, user_id):
     return Response(serializer.data)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAdmin])
+@permission_classes([IsAuthenticated])
 def get_all_doctors(request):
     if request.user.role != 'ADMIN':
-        return Response({
-            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
-        }, status=status.HTTP_401_UNAUTHORIZED)
-    
-    doctors = Doctor.objects.all()
-    serializer = DoctorSerializer(doctors, many=True)
-    return Response({
-        'message': '',
-        'data': serializer.data
-    }, status=status.HTTP_200_OK)
+            messages = [
+                'Bạn phải là ADMIN mới có thể truy cập được API này 👍',
+                'Gà thì không có quyền dùng API này đâu 🚫',
+                'Búng cu đi rồi cho dùng API'
+            ]
+            return Response({
+                'message': random.choice(messages)  
+            }, status=status.HTTP_401_UNAUTHORIZED)
+    doctors = Data.objects.filter(role='DOCTOR')
+    paginator = CustomPagination()
+    paginated_doctors = paginator.paginate_queryset(doctors, request)
+    serializer = DoctorSerializer(paginated_doctors, many=True)
+    return paginator.get_paginated_response(serializer.data)
 
 @api_view(['GET'])
 def get_services(request):

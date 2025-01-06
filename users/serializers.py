@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Data, Doctor, Service
+from .models import Data,Service
 
 class DataSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -9,13 +9,23 @@ class DataSerializer(serializers.ModelSerializer):
         fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password']
 
     def create(self, validated_data):
-        validated_data['avatar'] = 'avatars/avatar-1.png' 
-        data = Data.objects.create_user(
-            fullname=validated_data['fullname'],
-            phone=validated_data['phone'],
-            password=validated_data['password']
-        )
+        if 'role' in validated_data:
+            validated_data['avatar'] = 'avatars/avatar-1.png'
+            data = Data.objects.admin_create_user(
+                fullname=validated_data['fullname'],
+                phone=validated_data['phone'],
+                password=validated_data['password'],
+                role=validated_data['role']
+            )
+        else:
+            validated_data['avatar'] = 'avatars/avatar-1.png'
+            data = Data.objects.create_user(
+                fullname=validated_data['fullname'],
+                phone=validated_data['phone'],
+                password=validated_data['password']
+            )
         return data
+
 
     def validate_phone(self, value):
         if Data.objects.filter(phone=value).exists():
@@ -24,8 +34,8 @@ class DataSerializer(serializers.ModelSerializer):
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Doctor
-        fields = ['fullname', 'work', 'img']
+        model = Data
+        fields = ['fullname', 'work', 'img','phone']
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
