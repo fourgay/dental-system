@@ -1,304 +1,124 @@
+```markdown
 # Dental System API
 
-This is a dental system application built with Django and Django REST framework. It provides various APIs for user registration, login, retrieving user information, and more.
+## Giới thiệu
 
-## Features
+**Dental System API** là hệ thống quản lý người dùng và đặt lịch khám nha khoa, hỗ trợ các chức năng như đăng ký, đăng nhập, quản lý thông tin người dùng, bác sĩ, dịch vụ, và lịch hẹn. Dự án được xây dựng trên **Django REST Framework (DRF)** với các tính năng phân quyền mạnh mẽ và phân trang dữ liệu linh hoạt.
 
-- User registration with default avatar and role
-- User login with JWT authentication
-- Retrieve user information
-- List all users with pagination
-- List all doctors
-- List all services
-- Error handling with detailed messages
+## Chức năng chính
 
-## Installation
+1. **Quản lý người dùng:**
+   - Đăng ký tài khoản người dùng hoặc quản trị viên.
+   - Đăng nhập bằng số điện thoại và mật khẩu.
+   - Quản lý thông tin cá nhân và hồ sơ người dùng.
 
-1. Clone the repository:
+2. **Dịch vụ:**
+   - Lấy danh sách các dịch vụ khám nha khoa.
 
-    ```bash
-    git clone https://github.com/yourusername/dental-system.git
-    cd dental-system
-    ```
+3. **Quản lý đặt lịch:**
+   - Tạo và quản lý lịch hẹn với bác sĩ.
+   - Xem danh sách lịch hẹn (dành cho quản trị viên).
 
-2. Create a virtual environment and activate it:
+4. **Phân quyền:**
+   - Người dùng thông thường, bác sĩ và quản trị viên có quyền hạn khác nhau.
+   - API bảo mật với JWT Token Authentication.
 
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-    ```
+## Cấu trúc project
 
-3. Install the dependencies:
+- **`models.py`**:
+  - Định nghĩa các mô hình như `Data` (người dùng), `Service` (dịch vụ), và `Booking` (đặt lịch).
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+- **`serializers.py`**:
+  - Chuyển đổi dữ liệu giữa mô hình và định dạng JSON.
 
-4. Apply the migrations:
+- **`views.py`**:
+  - Logic chính cho API, bao gồm đăng ký, đăng nhập, và các chức năng quản lý khác.
 
-    ```bash
-    python [manage.py](http://_vscodecontentref_/1) makemigrations
-    python [manage.py](http://_vscodecontentref_/2) migrate
-    ```
+- **`urls.py`**:
+  - Định nghĩa các endpoint API.
 
-5. Create a superuser:
+- **`pagination.py`**:
+  - Tùy chỉnh phân trang API với số lượng kết quả và tổng số trang.
 
-    ```bash
-    python manage.py createsuperuser
-    ```
+- **`tests.py`**:
+  - Bài kiểm tra tự động (hiện tại chưa triển khai).
 
-6. Run the development server:
+## Cài đặt
 
-    ```bash
-    python manage.py runserver
-    ```
+### Yêu cầu hệ thống
+- Python 3.x
+- Django >= 3.2
+- Django REST Framework (DRF)
+- djangorestframework-simplejwt (JWT Authentication)
 
-## API Endpoints
+### Hướng dẫn cài đặt
+1. Clone repository:
+   ```bash
+   git clone https://github.com/fourgay/dental-system
+   cd dental-system
+   ```
 
-### Register
+2. Tạo và kích hoạt môi trường ảo:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Trên Linux/MacOS
+   venv\Scripts\activate     # Trên Windows
+   ```
 
-- **URL:** `/api/accounts/register/`
-- **Method:** `POST`
-- **Payload:**
+3. Cài đặt các gói phụ thuộc:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-    ```json
-    {
-        "fullname": "Nguyen Van A",
-        "phone": "0123456789",
-        "password": "securepassword123"
-    }
-    ```
+4. Chạy migrations:
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
 
-- **Response:**
+5. Chạy server:
+   ```bash
+   python manage.py runserver
+   ```
 
-    ```json
-    {
-        "message": "Tạo người dùng thành công!",
-        "data": {
-            "id": "1",
-            "fullname": "Nguyen Van A",
-            "phone": "0123456789",
-            "avatar": "avatars/avatar-1.png",
-            "role": "USER"
-        }
-    }
-    ```
+6. Truy cập API tại: [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-### Login
+## Sử dụng API
 
-- **URL:** `/api/accounts/login/`
-- **Method:** `POST`
-- **Payload:**
+### Các endpoint chính
 
-    ```json
-    {
-        "phone": "0123456789",
-        "password": "securepassword123"
-    }
-    ```
+- **Đăng ký người dùng:**
+  - `POST /accounts/register/`
+  
+- **Đăng nhập:**
+  - `POST /accounts/login/`
+  
+- **Lấy thông tin người dùng hiện tại:**
+  - `GET /accounts/user/`
+  
+- **Lấy danh sách bác sĩ:**
+  - `GET /admin/get-all-doctor/`
+  
+- **Xem danh sách dịch vụ:**
+  - `GET /services/`
 
-- **Response:**
+- **Quản lý đặt lịch (dành cho ADMIN):**
+  - `GET /admin/Booking/`
 
-    ```json
-    {
-        "message": "Đăng nhập thành công",
-        "data": {
-            "access_token": "your_access_token",
-            "user": {
-                "id": "1",
-                "fullname": "Nguyen Van A",
-                "phone": "0123456789",
-                "role": "USER",
-                "avatar": "avatars/avatar-1.png"
-            }
-        }
-    }
-    ```
+### Phân trang
+Tất cả các API trả về danh sách đều hỗ trợ phân trang thông qua tham số:
+- `page`: Số trang hiện tại.
+- `page_size`: Số lượng mục trên mỗi trang.
 
-### Get User Info
+## Đóng góp
 
-- **URL:** `/api/accounts/user/`
-- **Method:** `GET`
-- **Headers:**
-
-    ```http
-    Authorization: Bearer your_access_token
-    ```
-
-- **Response:**
-
-    ```json
-    {
-        "message": "",
-        "data": {
-            "user": {
-                "id": "1",
-                "fullname": "Nguyen Van A",
-                "phone": "0123456789",
-                "role": "USER",
-                "avatar": "avatars/avatar-1.png"
-            }
-        }
-    }
-    ```
-
-### Get User Profile
-
-- **URL:** `/api/accounts/user/<user_id>/`
-- **Method:** `GET`
-- **Headers:**
-
-    ```http
-    Authorization: Bearer your_access_token
-    ```
-
-- **Response:**
-
-    ```json
-    {
-        "id": "1",
-        "fullname": "Nguyen Van A",
-        "phone": "0123456789",
-        "role": "USER",
-        "avatar": "avatars/avatar-1.png"
-    }
-    ```
-
-### Get All Users
-
-- **URL:** `/api/users/`
-- **Method:** `GET`
-- **Headers:**
-
-    ```http
-    Authorization: Bearer your_access_token
-    ```
-
-- **Response:**
-
-    ```json
-    {
-        "message": "",
-        "data": {
-            "meta": {
-                "current": "1",
-                "pageSize": "10",
-                "pages": 1,
-                "total": 2
-            },
-            "result": [
-                {
-                    "id": "1",
-                    "fullname": "Nguyen Van A",
-                    "phone": "0123456789",
-                    "role": "USER",
-                    "avatar": "avatars/avatar-1.png"
-                },
-                {
-                    "id": "2",
-                    "fullname": "Nguyen Van B",
-                    "phone": "0987654321",
-                    "role": "ADMIN",
-                    "avatar": "avatars/avatar-2.png"
-                }
-            ]
-        }
-    }
-    ```
-
-### Get All Doctors
-
-- **URL:** `/api/admin/get-all-doctor/`
-- **Method:** `GET`
-- **Headers:**
-
-    ```http
-    Authorization: Bearer your_access_token
-    ```
-
-- **Response:**
-
-    ```json
-    {
-        "message": "",
-        "data": [
-            {
-                "fullname": "Dr. A",
-                "work": "Dentist",
-                "img": "doctor-a.png"
-            },
-            {
-                "fullname": "Dr. B",
-                "work": "Orthodontist",
-                "img": "doctor-b.png"
-            }
-        ]
-    }
-    ```
-
-### Get All Services
-
-- **URL:** `/api/services/`
-- **Method:** `GET`
-- **Response:**
-
-    ```json
-    {
-        "message": "",
-        "data": [
-            {
-                "id": "1",
-                "name": "Service A",
-                "title": "Title A",
-                "detail": "Detail A",
-                "img": "service-a.png"
-            },
-            {
-                "id": "2",
-                "name": "Service B",
-                "title": "Title B",
-                "detail": "Detail B",
-                "img": "service-b.png"
-            }
-        ]
-    }
-    ```
-
-## Error Handling
-
-### Duplicate Phone Number
-
-- **Response:**
-
-    ```json
-    {
-        "message": "Đăng ký không thành công.",
-        "errors": {
-            "phone": ["Số điện thoại đã tồn tại."]
-        }
-    }
-    ```
-
-### Invalid Login
-
-- **Response:**
-
-    ```json
-    {
-        "message": "Thông tin đăng nhập không chính xác"
-    }
-    ```
-
-### Unauthorized Access
-
-- **Response:**
-
-    ```json
-    {
-        "message": "Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)"
-    }
-    ```
+Để đóng góp vào dự án, vui lòng tạo một nhánh mới từ `main` và gửi pull request (PR). Mọi ý kiến đóng góp đều được hoan nghênh!
 
 ## License
 
-This project is licensed under the MIT License.
+Dự án này được cấp phép theo giấy phép MIT.
+
+---
+
+Truy cập repository tại đây: [Dental System API](https://github.com/fourgay/dental-system)
+```
