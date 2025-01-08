@@ -3,45 +3,36 @@
 
 ## Giới thiệu
 
-**Dental System API** là hệ thống quản lý người dùng và đặt lịch khám nha khoa, hỗ trợ các chức năng như đăng ký, đăng nhập, quản lý thông tin người dùng, bác sĩ, dịch vụ, và lịch hẹn. Dự án được xây dựng trên **Django REST Framework (DRF)** với các tính năng phân quyền mạnh mẽ và phân trang dữ liệu linh hoạt.
+**Dental System API** là một hệ thống quản lý người dùng, lịch hẹn và phòng khám nha khoa. Dự án hỗ trợ các vai trò khác nhau như **Guest**, **Customer**, **Dentist**, **Clinic Owner**, và **System Admin**, cung cấp các chức năng quản lý toàn diện từ đăng ký tài khoản đến lịch khám định kỳ.
 
 ## Chức năng chính
 
-1. **Quản lý người dùng:**
-   - Đăng ký tài khoản người dùng hoặc quản trị viên.
-   - Đăng nhập bằng số điện thoại và mật khẩu.
-   - Quản lý thông tin cá nhân và hồ sơ người dùng.
+### Guest
+- Xem danh mục dịch vụ.
+- Đăng ký tài khoản để trở thành Customer.
 
-2. **Dịch vụ:**
-   - Lấy danh sách các dịch vụ khám nha khoa.
+### Customer
+- Đăng ký lịch khám một lần hoặc định kỳ.
+- Nhận thông báo nhắc lịch trước ngày khám.
+- Nhận kết quả khám từ nha sĩ.
+- Nhắn tin trao đổi với nha sĩ.
 
-3. **Quản lý đặt lịch:**
-   - Tạo và quản lý lịch hẹn với bác sĩ.
-   - Xem danh sách lịch hẹn (dành cho quản trị viên).
+### Dentist
+- Xem lịch khám trong tuần của mình.
+- Đề xuất lịch khám định kỳ cho bệnh nhân.
+- Gửi kết quả khám và xem hồ sơ bệnh nhân.
+- Trao đổi với bệnh nhân thông qua kênh chat.
 
-4. **Phân quyền:**
-   - Người dùng thông thường, bác sĩ và quản trị viên có quyền hạn khác nhau.
-   - API bảo mật với JWT Token Authentication.
+### Clinic Owner
+- Đăng ký thông tin phòng khám vào hệ thống.
+- Quản lý thông tin bác sĩ, lịch khám, và bệnh nhân.
+- Nhập lịch hoạt động của phòng khám (giờ làm việc, số lượng slot).
 
-## Cấu trúc project
+### System Admin
+- Xét duyệt thông tin phòng khám và bác sĩ.
+- Quản lý tài khoản.
 
-- **`models.py`**:
-  - Định nghĩa các mô hình như `Data` (người dùng), `Service` (dịch vụ), và `Booking` (đặt lịch).
-
-- **`serializers.py`**:
-  - Chuyển đổi dữ liệu giữa mô hình và định dạng JSON.
-
-- **`views.py`**:
-  - Logic chính cho API, bao gồm đăng ký, đăng nhập, và các chức năng quản lý khác.
-
-- **`urls.py`**:
-  - Định nghĩa các endpoint API.
-
-- **`pagination.py`**:
-  - Tùy chỉnh phân trang API với số lượng kết quả và tổng số trang.
-
-- **`tests.py`**:
-  - Bài kiểm tra tự động (hiện tại chưa triển khai).
+---
 
 ## Cài đặt
 
@@ -83,39 +74,180 @@
 
 6. Truy cập API tại: [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
-## Sử dụng API
+---
 
-### Các endpoint chính
+## API Documentation
 
-- **Đăng ký người dùng:**
-  - `POST /accounts/register/`
-  
-- **Đăng nhập:**
-  - `POST /accounts/login/`
-  
-- **Lấy thông tin người dùng hiện tại:**
-  - `GET /accounts/user/`
-  
-- **Lấy danh sách bác sĩ:**
-  - `GET /admin/get-all-doctor/`
-  
-- **Xem danh sách dịch vụ:**
-  - `GET /services/`
+### 1. **Guest**
+#### Xem danh mục dịch vụ
+- **Endpoint:** `GET /services/`
+- **Response:**
+  ```json
+  {
+      "message": "",
+      "data": [
+          {
+              "id": 1,
+              "name": "Dịch vụ A",
+              "title": "Chi tiết dịch vụ A",
+              "detail": "Mô tả chi tiết dịch vụ",
+              "img": "image_url"
+          },
+          {
+              "id": 2,
+              "name": "Dịch vụ B",
+              "title": "Chi tiết dịch vụ B",
+              "detail": "Mô tả chi tiết dịch vụ",
+              "img": "image_url"
+          }
+      ]
+  }
+  ```
 
-- **Quản lý đặt lịch (dành cho ADMIN):**
-  - `GET /admin/Booking/`
+#### Đăng ký tài khoản
+- **Endpoint:** `POST /accounts/register/`
+- **Body:**
+  ```json
+  {
+      "fullname": "Nguyen Van A",
+      "phone": "0123456789",
+      "password": "123456"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+      "message": "Tạo người dùng thành công!"
+  }
+  ```
 
-### Phân trang
-Tất cả các API trả về danh sách đều hỗ trợ phân trang thông qua tham số:
-- `page`: Số trang hiện tại.
-- `page_size`: Số lượng mục trên mỗi trang.
+---
+
+### 2. **Customer**
+#### Đăng ký lịch khám
+- **Endpoint:** `POST /booking/`
+- **Body:**
+  ```json
+  {
+      "fullname": "Nguyen Van A",
+      "date": "2025-01-10",
+      "time": "14:00",
+      "forAnother": false,
+      "remark": "Khám định kỳ",
+      "service": "Niềng răng",
+      "account": "Nguyen Van A",
+      "doctor": "Dr. B"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+      "message": "Đặt lịch thành công!",
+      "data": {
+          "id": 1,
+          "fullname": "Nguyen Van A",
+          "date": "2025-01-10",
+          "time": "14:00",
+          "forAnother": false,
+          "remark": "Khám định kỳ",
+          "service": "Niềng răng",
+          "account": "Nguyen Van A",
+          "doctor": "Dr. B"
+      }
+  }
+  ```
+
+---
+
+### 3. **Dentist**
+#### Xem lịch khám trong tuần
+- **Endpoint:** `GET /dentist/schedule/`
+- **Response:**
+  ```json
+  {
+      "message": "",
+      "data": [
+          {
+              "id": 1,
+              "fullname": "Nguyen Van A",
+              "date": "2025-01-10",
+              "time": "14:00",
+              "remark": "Khám định kỳ"
+          }
+      ]
+  }
+  ```
+
+---
+
+### 4. **Clinic Owner**
+#### Đăng ký thông tin phòng khám
+- **Endpoint:** `POST /clinic/register/`
+- **Body:**
+  ```json
+  {
+      "name": "Phòng khám ABC",
+      "address": "123 Đường ABC, Quận 1",
+      "opening_hours": {
+          "start": "08:00",
+          "end": "18:00"
+      },
+      "slots": {
+          "examination": 3,
+          "treatment": 1
+      }
+  }
+  ```
+- **Response:**
+  ```json
+  {
+      "message": "Phòng khám được đăng ký thành công!",
+      "data": {
+          "id": 1,
+          "name": "Phòng khám ABC",
+          "address": "123 Đường ABC, Quận 1",
+          "opening_hours": {
+              "start": "08:00",
+              "end": "18:00"
+          },
+          "slots": {
+              "examination": 3,
+              "treatment": 1
+          }
+      }
+  }
+  ```
+
+---
+
+### 5. **System Admin**
+#### Xét duyệt thông tin bác sĩ
+- **Endpoint:** `POST /admin/approve-doctor/`
+- **Body:**
+  ```json
+  {
+      "doctor_id": 2,
+      "approved": true
+  }
+  ```
+- **Response:**
+  ```json
+  {
+      "message": "Thông tin bác sĩ đã được xét duyệt."
+  }
+  ```
+
+---
+
+## Tích hợp
+- **JWT Authentication:** Sử dụng JWT Token để bảo mật API. Người dùng cần cung cấp token trong `Authorization Header` để truy cập các endpoint yêu cầu xác thực.
+
+---
 
 ## Đóng góp
-
 Để đóng góp vào dự án, vui lòng tạo một nhánh mới từ `main` và gửi pull request (PR). Mọi ý kiến đóng góp đều được hoan nghênh!
 
 ## License
-
 Dự án này được cấp phép theo giấy phép MIT.
 
 ---
