@@ -2,12 +2,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, fullname, phone, password=None):
+    def create_user(self, fullname, phone, password=None,birthDay=None,isBooking=False,address=None):
         if not fullname:
             raise ValueError('Tên không được để trống!')
         if not phone:
             raise ValueError('Số điện thoại không được để trống!')
-        data = self.model(fullname=fullname, phone=phone, role='USER')
+        data = self.model(fullname=fullname, phone=phone, role='USER',birthDay=None,isBooking=False,address=None)
         data.set_password(password)
         data.save(using=self._db)
         return data
@@ -20,7 +20,7 @@ class CustomUserManager(BaseUserManager):
         data.save(using=self._db)
         return data
     
-    def admin_create_user(self, fullname, phone, password=None, role='USER'):
+    def admin_create_user(self, fullname, phone, password=None, role='USER',birthDay=None,isBooking=False,address=None):
         if not fullname:
             raise ValueError('Tên không được để trống!')
         if not phone:
@@ -34,11 +34,13 @@ class Data(AbstractBaseUser):
     fullname = models.CharField(max_length=255)
     phone = models.CharField(max_length=15, unique=True)
     avatar = models.CharField(max_length=255, default='default_avatar.png')
-    role = models.CharField(max_length=50, default='USER')  # USER hoặc DOCTOR
+    role = models.CharField(max_length=50, default='USER')  
+    birthDay = models.CharField(max_length=255,null=True, blank=True)
+    isBooking = models.BooleanField(default=False, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
-
     # Thông tin riêng cho bác sĩ
     work = models.CharField(max_length=255, null=True, blank=True)  # Công việc (chỉ dành cho bác sĩ)
     img = models.CharField(max_length=255, null=True, blank=True)  # Ảnh đại diện (chỉ dành cho bác sĩ)
@@ -69,3 +71,16 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
+
+class Booking(models.Model):
+    fullname = models.CharField(max_length=255)
+    date  = models.CharField(max_length=255)
+    time = models.CharField(max_length=255)
+    forAnother = models.BooleanField(default=False)
+    remark = models.CharField(max_length=255)
+    service = models.CharField(max_length=255)
+    account  = models.CharField(max_length=255)
+    doctor = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.fullname

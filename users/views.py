@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import Data, Service
-from .serializers import DataSerializer, DoctorSerializer, ServiceSerializer
+from .models import Data, Service, Booking
+from .serializers import DataSerializer, DoctorSerializer, ServiceSerializer, BookingSerializer
 from rest_framework.pagination import PageNumberPagination
 import random
 from .pagination import CustomPagination
@@ -138,23 +138,23 @@ def get_services(request):
     }, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_all_users(request):
-    if request.user.role != 'ADMIN':
-            messages = [
-                'Bạn phải là ADMIN mới có thể truy cập được API này 👍',
-                'Gà thì không có quyền dùng API này đâu 🚫',
-                'Búng cu đi rồi cho dùng API'
-            ]
-            return Response({
-                'message': random.choice(messages)  
-            }, status=status.HTTP_401_UNAUTHORIZED)
-    users = Data.objects.all()
-    paginator = CustomPagination()
-    paginated_users = paginator.paginate_queryset(users, request)
-    serializer = DataSerializer(paginated_users, many=True)
-    return paginator.get_paginated_response(serializer.data)
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def get_all_users(request):
+#     if request.user.role != 'ADMIN':
+#             messages = [
+#                 'Bạn phải là ADMIN mới có thể truy cập được API này 👍',
+#                 'Gà thì không có quyền dùng API này đâu 🚫',
+#                 'Búng cu đi rồi cho dùng API'
+#             ]
+#             return Response({
+#                 'message': random.choice(messages)  
+#             }, status=status.HTTP_401_UNAUTHORIZED)
+#     users = Data.objects.all()
+#     paginator = CustomPagination()
+#     paginated_users = paginator.paginate_queryset(users, request)
+#     serializer = DataSerializer(paginated_users, many=True)
+#     return paginator.get_paginated_response(serializer.data)
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
@@ -176,3 +176,69 @@ def admin_delete(request):
         return Response({"error": f"Không tìm thấy user với phone {phone}."}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({"error": f"Đã xảy ra lỗi: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_users(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    phone = request.query_params.get('phone')
+    fullname = request.query_params.get('fullname')
+    role = request.query_params.get('role')
+
+    try:
+        #tim theo phone
+        if phone:
+            users = Data.objects.filter(phone=phone)
+            if not users.exists():
+                return Response({"message": f"Không tìm thấy user với phone {phone}."}, status=status.HTTP_404_NOT_FOUND)
+            paginator = CustomPagination()
+            paginated_users = paginator.paginate_queryset(users, request)
+            serializer = DataSerializer(paginated_users, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        #tim theo role
+        if role:
+            users = Data.objects.filter(role=role)
+            if not users.exists():
+                return Response({"message": f"Không tìm thấy user với role {role}."}, status=status.HTTP_404_NOT_FOUND)
+            paginator = CustomPagination()
+            paginated_users = paginator.paginate_queryset(users, request)
+            serializer = DataSerializer(paginated_users, many=True)
+            return paginator.get_paginated_response(serializer.data)
+            #tim theo ten
+        if fullname:
+            users = Data.objects.filter(fullname__icontains=fullname)
+            if not users.exists():
+                return Response({"error": f"Không tìm thấy user với fullname chứa {fullname}."}, status=status.HTTP_404_NOT_FOUND)
+            paginator = CustomPagination()
+            paginated_users = paginator.paginate_queryset(users, request)
+            serializer = DataSerializer(paginated_users, many=True)
+            return paginator.get_paginated_response(serializer.data)
+        users = Data.objects.all()
+        paginator = CustomPagination()
+        paginated_users = paginator.paginate_queryset(users, request)
+        serializer = DataSerializer(paginated_users, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Data.DoesNotExist:
+        return Response({"error": f"Không tìm thấy user với phone {phone}."}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"Đã xảy ra lỗi: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_booking(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    bookings = Booking.objects.all()
+    paginator = CustomPagination()
+    paginated_bookings = paginator.paginate_queryset(bookings, request)
+    serializer = BookingSerializer(paginated_bookings, many=True)
+    return paginator.get_paginated_response(serializer.data)
