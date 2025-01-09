@@ -11,6 +11,7 @@ import {
 import { deleteUserAPI, getUsersAPI } from "@/services/api";
 import { DetailUser } from "./detail.user";
 import { CreateUser } from "./create.user";
+import { UpdateUser } from "./update.user";
 
 type TSearch = {
   phone: string;
@@ -23,6 +24,9 @@ export const TableUser = () => {
   const [dataViewDetail, setDataViewDetail] = useState<IUser | null>(null);
 
   const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
+
+  const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
+  const [dataUpdate, setDataUpdate] = useState<IUser | null>(null);
 
   const [isDeleteUser, setIsDeleteUser] = useState<boolean>(false);
   const { notification } = App.useApp();
@@ -121,6 +125,12 @@ export const TableUser = () => {
             <EditTwoTone
               twoToneColor="#f57800"
               style={{ cursor: "pointer", marginRight: 15 }}
+              onClick={() => {
+                setDataUpdate(entity);
+                console.log(dataUpdate);
+
+                setOpenModalUpdate(true);
+              }}
             />
             <Popconfirm
               placement="leftTop"
@@ -243,6 +253,13 @@ export const TableUser = () => {
       <CreateUser
         openModalCreate={openModalCreate}
         setOpenModalCreate={setOpenModalCreate}
+        refreshTable={refreshTable}
+      />
+      <UpdateUser
+        openModalUpdate={openModalUpdate}
+        setOpenModalUpdate={setOpenModalUpdate}
+        dataUpdate={dataUpdate}
+        setDataUpdate={setDataUpdate}
         refreshTable={refreshTable}
       />
     </>

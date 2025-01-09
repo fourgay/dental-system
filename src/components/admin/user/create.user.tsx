@@ -37,24 +37,26 @@ export const CreateUser = (props: IProps) => {
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const { phone, fullname, password, birthDay, address, role } = values;
-    console.log({
-      phone: phone,
-      fullname: fullname,
-      password: password,
-      birthDay: dayjs(birthDay).format("DD-MM-YYYY"),
-      address: address,
-      role: role,
-    });
+    // console.log({
+    //   phone: phone,
+    //   fullname: fullname,
+    //   password: password,
+    //   birthDay: dayjs(birthDay).format("DD-MM-YYYY"),
+    //   address: address,
+    //   role: role,
+    // });
 
     setIsSubmit(true);
     const res = await createUserAPI(
       phone,
       fullname,
       password,
-      birthDay,
+      dayjs(birthDay).format("DD-MM-YYYY"),
       address,
       role
     );
+    console.log(res.data);
+
     if (res && res.data) {
       notification.success({
         message: res.message,

@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import {
-  TeamOutlined,
   UserOutlined,
   SnippetsOutlined,
   AppstoreOutlined,
@@ -11,7 +10,7 @@ import {
   MenuFoldOutlined,
 } from "@ant-design/icons";
 import { userCurrentApp } from "../context/app.context";
-const { Content, Footer, Sider } = Layout;
+const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -20,7 +19,13 @@ export const LayoutAdmin = () => {
   const [activeMenu, setActiveMenu] = useState("");
   const location = useLocation();
 
-  const { user } = userCurrentApp();
+  const { user, setUser, setIsAuthenticated } = userCurrentApp();
+
+  const handleLogout = async () => {
+    setUser(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem("access_token");
+  };
 
   const items: MenuItem[] = [
     {
@@ -57,7 +62,11 @@ export const LayoutAdmin = () => {
       key: "home",
     },
     {
-      label: <label style={{ cursor: "pointer" }}>Đăng xuất</label>,
+      label: (
+        <label style={{ cursor: "pointer" }} onClick={() => handleLogout()}>
+          Đăng xuất
+        </label>
+      ),
       key: "logout",
     },
   ];

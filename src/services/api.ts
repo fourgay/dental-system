@@ -61,3 +61,18 @@ export const deleteUserAPI = (phone: string) => {
   const urlBackend = `/api/admin/delete?phone=${phone}`;
   return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };
+
+export const updateUserAPI = (
+  phone: string,
+  fullname: string,
+  birthDay: string,
+  address: string
+) => {
+  const urlBackend = "/api/admin/admin_register/";
+  return axios.post<IBackendRes<IRegister>>(urlBackend, {
+    phone,
+    fullname,
+    birthDay,
+    address,
+  });
+};
