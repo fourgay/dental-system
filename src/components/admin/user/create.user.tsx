@@ -1,6 +1,16 @@
 import { createUserAPI } from "@/services/api";
-import { App, Divider, Form, Input, Modal } from "antd";
+import {
+  App,
+  DatePicker,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Space,
+} from "antd";
 import type { FormProps } from "antd";
+import dayjs from "dayjs";
 import { useState } from "react";
 
 interface IProps {
@@ -27,6 +37,15 @@ export const CreateUser = (props: IProps) => {
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const { phone, fullname, password, birthDay, address, role } = values;
+    console.log({
+      phone: phone,
+      fullname: fullname,
+      password: password,
+      birthDay: dayjs(birthDay).format("DD-MM-YYYY"),
+      address: address,
+      role: role,
+    });
+
     setIsSubmit(true);
     const res = await createUserAPI(
       phone,
@@ -104,6 +123,37 @@ export const CreateUser = (props: IProps) => {
             rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
           >
             <Input.Password />
+          </Form.Item>
+
+          <Form.Item>
+            <Space.Compact>
+              <Form.Item<FieldType>
+                labelCol={{ span: 24 }}
+                label="Ngày sinh"
+                name="birthDay"
+                rules={[
+                  { required: true, message: "Vui lòng nhập ngày sinh!" },
+                ]}
+              >
+                <DatePicker format={"DD-MM-YYYY"} />
+              </Form.Item>
+              <Form.Item<FieldType>
+                labelCol={{ span: 24 }}
+                label="Phân quyền"
+                name="role"
+                rules={[{ required: true, message: "Vui lòng chọn!" }]}
+              >
+                <Select
+                  style={{ width: 120 }}
+                  defaultValue="USER"
+                  options={[
+                    { value: "USER", label: <span>USER</span> },
+                    { value: "DOCTOR", label: <span>DOCTOR</span> },
+                    { value: "ADMIN", label: <span>ADMIN</span> },
+                  ]}
+                />
+              </Form.Item>
+            </Space.Compact>
           </Form.Item>
 
           <Form.Item<FieldType>
