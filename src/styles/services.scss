@@ -1,0 +1,39 @@
+.services-page {
+  .list-services {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0 100px;
+    &__title {
+      font-weight: bold;
+      font-size: 50px;
+      margin-top: 50px;
+    }
+    &__detail {
+      width: 400px;
+      text-align: center;
+      margin: 50px 0;
+    }
+    &__content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 50px 30px;
+      background-color: #e6f6fe;
+      flex-wrap: wrap;
+      .card {
+        padding: 40px;
+        background-color: #fff;
+        width: 25%;
+        text-align: center;
+        border-radius: 10px;
+        .name {
+          font-weight: bold;
+          font-size: 20px;
+        }
+      }
+    }
+  }
+}

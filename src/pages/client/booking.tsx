@@ -9,12 +9,13 @@ import {
   ProFormTextArea,
   StepsForm,
 } from "@ant-design/pro-components";
-import { Button, Input, message, Result } from "antd";
+import { Button, Input, Result } from "antd";
 import { useEffect, useState } from "react";
 import "styles/booking.scss";
 import { getListServicesAPI } from "@/services/api";
 import { userCurrentApp } from "@/components/context/app.context";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 export const Booking = () => {
   const [loading, setLoading] = useState(false);
@@ -145,6 +146,7 @@ export const Booking = () => {
               fieldProps={{
                 format: "DD-MM",
               }}
+              initialValue={dayjs("01-01", "DD-MM")}
               width="sm"
               name="date"
               label="Ngày / Tháng"

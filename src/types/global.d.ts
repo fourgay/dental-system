@@ -31,8 +31,11 @@ declare global {
     id: string;
     fullname: string;
     phone: string;
-    role: string;
     avatar: string;
+    role: string;
+    birthDay: string;
+    isBooking: boolean;
+    address: string;
   }
 
   interface IFetchAccount {

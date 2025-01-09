@@ -7,10 +7,10 @@ import "styles/global.scss";
 import { RegisterPage } from "pages/client/auth/register";
 import { LoginPage } from "pages/client/auth/login";
 import { HomePage } from "pages/client/home";
-import { AboutUs } from "@/pages/client/about.us";
+import { AboutUsPage } from "@/pages/client/about.us";
 import { AppFooter } from "components/layout/app.footer";
 import { AppProvider } from "components/context/app.context";
-import { Blogs } from "pages/client/blogs";
+import { BlogsPage } from "pages/client/blogs";
 import { Booking } from "pages/client/booking";
 import enUS from "antd/locale/en_US";
 import { ProtectedRoute } from "components/auth";
@@ -19,6 +19,7 @@ import DashBoardPage from "./pages/admin/dashboard";
 import { ManageUserPage } from "./pages/admin/manage.user";
 import { ManageDoctorPage } from "./pages/admin/manage.doctor";
 import { ManageBookingPage } from "./pages/admin/manage.booking";
+import { ServicesPage } from "./pages/client/services";
 
 const router = createBrowserRouter([
   {
@@ -35,10 +36,19 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "services",
+        element: (
+          <>
+            <ServicesPage />
+            <AppFooter />
+          </>
+        ),
+      },
+      {
         path: "aboutus",
         element: (
           <>
-            <AboutUs />
+            <AboutUsPage />
             <AppFooter />
           </>
         ),
@@ -47,7 +57,7 @@ const router = createBrowserRouter([
         path: "blogs",
         element: (
           <>
-            <Blogs />
+            <BlogsPage />
             <AppFooter />
           </>
         ),

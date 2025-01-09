@@ -26,7 +26,7 @@ export const RegisterPage = () => {
 
     const res = await registerAPI(fullname, phone, password);
 
-    if (res.data) {
+    if (res && res.data) {
       notification.success({
         message: res.message,
         placement: "bottomLeft",

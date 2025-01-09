@@ -1,16 +1,32 @@
 import { useRef, useState } from "react";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable, TableDropdown } from "@ant-design/pro-components";
-import { Button, Dropdown, Space, Tag } from "antd";
+import { App, Button, Dropdown, Popconfirm, Space, Tag } from "antd";
 import {
   DeleteTwoTone,
   EditTwoTone,
   EllipsisOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { getUsersAPI } from "@/services/api";
+import { deleteUserAPI, getUsersAPI } from "@/services/api";
+import { DetailUser } from "./detail.user";
+import { CreateUser } from "./create.user";
+
+type TSearch = {
+  phone: string;
+  fullname: string;
+  role: string;
+};
 
 export const TableUser = () => {
+  const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
+  const [dataViewDetail, setDataViewDetail] = useState<IUser | null>(null);
+
+  const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
+
+  const [isDeleteUser, setIsDeleteUser] = useState<boolean>(false);
+  const { notification } = App.useApp();
+
   const [meta, setMeta] = useState({
     current: 1,
     pageSize: 10,
@@ -19,6 +35,24 @@ export const TableUser = () => {
   });
   const actionRef = useRef<ActionType>();
 
+  const handleDeleteUser = async (phone: string) => {
+    setIsDeleteUser(true);
+    const res = await deleteUserAPI(phone);
+    if (res.message) {
+      notification.success({
+        message: "Xoá user thành công",
+        description: res.message,
+      });
+      refreshTable();
+    } else {
+      notification.error({
+        message: "Đã có lỗi xảy ra",
+        description: res.message,
+      });
+    }
+    setIsDeleteUser(false);
+  };
+
   const columns: ProColumns<IUser>[] = [
     {
       dataIndex: "index",
@@ -26,12 +60,21 @@ export const TableUser = () => {
       width: 48,
     },
     {
-      title: "Id",
-      dataIndex: "id",
-      hideInSearch: true,
-      ellipsis: true,
+      title: "SĐT",
+      dataIndex: "phone",
+      copyable: true,
       render(dom, entity, index, action, schema) {
-        return <a href="#">{entity.id}</a>;
+        return (
+          <a
+            onClick={() => {
+              setOpenViewDetail(true);
+              setDataViewDetail(entity);
+            }}
+            href="#"
+          >
+            {entity.phone}
+          </a>
+        );
       },
     },
     {
@@ -39,13 +82,35 @@ export const TableUser = () => {
       dataIndex: "fullname",
     },
     {
-      title: "SĐT",
-      dataIndex: "phone",
-      copyable: true,
+      title: "Phân quyền",
+      dataIndex: "role",
+      valueType: "select",
+      valueEnum: {
+        ADMIN: { text: "Admin" },
+        USER: { text: "User" },
+        DOCTOR: { text: "Doctor" },
+      },
+      hideInTable: true,
+    },
+    {
+      title: "Ngày sinh",
+      dataIndex: "birthDay",
+      hideInSearch: true,
+    },
+    {
+      title: "Đặt lịch",
+      dataIndex: "isBooking",
+      hideInSearch: true,
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "address",
+      hideInSearch: true,
     },
     {
       title: "Phân quyền",
       dataIndex: "role",
+      hideInSearch: true,
     },
     {
       title: "Action",
@@ -57,10 +122,22 @@ export const TableUser = () => {
               twoToneColor="#f57800"
               style={{ cursor: "pointer", marginRight: 15 }}
             />
-            <DeleteTwoTone
-              twoToneColor="#ff4d4f"
-              style={{ cursor: "pointer" }}
-            />
+            <Popconfirm
+              placement="leftTop"
+              title={"Xác nhận xóa user"}
+              description={"Bạn có chắc chắn muốn xóa user này ?"}
+              onConfirm={() => handleDeleteUser(entity.phone)}
+              okText="Xác nhận"
+              cancelText="Hủy"
+              okButtonProps={{ loading: isDeleteUser }}
+            >
+              <span style={{ cursor: "pointer", marginLeft: 20 }}>
+                <DeleteTwoTone
+                  twoToneColor="#ff4d4f"
+                  style={{ cursor: "pointer" }}
+                />
+              </span>
+            </Popconfirm>
           </>
         );
       },
@@ -73,13 +150,28 @@ export const TableUser = () => {
 
   return (
     <>
-      <ProTable<IUser>
+      <ProTable<IUser, TSearch>
         columns={columns}
         actionRef={actionRef}
         cardBordered
         request={async (params, sort, filter) => {
           console.log(params, sort, filter);
-          const res = await getUsersAPI(params?.current ?? 1);
+
+          let query = "";
+          if (params) {
+            query += `page=${params?.current ?? 1}`;
+            if (params.phone) {
+              query += `&phone=${params.phone}`;
+            }
+            if (params.fullname) {
+              query += `&fullname=${params.fullname}`;
+            }
+            if (params.role) {
+              query += `&role=${params.role}`;
+            }
+          }
+
+          const res = await getUsersAPI(query);
           if (res.data) {
             setMeta(res.data.meta);
           }
@@ -107,7 +199,14 @@ export const TableUser = () => {
         }}
         headerTitle="Table user"
         toolBarRender={() => [
-          <Button key="button" icon={<PlusOutlined />} type="primary">
+          <Button
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => {
+              setOpenModalCreate(true);
+            }}
+          >
             Thêm
           </Button>,
           <Dropdown
@@ -134,6 +233,17 @@ export const TableUser = () => {
             </Button>
           </Dropdown>,
         ]}
+      />
+      <DetailUser
+        openViewDetail={openViewDetail}
+        setOpenViewDetail={setOpenViewDetail}
+        dataViewDetail={dataViewDetail}
+        setDataViewDetail={setDataViewDetail}
+      />
+      <CreateUser
+        openModalCreate={openModalCreate}
+        setOpenModalCreate={setOpenModalCreate}
+        refreshTable={refreshTable}
       />
     </>
   );

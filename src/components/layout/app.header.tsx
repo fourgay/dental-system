@@ -33,7 +33,16 @@ export const AppHeader = () => {
               >
                 Trang Chủ
               </div>
-              <div className="services">Dịch Vụ</div>
+              <div
+                className={
+                  location.pathname == "/services"
+                    ? "services bold"
+                    : "services"
+                }
+                onClick={() => navigate("/services")}
+              >
+                Dịch Vụ
+              </div>
               <div className="blogs">Blogs</div>
               <div
                 className={

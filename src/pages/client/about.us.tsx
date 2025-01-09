@@ -8,7 +8,7 @@ import { useEffect } from "react";
 
 import "styles/about.us.scss";
 
-export const AboutUs = () => {
+export const AboutUsPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);

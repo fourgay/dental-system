@@ -34,7 +34,30 @@ export const getListServicesAPI = () => {
   return axios.get<IBackendRes<IServices[]>>(urlBackend);
 };
 
-export const getUsersAPI = (page: number) => {
-  const urlBackend = `/api/users/?page=${page}`;
+export const getUsersAPI = (query: string) => {
+  const urlBackend = `/api/users/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IUser>>>(urlBackend);
+};
+export const createUserAPI = (
+  phone: string,
+  fullname: string,
+  password: string,
+  birthDay: string,
+  address: string,
+  role: string
+) => {
+  const urlBackend = "/api/admin/admin_register/";
+  return axios.post<IBackendRes<IRegister>>(urlBackend, {
+    phone,
+    fullname,
+    password,
+    birthDay,
+    address,
+    role,
+  });
+};
+
+export const deleteUserAPI = (phone: string) => {
+  const urlBackend = `/api/admin/delete?phone=${phone}`;
+  return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };

@@ -29,11 +29,6 @@ export const LayoutAdmin = () => {
       icon: <UserOutlined />,
     },
     {
-      label: <Link to="/admin/doctor">Quản lý bác sĩ</Link>,
-      key: "/admin/doctor",
-      icon: <TeamOutlined />,
-    },
-    {
       label: <Link to="/admin/booking">Quản lý lịch đăng ký</Link>,
       key: "/admin/booking",
       icon: <SnippetsOutlined />,
