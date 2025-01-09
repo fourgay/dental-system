@@ -27,7 +27,7 @@ class CustomUserManager(BaseUserManager):
         data.save(using=self._db)
         return data
     
-    def admin_create_user(self, fullname, phone, password=None, role='USER',birthDay=None,isBooking=False,address=None):
+    def admin_create_user(self, fullname, phone, password=None, role='USER', birthDay=None, isBooking=False, address=None):
         if not fullname:
             raise ValueError('Tên không được để trống!')
         if not phone:

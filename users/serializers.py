@@ -3,14 +3,15 @@ from .models import Data, Service, Booking
 
 class DataSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    birthDay = serializers.DateField(input_formats=['%Y-%m-%d', '%d-%m-%Y'], required=False)
 
     class Meta:
         model = Data
         fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address']
 
     def create(self, validated_data):
+        validated_data['avatar'] = 'avatars/avatar-1.png'
         if 'role' in validated_data:
-            validated_data['avatar'] = 'avatars/avatar-1.png'
             data = Data.objects.admin_create_user(
                 fullname=validated_data['fullname'],
                 phone=validated_data['phone'],
@@ -21,12 +22,10 @@ class DataSerializer(serializers.ModelSerializer):
                 address=validated_data['address']
             )
         else:
-            validated_data['avatar'] = 'avatars/avatar-1.png'
             data = Data.objects.create_user(
                 fullname=validated_data['fullname'],
                 phone=validated_data['phone'],
                 password=validated_data['password'],
-
             )
         return data
 
