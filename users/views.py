@@ -7,6 +7,8 @@ from django.contrib.auth import authenticate
 from .models import Data, Service, Booking
 from .serializers import DataSerializer, ServiceSerializer, BookingSerializer
 from .pagination import CustomPagination
+from django.db.models import Q
+
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
@@ -156,48 +158,32 @@ def get_all_users(request):
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
-
     phone = request.query_params.get('phone')
     fullname = request.query_params.get('fullname')
     role = request.query_params.get('role')
 
     try:
-        #tim theo phone
+        filters = Q()
         if phone:
-            users = Data.objects.filter(phone=phone)
-            if not users.exists():
-                return Response({"message": f"Không tìm thấy user với phone {phone}."}, status=status.HTTP_404_NOT_FOUND)
-            paginator = CustomPagination()
-            paginated_users = paginator.paginate_queryset(users, request)
-            serializer = DataSerializer(paginated_users, many=True)
-            return paginator.get_paginated_response(serializer.data)
-        #tim theo role
-        if role:
-            users = Data.objects.filter(role=role)
-            if not users.exists():
-                return Response({"message": f"Không tìm thấy user với role {role}."}, status=status.HTTP_404_NOT_FOUND)
-            paginator = CustomPagination()
-            paginated_users = paginator.paginate_queryset(users, request)
-            serializer = DataSerializer(paginated_users, many=True)
-            return paginator.get_paginated_response(serializer.data)
-            #tim theo ten
+            filters &= Q(phone=phone)
         if fullname:
-            users = Data.objects.filter(fullname__icontains=fullname)
-            if not users.exists():
-                return Response({"error": f"Không tìm thấy user với fullname chứa {fullname}."}, status=status.HTTP_404_NOT_FOUND)
-            paginator = CustomPagination()
-            paginated_users = paginator.paginate_queryset(users, request)
-            serializer = DataSerializer(paginated_users, many=True)
-            return paginator.get_paginated_response(serializer.data)
-        users = Data.objects.all()
+            filters &= Q(fullname=fullname)
+        if role:
+            filters &= Q(role=role)
+        users = Data.objects.filter(filters)
+        if not users.exists():
+            return Response({
+                "message": "Không tìm thấy user với các điều kiện đã chọn."
+            }, status=status.HTTP_404_NOT_FOUND)
         paginator = CustomPagination()
         paginated_users = paginator.paginate_queryset(users, request)
         serializer = DataSerializer(paginated_users, many=True)
         return paginator.get_paginated_response(serializer.data)
-    except Data.DoesNotExist:
-        return Response({"error": f"Không tìm thấy user với phone {phone}."}, status=status.HTTP_404_NOT_FOUND)
+
     except Exception as e:
-        return Response({"error": f"Đã xảy ra lỗi: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({
+            "error": f"Đã xảy ra lỗi: {str(e)}"
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
