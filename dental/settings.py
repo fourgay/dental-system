@@ -158,4 +158,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 # CORS_ALLOW_ALL_ORIGINS = True
 
-ALLOWED_HOSTS = ['192.168.188.89']
+ALLOWED_HOSTS = ['*']
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}

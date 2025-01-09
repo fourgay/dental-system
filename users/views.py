@@ -5,24 +5,16 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Data, Service, Booking
-from .serializers import DataSerializer, DoctorSerializer, ServiceSerializer, BookingSerializer
-from rest_framework.pagination import PageNumberPagination
-import random
+from .serializers import DataSerializer, ServiceSerializer, BookingSerializer
 from .pagination import CustomPagination
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.is_doctor()
+        return request.user.is_authenticated and request.user.has_doctor_role()
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.role == 'ADMIN'
-
-class StandardresultsSetPagination(PageNumberPagination):
-    page_size = 3
-    page_size_query_param = 'page_size'
-    max_page_size = 100
-
 
 @api_view(['POST'])
 def register(request):
@@ -115,9 +107,7 @@ def get_user_profile(request, user_id):
 def get_all_doctors(request):
     if request.user.role != 'ADMIN':
             messages = [
-                'Bạn phải là ADMIN mới có thể truy cập được API này 👍',
-                'Gà thì không có quyền dùng API này đâu 🚫',
-                'Búng cu đi rồi cho dùng API'
+                'Bạn phải là ADMIN mới có thể truy cập được API này 👍'
             ]
             return Response({
                 'message': random.choice(messages)  
@@ -136,26 +126,6 @@ def get_services(request):
         'message': '',
         'data': serializer.data
     }, status=status.HTTP_200_OK)
-
-
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def get_all_users(request):
-#     if request.user.role != 'ADMIN':
-#             messages = [
-#                 'Bạn phải là ADMIN mới có thể truy cập được API này 👍',
-#                 'Gà thì không có quyền dùng API này đâu 🚫',
-#                 'Búng cu đi rồi cho dùng API'
-#             ]
-#             return Response({
-#                 'message': random.choice(messages)  
-#             }, status=status.HTTP_401_UNAUTHORIZED)
-#     users = Data.objects.all()
-#     paginator = CustomPagination()
-#     paginated_users = paginator.paginate_queryset(users, request)
-#     serializer = DataSerializer(paginated_users, many=True)
-#     return paginator.get_paginated_response(serializer.data)
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def admin_delete(request):
