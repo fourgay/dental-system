@@ -125,6 +125,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Cấu hình ngôn ngữ và định dạng ngày tháng
+DATE_FORMAT = "d-m-Y"
+USE_L10N = False  # Để DATE_FORMAT có hiệu lực
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
