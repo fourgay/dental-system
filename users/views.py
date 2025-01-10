@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Data, Service, Booking
-from .serializers import DataSerializer, ServiceSerializer, BookingSerializer
+from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin
 from .pagination import CustomPagination
 from django.db.models import Q
 
@@ -63,10 +63,10 @@ def admin_register(request):
         return Response({
             'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
         }, status=status.HTTP_401_UNAUTHORIZED)
-    serializer = DataSerializer(data=request.data)
+    serializer = DataSerializer_admin(data=request.data)
     if serializer.is_valid():
         data = serializer.save()
-        response_serializer = DataSerializer(data)
+        response_serializer = DataSerializer_admin(data)
         return Response({
             'message': 'Tạo người dùng thành công!',
             'data': response_serializer.data

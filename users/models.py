@@ -12,11 +12,13 @@ class CustomUserManager(BaseUserManager):
             phone=phone,
             role='USER',
             birthDay=birthDay,
-            isBooking=isBooking,
-            address=address
+            isBooking=isBooking, 
+            address=address      
         )
-        data.set_password(password)
+        if password:
+            data.set_password(password)
         data.save(using=self._db)
+        
         return data
 
     def create_superuser(self, fullname, phone, password=None):
@@ -32,7 +34,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Tên không được để trống!')
         if not phone:
             raise ValueError('Số điện thoại không được để trống!')
-        data = self.model(fullname=fullname, phone=phone, role=role)
+        data = self.model(fullname=fullname, phone=phone, role=role, birthDay=birthDay, isBooking=isBooking, address=address)
         data.set_password(password)
         if role == 'admin':
             data.is_staff = True
@@ -45,9 +47,9 @@ class Data(AbstractBaseUser):
     phone = models.CharField(max_length=15, unique=True)
     avatar = models.CharField(max_length=255, default='default_avatar.png')
     role = models.CharField(max_length=50, default='USER')  
-    birthDay = models.DateField(null=True, blank=True)  # Sử dụng kiểu DateField
-    isBooking = models.BooleanField(default=False, null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
+    birthDay = models.CharField(max_length=255,null=True, blank=True) 
+    isBooking = models.BooleanField(default=False)
+    address = models.CharField(max_length=255,null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
