@@ -198,3 +198,32 @@ def admin_booking(request):
     paginated_bookings = paginator.paginate_queryset(bookings, request)
     serializer = BookingSerializer(paginated_bookings, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def Update_user(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    phone = request.data.get('phone')
+    fullname = request.data.get('fullname')
+    birthDay = request.data.get('birthDay')
+    address = request.data.get('address')
+
+    if  not phone:
+        return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Data.objects.get(phone=phone)
+    except Data.DoesNotExist:
+        return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+    user.fullname = fullname if fullname else user.fullname
+    user.birthDay = birthDay if birthDay else user.birthDay
+    user.address = address if address else user.address
+    user.save()
+    serializer = DataSerializer(user)
+    return Response({
+        'message': 'Cập nhật thông tin thành công.',
+        'data': serializer.data
+    }, status=status.HTTP_200_OK)
