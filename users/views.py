@@ -5,9 +5,10 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Data, Service, Booking
-from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin
+from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin,DataSerializer_booking
 from .pagination import CustomPagination
 from django.db.models import Q
+from django.db import transaction
 
 
 class IsDoctor(BasePermission):
@@ -130,7 +131,7 @@ def get_services(request):
     }, status=status.HTTP_200_OK)
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
-def admin_delete(request):
+def admin_delete_user(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
@@ -188,7 +189,7 @@ def get_all_users(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def admin_booking(request):
+def admin_get_in_for_booking(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
@@ -227,3 +228,128 @@ def Update_user(request):
         'message': 'Cập nhật thông tin thành công.',
         'data': serializer.data
     }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def Register_booking(request):
+    if not hasattr(request.user, 'role') or (request.user.role != 'ADMIN' and request.user.role != 'USER'):
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc USER để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    serializer = DataSerializer_booking(data=request.data)
+    if serializer.is_valid():
+        try:
+            with transaction.atomic():
+                account = serializer.validated_data.get('account')
+
+                # Check if the account (phone number) exists in the database
+                try:
+                    user = Data.objects.get(phone=account)
+                except Data.DoesNotExist:
+                    return Response({
+                        'message': 'Đặt lịch không thành công.',
+                        'error': f'Số điện thoại {account} không tồn tại trong hệ thống.'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+
+                # Check if the user already has a booking
+                if user.isBooking:
+                    return Response({
+                        'message': 'Đặt lịch không thành công.',
+                        'error': f'Người dùng với số điện thoại {account} đã có lịch hẹn. Vui lòng hoàn thành hoặc hủy lịch hẹn hiện tại trước khi đặt lịch mới.'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+
+                # If the account exists and doesn't have an active booking, proceed with booking
+                booking = serializer.save()
+
+                # Update isBooking status
+                user.isBooking = True
+                user.save()
+                response_serializer = DataSerializer_booking(booking)
+                return Response({
+                    'message': 'Đặt lịch thành công!',
+                }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({
+                'message': 'Đặt lịch không thành công.',
+                'error': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return Response({
+        'message': 'Đặt lịch không thành công.',
+        'errors': serializer.errors  
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_booking(request):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'USER']:
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc USER để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    phone = request.query_params.get('phone')
+    if not phone:
+        return Response({
+            'message': 'Thiếu tham số phone trong query params.',
+        }, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        booking = Booking.objects.get(account=phone)
+    except Booking.DoesNotExist:
+        return Response({
+            'message': f'Không tìm thấy lịch hẹn cho số điện thoại {phone}.',
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    if request.user.role == 'USER' and booking.account != request.user.phone:
+        return Response({
+            'message': 'Unauthorized: Bạn không có quyền xóa lịch hẹn này.',
+        }, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        with transaction.atomic():
+            # Delete the booking
+            booking.delete()
+
+            # Update isBooking status for the user
+            user = Data.objects.get(phone=phone)
+            user.isBooking = False
+            user.save()
+
+        return Response({
+            'message': 'Xóa lịch hẹn thành công.',
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'message': f'Lỗi khi xóa lịch hẹn: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_booking(request, booking_id):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'USER']:
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc USER để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        booking = Booking.objects.get(id=booking_id)
+    except Booking.DoesNotExist:
+        return Response({
+            'message': 'Không tìm thấy lịch hẹn.',
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    if request.user.role == 'USER' and booking.account != request.user.phone:
+        return Response({
+            'message': 'Unauthorized: Bạn không có quyền cập nhật lịch hẹn này.',
+        }, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = BookingSerializer(booking, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            'message': 'Cập nhật lịch hẹn thành công.',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+    return Response({
+        'message': 'Cập nhật không thành công.',
+        'errors': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)

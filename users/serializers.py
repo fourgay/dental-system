@@ -16,7 +16,7 @@ class DataSerializer(serializers.ModelSerializer):
             phone=validated_data['phone'],
             password=validated_data['password'],
             # birthDay=validated_data['birthDay'],
-            isBooking=validated_data['isBooking'],
+            # isBooking=validated_data['isBooking'],
             # address=validated_data['address']
         )
         return data
@@ -70,3 +70,21 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = '__all__'
+
+class DataSerializer_booking(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = ['fullname', 'date','time', 'forAnother','remark','service','account','doctor','status',]
+    def create(self, validated_data):
+        data = Data.objects.register_booking(
+            fullname=validated_data['fullname'],
+            date=validated_data['date'],
+            time=validated_data['time'],
+            forAnother=validated_data['forAnother'],
+            remark=validated_data['remark'],
+            service=validated_data['service'],
+            account=validated_data['account'],
+            doctor=validated_data['doctor'],
+            status=validated_data['status']
+        )
+        return data
