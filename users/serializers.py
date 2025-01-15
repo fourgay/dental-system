@@ -72,6 +72,7 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DataSerializer_booking(serializers.ModelSerializer):
+    date = serializers.DateField(input_formats=['%d-%m-%Y'], required=False)
     class Meta:
         model = Booking
         fields = ['fullname', 'date','time', 'forAnother','remark','service','account','doctor','status',]
