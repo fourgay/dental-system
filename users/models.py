@@ -119,7 +119,7 @@ class Service(models.Model):
 
 class Booking(models.Model):
     fullname = models.CharField(max_length=255)
-    date = models.DateField()  # Chuyển sang DateField
+    date = models.CharField(max_length=255,null=True, blank=True)  
     time = models.TimeField()  # Sử dụng TimeField
     forAnother = models.BooleanField(default=False)
     remark = models.TextField(null=True, blank=True)
