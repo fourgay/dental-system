@@ -324,17 +324,23 @@ def delete_booking(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def update_booking(request, booking_id):
+def update_booking(request):
     if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'USER']:
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc USER để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
+    account = request.data.get('account')
+    if not account:
+        return Response({
+            'message': 'Thiếu thông tin account để tìm booking.',
+        }, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        booking = Booking.objects.get(id=booking_id)
+        booking = Booking.objects.get(account=account)
     except Booking.DoesNotExist:
         return Response({
-            'message': 'Không tìm thấy lịch hẹn.',
+            'message': f'Không tìm thấy lịch hẹn cho account {account}.',
         }, status=status.HTTP_404_NOT_FOUND)
 
     if request.user.role == 'USER' and booking.account != request.user.phone:
@@ -349,6 +355,7 @@ def update_booking(request, booking_id):
             'message': 'Cập nhật lịch hẹn thành công.',
             'data': serializer.data
         }, status=status.HTTP_200_OK)
+    
     return Response({
         'message': 'Cập nhật không thành công.',
         'errors': serializer.errors
