@@ -1,256 +1,347 @@
-```markdown
-# Dental System API
+# Dental System
 
-## Giới thiệu
-
-**Dental System API** là một hệ thống quản lý người dùng, lịch hẹn và phòng khám nha khoa. Dự án hỗ trợ các vai trò khác nhau như **Guest**, **Customer**, **Dentist**, **Clinic Owner**, và **System Admin**, cung cấp các chức năng quản lý toàn diện từ đăng ký tài khoản đến lịch khám định kỳ.
-
-## Chức năng chính
-
-### Guest
-- Xem danh mục dịch vụ.
-- Đăng ký tài khoản để trở thành Customer.
-
-### Customer
-- Đăng ký lịch khám một lần hoặc định kỳ.
-- Nhận thông báo nhắc lịch trước ngày khám.
-- Nhận kết quả khám từ nha sĩ.
-- Nhắn tin trao đổi với nha sĩ.
-
-### Dentist
-- Xem lịch khám trong tuần của mình.
-- Đề xuất lịch khám định kỳ cho bệnh nhân.
-- Gửi kết quả khám và xem hồ sơ bệnh nhân.
-- Trao đổi với bệnh nhân thông qua kênh chat.
-
-### Clinic Owner
-- Đăng ký thông tin phòng khám vào hệ thống.
-- Quản lý thông tin bác sĩ, lịch khám, và bệnh nhân.
-- Nhập lịch hoạt động của phòng khám (giờ làm việc, số lượng slot).
-
-### System Admin
-- Xét duyệt thông tin phòng khám và bác sĩ.
-- Quản lý tài khoản.
+Comprehensive Booking and User Management System
 
 ---
 
-## Cài đặt
+## Description
 
-### Yêu cầu hệ thống
-- Python 3.x
-- Django >= 3.2
-- Django REST Framework (DRF)
-- djangorestframework-simplejwt (JWT Authentication)
+This project is a Django-based REST API designed for managing user accounts, services, and bookings. It includes features for user authentication, service listing, booking management, and administrative actions. The system supports role-based permissions, ensuring secure access to critical operations for administrators and doctors.
 
-### Hướng dẫn cài đặt
-1. Clone repository:
+---
+
+## Features
+
+### User Management
+- **User Registration:** Endpoints to register new users.
+- **Login:** JWT-based authentication for secure login.
+- **Profile Management:** Retrieve and update user profile information.
+- **Admin Actions:**
+  - Add new users with specific roles.
+  - Delete users.
+  - Update user information.
+
+### Booking Management
+- **Book Appointments:** Users can create new appointments, specifying service, time, and other details.
+- **Manage Appointments:** Users and admins can update or delete bookings.
+- **Booking Restrictions:** Prevent users with active bookings from creating new ones.
+
+### Service Management
+- **List Services:** Retrieve details of all available services, including name, title, and description.
+
+### Pagination
+- Custom pagination to manage large data sets in API responses.
+
+---
+
+## Installation
+
+1. Clone the repository:
    ```bash
    git clone https://github.com/fourgay/dental-system
-   cd dental-system
    ```
 
-2. Tạo và kích hoạt môi trường ảo:
+2. Navigate to the project directory:
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # Trên Linux/MacOS
-   venv\Scripts\activate     # Trên Windows
+   cd project-directory
    ```
 
-3. Cài đặt các gói phụ thuộc:
+3. Install dependencies:
    ```bash
    pip install -r requirements.txt
    ```
 
-4. Chạy migrations:
+4. Run database migrations:
    ```bash
-   python manage.py makemigrations
    python manage.py migrate
    ```
 
-5. Chạy server:
+5. Start the development server:
    ```bash
    python manage.py runserver
    ```
 
-6. Truy cập API tại: [http://127.0.0.1:8000](http://127.0.0.1:8000).
-
 ---
 
-## API Documentation
+## API Endpoints
 
-### 1. **Guest**
-#### Xem danh mục dịch vụ
-- **Endpoint:** `GET /services/`
-- **Response:**
+### Authentication
+#### `POST /accounts/register/`
+- **Description:** Register a new user.
+- **Request Body:**
   ```json
   {
-      "message": "",
-      "data": [
-          {
-              "id": 1,
-              "name": "Dịch vụ A",
-              "title": "Chi tiết dịch vụ A",
-              "detail": "Mô tả chi tiết dịch vụ",
-              "img": "image_url"
-          },
-          {
-              "id": 2,
-              "name": "Dịch vụ B",
-              "title": "Chi tiết dịch vụ B",
-              "detail": "Mô tả chi tiết dịch vụ",
-              "img": "image_url"
-          }
-      ]
-  }
-  ```
-
-#### Đăng ký tài khoản
-- **Endpoint:** `POST /accounts/register/`
-- **Body:**
-  ```json
-  {
-      "fullname": "Nguyen Van A",
-      "phone": "0123456789",
-      "password": "123456"
+    "fullname": "string",
+    "phone": "string",
+    "password": "string"
   }
   ```
 - **Response:**
   ```json
   {
-      "message": "Tạo người dùng thành công!"
+    "message": "Tạo người dùng thành công!",
+    "data": {
+      "id": "integer",
+      "fullname": "string",
+      "phone": "string",
+      "role": "USER",
+      "avatar": "string"
+    }
   }
   ```
 
----
-
-### 2. **Customer**
-#### Đăng ký lịch khám
-- **Endpoint:** `POST /booking/`
-- **Body:**
+#### `POST /accounts/login/`
+- **Description:** Login and receive an access token.
+- **Request Body:**
   ```json
   {
-      "fullname": "Nguyen Van A",
-      "date": "2025-01-10",
-      "time": "14:00",
-      "forAnother": false,
-      "remark": "Khám định kỳ",
-      "service": "Niềng răng",
-      "account": "Nguyen Van A",
-      "doctor": "Dr. B"
+    "phone": "string",
+    "password": "string"
   }
   ```
 - **Response:**
   ```json
   {
-      "message": "Đặt lịch thành công!",
-      "data": {
-          "id": 1,
-          "fullname": "Nguyen Van A",
-          "date": "2025-01-10",
-          "time": "14:00",
-          "forAnother": false,
-          "remark": "Khám định kỳ",
-          "service": "Niềng răng",
-          "account": "Nguyen Van A",
-          "doctor": "Dr. B"
+    "message": "Đăng nhập thành công",
+    "data": {
+      "access_token": "string",
+      "user": {
+        "id": "integer",
+        "fullname": "string",
+        "phone": "string",
+        "role": "USER",
+        "avatar": "string"
       }
+    }
   }
   ```
 
----
-
-### 3. **Dentist**
-#### Xem lịch khám trong tuần
-- **Endpoint:** `GET /dentist/schedule/`
+### User Management
+#### `GET /accounts/user/`
+- **Description:** Retrieve current user's information.
 - **Response:**
   ```json
   {
-      "message": "",
-      "data": [
-          {
-              "id": 1,
-              "fullname": "Nguyen Van A",
-              "date": "2025-01-10",
-              "time": "14:00",
-              "remark": "Khám định kỳ"
-          }
-      ]
-  }
-  ```
-
----
-
-### 4. **Clinic Owner**
-#### Đăng ký thông tin phòng khám
-- **Endpoint:** `POST /clinic/register/`
-- **Body:**
-  ```json
-  {
-      "name": "Phòng khám ABC",
-      "address": "123 Đường ABC, Quận 1",
-      "opening_hours": {
-          "start": "08:00",
-          "end": "18:00"
-      },
-      "slots": {
-          "examination": 3,
-          "treatment": 1
+    "message": "",
+    "data": {
+      "user": {
+        "id": "integer",
+        "fullname": "string",
+        "phone": "string",
+        "role": "string",
+        "avatar": "string"
       }
+    }
+  }
+  ```
+
+#### `GET /accounts/user/<int:user_id>/`
+- **Description:** Get profile of a specific user.
+- **Response:**
+  ```json
+  {
+    "id": "integer",
+    "fullname": "string",
+    "phone": "string",
+    "role": "string",
+    "avatar": "string"
+  }
+  ```
+
+#### `PUT /admin/Update_user/`
+- **Description:** Admin updates user details.
+- **Request Body:**
+  ```json
+  {
+    "phone": "string",
+    "fullname": "string",
+    "birthDay": "string",
+    "address": "string"
   }
   ```
 - **Response:**
   ```json
   {
-      "message": "Phòng khám được đăng ký thành công!",
-      "data": {
-          "id": 1,
-          "name": "Phòng khám ABC",
-          "address": "123 Đường ABC, Quận 1",
-          "opening_hours": {
-              "start": "08:00",
-              "end": "18:00"
-          },
-          "slots": {
-              "examination": 3,
-              "treatment": 1
-          }
+    "message": "Cập nhật thông tin thành công.",
+    "data": {
+      "id": "integer",
+      "fullname": "string",
+      "phone": "string",
+      "role": "string",
+      "avatar": "string"
+    }
+  }
+  ```
+
+### Booking Management
+#### `POST /services/register_booking/`
+- **Description:** Register a new booking.
+- **Request Body:**
+  ```json
+  {
+    "fullname": "string",
+    "date": "YYYY-MM-DD",
+    "time": "HH:MM",
+    "forAnother": "boolean",
+    "remark": "string",
+    "service": "string",
+    "account": "string",
+    "doctor": "string",
+    "status": "string"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Đặt lịch thành công!"
+  }
+  ```
+
+#### `PUT /update-booking/<int:booking_id>/`
+- **Description:** Update an existing booking.
+- **Request Body:**
+  ```json
+  {
+    "fullname": "string",
+    "date": "YYYY-MM-DD",
+    "time": "HH:MM",
+    "status": "string"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Cập nhật lịch hẹn thành công.",
+    "data": {
+      "id": "integer",
+      "fullname": "string",
+      "date": "YYYY-MM-DD",
+      "time": "HH:MM",
+      "status": "string"
+    }
+  }
+  ```
+
+#### `DELETE /delete-booking/`
+- **Description:** Delete a booking.
+- **Query Params:**
+  ```
+  phone=<string>
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Xóa lịch hẹn thành công."
+  }
+  ```
+
+### Services
+#### `GET /services/`
+- **Description:** Retrieve all services.
+- **Response:**
+  ```json
+  {
+    "message": "",
+    "data": [
+      {
+        "id": "integer",
+        "name": "string",
+        "title": "string",
+        "detail": "string",
+        "img": "string"
       }
+    ]
   }
   ```
 
----
-
-### 5. **System Admin**
-#### Xét duyệt thông tin bác sĩ
-- **Endpoint:** `POST /admin/approve-doctor/`
-- **Body:**
+### Admin Operations
+#### `GET /admin/get-all-doctor/`
+- **Description:** List all doctors.
+- **Response:**
   ```json
   {
-      "doctor_id": 2,
-      "approved": true
+    "message": "",
+    "data": [
+      {
+        "fullname": "string",
+        "work": "string",
+        "img": "string",
+        "phone": "string"
+      }
+    ]
   }
+  ```
+
+#### `GET /users/`
+- **Description:** List all users.
+- **Query Params:**
+  ```
+  phone=<string>&fullname=<string>&role=<string>
   ```
 - **Response:**
   ```json
   {
-      "message": "Thông tin bác sĩ đã được xét duyệt."
+    "message": "",
+    "data": [
+      {
+        "id": "integer",
+        "fullname": "string",
+        "phone": "string",
+        "role": "string",
+        "avatar": "string"
+      }
+    ]
+  }
+  ```
+
+#### `DELETE /admin/delete/`
+- **Description:** Delete a user.
+- **Query Params:**
+  ```
+  phone=<string>
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "User đã được xóa thành công."
   }
   ```
 
 ---
 
-## Tích hợp
-- **JWT Authentication:** Sử dụng JWT Token để bảo mật API. Người dùng cần cung cấp token trong `Authorization Header` để truy cập các endpoint yêu cầu xác thực.
+## Technology Stack
+
+- **Backend Framework:** Django REST Framework (DRF)
+- **Authentication:** JWT (JSON Web Token)
+- **Database:** mysql 
+- **Pagination:** Custom pagination for enhanced API responses
 
 ---
 
-## Đóng góp
-Để đóng góp vào dự án, vui lòng tạo một nhánh mới từ `main` và gửi pull request (PR). Mọi ý kiến đóng góp đều được hoan nghênh!
+## Permissions
+
+### Roles
+- **USER:** Basic user with access to profile and booking functionalities.
+- **DOCTOR:** Special role for managing medical services and appointments.
+- **ADMIN:** Full access to user and booking management APIs.
+
+### Permissions Matrix
+| Role       | Action                            | Permissions          |
+|------------|-----------------------------------|----------------------|
+| USER       | Register, Login, Book Services    | Limited to self      |
+| DOCTOR     | View and manage appointments      | Assigned patients    |
+| ADMIN      | Add/Remove Users, Manage Bookings | Full access          |
+
+---
+5. Open a pull request on GitHub.
+
+---
 
 ## License
-Dự án này được cấp phép theo giấy phép MIT.
+
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ---
 
-Truy cập repository tại đây: [Dental System API](https://github.com/fourgay/dental-system)
-```
+Thank you for using this system! Feel free to contribute and help us improve.
+
