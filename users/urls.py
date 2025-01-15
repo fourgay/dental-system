@@ -13,7 +13,7 @@ urlpatterns = [
     path('admin/delete/', admin_delete_user, name='admin_delete_user'),
     path('admin/Booking/', admin_get_in_for_booking, name='admin_get_in_for_booking'),
     path('admin/Update_user/', Update_user, name='Update_user'),
-    path('services/register_booking/', Register_booking, name='Register_booking'),
-    path('services/delete-booking/', delete_booking, name='delete_booking'),
-    path('services/update-booking/', update_booking, name='update_booking'),
+    path('admin/register_booking/', Register_booking, name='Register_booking'),
+    path('admin/delete-booking/', delete_booking, name='delete_booking'),
+    path('admin/update-booking/', update_booking, name='update_booking'),
 ]
