@@ -17,7 +17,6 @@ import { ProtectedRoute } from "components/auth";
 import { LayoutAdmin } from "components/layout/layout.admin";
 import DashBoardPage from "./pages/admin/dashboard";
 import { ManageUserPage } from "./pages/admin/manage.user";
-import { ManageDoctorPage } from "./pages/admin/manage.doctor";
 import { ManageBookingPage } from "./pages/admin/manage.booking";
 import { ServicesPage } from "./pages/client/services";
 
@@ -97,14 +96,6 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ManageUserPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "doctor",
-        element: (
-          <ProtectedRoute>
-            <ManageDoctorPage />
           </ProtectedRoute>
         ),
       },

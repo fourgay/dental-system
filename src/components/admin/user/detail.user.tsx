@@ -1,6 +1,7 @@
-import { ProForm, ProFormDatePicker } from "@ant-design/pro-components";
+import { CheckSquareFilled, CloseSquareFilled } from "@ant-design/icons";
 import { Avatar, Badge, DatePicker, Descriptions, Drawer } from "antd";
 import dayjs from "dayjs";
+import { useEffect } from "react";
 
 interface IProps {
   openViewDetail: boolean;
@@ -20,6 +21,7 @@ export const DetailUser = (props: IProps) => {
   const avatarURL = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
     dataViewDetail?.avatar
   }`;
+
   return (
     <>
       <Drawer
@@ -49,7 +51,11 @@ export const DetailUser = (props: IProps) => {
           </Descriptions.Item>
 
           <Descriptions.Item label="Đặt lịch">
-            {dataViewDetail?.isBooking}
+            {dataViewDetail?.isBooking ? (
+              <CheckSquareFilled style={{ color: "green", fontSize: 30 }} />
+            ) : (
+              <CloseSquareFilled style={{ color: "red", fontSize: 30 }} />
+            )}
           </Descriptions.Item>
 
           <Descriptions.Item label="Địa chỉ">

@@ -38,19 +38,35 @@ export const UpdateUser = (props: IProps) => {
       form.setFieldsValue({
         phone: dataUpdate.phone,
         fullname: dataUpdate.fullname,
-        birthDay: dayjs(dataUpdate.birthDay, "DD-MM-YYYY"),
+        birthDay: dataUpdate.birthDay
+          ? dayjs(dataUpdate.birthDay, "DD-MM-YYYY")
+          : undefined,
         address: dataUpdate.address,
       });
-      console.log(dataUpdate.birthDay);
+      console.log(dataUpdate);
     }
   }, [dataUpdate]);
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const { phone, fullname, birthDay, address } = values;
+
+    const formattedBirthDay: any = birthDay
+      ? dayjs(birthDay).format("DD-MM-YYYY")
+      : null;
+    console.log(formattedBirthDay);
+
     setIsSubmit(true);
-    const res = await updateUserAPI(phone, fullname, birthDay, address);
+    const res = await updateUserAPI(
+      phone,
+      fullname,
+      formattedBirthDay,
+      address
+    );
     if (res && res.data) {
-      message.success("Cập nhật user thành công");
+      notification.success({
+        message: "Cập nhập thành công",
+        description: res.message,
+      });
       form.resetFields();
       setOpenModalUpdate(false);
       setDataUpdate(null);

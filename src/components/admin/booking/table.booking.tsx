@@ -10,10 +10,7 @@ import {
   EllipsisOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { deleteUserAPI, getUsersAPI } from "@/services/api";
-import { DetailUser } from "./detail.user";
-import { CreateUser } from "./create.user";
-import { UpdateUser } from "./update.user";
+import { getBookingAPI } from "@/services/api";
 
 type TSearch = {
   phone: string;
@@ -21,14 +18,14 @@ type TSearch = {
   role: string;
 };
 
-export const TableUser = () => {
+export const TableBooking = () => {
   const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
-  const [dataViewDetail, setDataViewDetail] = useState<IUser | null>(null);
+  const [dataViewDetail, setDataViewDetail] = useState<IBooking | null>(null);
 
   const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
 
   const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
-  const [dataUpdate, setDataUpdate] = useState<IUser | null>(null);
+  const [dataUpdate, setDataUpdate] = useState<IBooking | null>(null);
 
   const [isDeleteUser, setIsDeleteUser] = useState<boolean>(false);
   const { notification } = App.useApp();
@@ -41,33 +38,33 @@ export const TableUser = () => {
   });
   const actionRef = useRef<ActionType>();
 
-  const handleDeleteUser = async (phone: string) => {
-    setIsDeleteUser(true);
-    const res = await deleteUserAPI(phone);
-    if (res.message) {
-      notification.success({
-        message: "Xoá user thành công",
-        description: res.message,
-      });
-      refreshTable();
-    } else {
-      notification.error({
-        message: "Đã có lỗi xảy ra",
-        description: res.message,
-      });
-    }
-    setIsDeleteUser(false);
-  };
+  // const handleDeleteUser = async (phone: string) => {
+  //   setIsDeleteUser(true);
+  //   const res = await deleteUserAPI(phone);
+  //   if (res.message) {
+  //     notification.success({
+  //       message: "Xoá user thành công",
+  //       description: res.message,
+  //     });
+  //     refreshTable();
+  //   } else {
+  //     notification.error({
+  //       message: "Đã có lỗi xảy ra",
+  //       description: res.message,
+  //     });
+  //   }
+  //   setIsDeleteUser(false);
+  // };
 
-  const columns: ProColumns<IUser>[] = [
+  const columns: ProColumns<IBooking>[] = [
     {
       dataIndex: "index",
       valueType: "indexBorder",
       width: 48,
     },
     {
-      title: "SĐT",
-      dataIndex: "phone",
+      title: "Tài khoản",
+      dataIndex: "account",
       copyable: true,
       render(dom, entity, index, action, schema) {
         return (
@@ -78,7 +75,7 @@ export const TableUser = () => {
             }}
             href="#"
           >
-            {entity.phone}
+            {entity.account}
           </a>
         );
       },
@@ -88,43 +85,41 @@ export const TableUser = () => {
       dataIndex: "fullname",
     },
     {
-      title: "Phân quyền",
-      dataIndex: "role",
-      valueType: "select",
-      valueEnum: {
-        ADMIN: { text: "Admin" },
-        USER: { text: "User" },
-        DOCTOR: { text: "Doctor" },
-      },
-      hideInTable: true,
-    },
-    {
-      title: "Ngày sinh",
-      dataIndex: "birthDay",
+      title: "Ngày khám",
+      dataIndex: "date",
       hideInSearch: true,
     },
     {
-      title: "Đặt lịch",
-      dataIndex: "isBooking",
+      title: "Thời gian",
+      dataIndex: "time",
+      hideInSearch: true,
+    },
+    {
+      title: "Dịch vụ",
+      dataIndex: "service",
+      hideInSearch: true,
+    },
+    {
+      title: "Bác sĩ",
+      dataIndex: "doctor",
+      hideInSearch: true,
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      hideInSearch: true,
+    },
+    {
+      title: "Cho người khác",
+      dataIndex: "forAnother",
       hideInSearch: true,
       align: "center",
       render: (_, record) =>
-        record.isBooking ? (
+        record.forAnother ? (
           <CheckSquareFilled style={{ color: "green", fontSize: 20 }} />
         ) : (
           <CloseSquareFilled style={{ color: "red", fontSize: 20 }} />
         ),
-    },
-    {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      hideInSearch: true,
-      ellipsis: true,
-    },
-    {
-      title: "Phân quyền",
-      dataIndex: "role",
-      hideInSearch: true,
     },
     {
       title: "Action",
@@ -146,7 +141,7 @@ export const TableUser = () => {
               placement="leftTop"
               title={"Xác nhận xóa user"}
               description={"Bạn có chắc chắn muốn xóa user này ?"}
-              onConfirm={() => handleDeleteUser(entity.phone)}
+              // onConfirm={() => handleDeleteUser(entity.phone)}
               okText="Xác nhận"
               cancelText="Hủy"
               okButtonProps={{ loading: isDeleteUser }}
@@ -170,7 +165,7 @@ export const TableUser = () => {
 
   return (
     <>
-      <ProTable<IUser, TSearch>
+      <ProTable<IBooking, TSearch>
         columns={columns}
         actionRef={actionRef}
         cardBordered
@@ -197,7 +192,7 @@ export const TableUser = () => {
             }
           }
 
-          const res = await getUsersAPI(query);
+          const res = await getBookingAPI(query);
           if (res.data) {
             setMeta(res.data.meta);
           }
@@ -259,24 +254,6 @@ export const TableUser = () => {
             </Button>
           </Dropdown>,
         ]}
-      />
-      <DetailUser
-        openViewDetail={openViewDetail}
-        setOpenViewDetail={setOpenViewDetail}
-        dataViewDetail={dataViewDetail}
-        setDataViewDetail={setDataViewDetail}
-      />
-      <CreateUser
-        openModalCreate={openModalCreate}
-        setOpenModalCreate={setOpenModalCreate}
-        refreshTable={refreshTable}
-      />
-      <UpdateUser
-        openModalUpdate={openModalUpdate}
-        setOpenModalUpdate={setOpenModalUpdate}
-        dataUpdate={dataUpdate}
-        setDataUpdate={setDataUpdate}
-        refreshTable={refreshTable}
       />
     </>
   );

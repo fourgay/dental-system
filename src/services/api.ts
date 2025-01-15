@@ -58,7 +58,7 @@ export const createUserAPI = (
 };
 
 export const deleteUserAPI = (phone: string) => {
-  const urlBackend = `/api/admin/delete?phone=${phone}`;
+  const urlBackend = `/api/admin/delete/?phone=${phone}`;
   return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };
 
@@ -68,11 +68,16 @@ export const updateUserAPI = (
   birthDay: string,
   address: string
 ) => {
-  const urlBackend = "/api/admin/admin_register/";
-  return axios.post<IBackendRes<IRegister>>(urlBackend, {
+  const urlBackend = "/api/admin/Update_user/";
+  return axios.put<IBackendRes<IRegister>>(urlBackend, {
     phone,
     fullname,
     birthDay,
     address,
   });
+};
+
+export const getBookingAPI = (query: string) => {
+  const urlBackend = `/api/admin/Booking/?${query}`;
+  return axios.get<IBackendRes<IModePaginate<IBooking>>>(urlBackend);
 };

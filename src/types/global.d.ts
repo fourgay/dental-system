@@ -55,4 +55,17 @@ declare global {
     detail: string;
     img: string;
   }
+
+  interface IBooking {
+    id: number;
+    fullname: string;
+    date: string;
+    time: string;
+    forAnother: boolean;
+    remark: string;
+    service: string;
+    account: string;
+    doctor: string;
+    status: string;
+  }
 }

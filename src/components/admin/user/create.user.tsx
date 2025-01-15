@@ -37,14 +37,6 @@ export const CreateUser = (props: IProps) => {
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const { phone, fullname, password, birthDay, address, role } = values;
-    // console.log({
-    //   phone: phone,
-    //   fullname: fullname,
-    //   password: password,
-    //   birthDay: dayjs(birthDay).format("DD-MM-YYYY"),
-    //   address: address,
-    //   role: role,
-    // });
 
     setIsSubmit(true);
     const res = await createUserAPI(
@@ -147,7 +139,7 @@ export const CreateUser = (props: IProps) => {
               >
                 <Select
                   style={{ width: 120 }}
-                  defaultValue="USER"
+                  placeholder="Chọn"
                   options={[
                     { value: "USER", label: <span>USER</span> },
                     { value: "DOCTOR", label: <span>DOCTOR</span> },
