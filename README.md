@@ -197,32 +197,42 @@ This project is a Django-based REST API designed for managing user accounts, ser
   }
   ```
 
-#### `PUT /update-booking/<int:booking_id>/`
+#### `PUT services/update-booking/`
 - **Description:** Update an existing booking.
 - **Request Body:**
   ```json
-  {
-    "fullname": "string",
-    "date": "YYYY-MM-DD",
-    "time": "HH:MM",
-    "status": "string"
-  }
+{
+    "fullname": "Hung Vu",
+    "date": "2026-07-15",
+    "time": "14:30:00",
+    "forAnother": false,
+    "remark": "1000%",
+    "service": "Dental Cleaning",
+    "account": "123456",
+    "doctor": "Dr. Smith",
+    "status": "Scheduled"
+}
   ```
 - **Response:**
   ```json
-  {
+{
     "message": "Cập nhật lịch hẹn thành công.",
     "data": {
-      "id": "integer",
-      "fullname": "string",
-      "date": "YYYY-MM-DD",
-      "time": "HH:MM",
-      "status": "string"
+        "id": 8,
+        "fullname": "Hung Vu",
+        "date": "2026-07-15",
+        "time": "14:30:00",
+        "forAnother": false,
+        "remark": "Búng cu 1000%",
+        "service": "Dental Cleaning",
+        "account": "123456",
+        "doctor": "Dr. Smith",
+        "status": "Scheduled"
     }
-  }
+}
   ```
 
-#### `DELETE /delete-booking/`
+#### `DELETE /services/delete-booking/`
 - **Description:** Delete a booking.
 - **Query Params:**
   ```
