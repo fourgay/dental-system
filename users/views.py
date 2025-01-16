@@ -268,6 +268,7 @@ def Register_booking(request):
                 response_serializer = DataSerializer_booking(booking)
                 return Response({
                     'message': 'Đặt lịch thành công!',
+                    'data': response_serializer.data
                 }, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({
