@@ -241,23 +241,24 @@ This project is a Django-based REST API designed for managing user accounts, ser
     "status": "Scheduled"
 }
   ```
+
 - **Response:**
   ```json
-{
-    "message": "Cập nhật lịch hẹn thành công.",
-    "data": {
-        "id": 8,
-        "fullname": "Hung Vu",
-        "date": "2026-07-15",
-        "time": "14:30:00",
-        "forAnother": false,
-        "remark": "Búng cu 1000%",
-        "service": "Dental Cleaning",
-        "account": "123456",
-        "doctor": "Dr. Smith",
-        "status": "Scheduled"
-    }
-}
+  {
+      "message": "Cập nhật lịch hẹn thành công.",
+      "data": {
+          "id": 8,
+          "fullname": "Hung Vu",
+          "date": "2026-07-15",
+          "time": "14:30:00",
+          "forAnother": false,
+          "remark": "Búng cu 1000%",
+          "service": "Dental Cleaning",
+          "account": "123456",
+          "doctor": "Dr. Smith",
+          "status": "Scheduled"
+      }
+  }
   ```
 
 #### `DELETE /services/delete-booking/`
