@@ -74,7 +74,7 @@ def admin_register(request):
         }, status=status.HTTP_201_CREATED)
     return Response({
         'message': 'Đăng ký không thành công.',
-        'errors': serializer.errors  # Include detailed error messages
+        'errors': serializer.errors  
     }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -202,7 +202,7 @@ def admin_get_in_for_booking(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def Update_user(request):
+def Admin_Update_user(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
@@ -242,8 +242,6 @@ def Register_booking(request):
         try:
             with transaction.atomic():
                 account = serializer.validated_data.get('account')
-
-                # Check if the account (phone number) exists in the database
                 try:
                     user = Data.objects.get(phone=account)
                 except Data.DoesNotExist:
@@ -251,18 +249,12 @@ def Register_booking(request):
                         'message': 'Đặt lịch không thành công.',
                         'error': f'Số điện thoại {account} không tồn tại trong hệ thống.'
                     }, status=status.HTTP_400_BAD_REQUEST)
-
-                # Check if the user already has a booking
                 if user.isBooking:
                     return Response({
                         'message': 'Đặt lịch không thành công.',
                         'error': f'Người dùng với số điện thoại {account} đã có lịch hẹn. Vui lòng hoàn thành hoặc hủy lịch hẹn hiện tại trước khi đặt lịch mới.'
                     }, status=status.HTTP_400_BAD_REQUEST)
-
-                # If the account exists and doesn't have an active booking, proceed with booking
                 booking = serializer.save()
-
-                # Update isBooking status
                 user.isBooking = True
                 user.save()
                 response_serializer = DataSerializer_booking(booking)
@@ -307,10 +299,7 @@ def delete_booking(request):
 
     try:
         with transaction.atomic():
-            # Delete the booking
             booking.delete()
-
-            # Update isBooking status for the user
             user = Data.objects.get(phone=phone)
             user.isBooking = False
             user.save()
@@ -361,3 +350,40 @@ def update_booking(request):
         'message': 'Cập nhật không thành công.',
         'errors': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def Update_user(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'USER':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền USER để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    phone = request.data.get('phone')
+    fullname = request.data.get('fullname')
+    birthDay = request.data.get('birthDay')
+    address = request.data.get('address')
+    password = request.data.get('password')
+
+    if not phone:
+        return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Data.objects.get(phone=phone)
+    except Data.DoesNotExist:
+        return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+    user.fullname = fullname if fullname else user.fullname
+    user.birthDay = birthDay if birthDay else user.birthDay
+    user.address = address if address else user.address
+    if password:
+        user.set_password(password)
+    user.save()
+    serializer = DataSerializer(user)
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'message': 'Cập nhật thông tin thành công.',
+        'access_token': str(refresh.access_token),
+        'data': serializer.data
+    }, status=status.HTTP_200_OK)
+
+
+

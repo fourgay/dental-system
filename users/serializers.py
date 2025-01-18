@@ -8,7 +8,6 @@ class DataSerializer(serializers.ModelSerializer):
     class Meta:
         model = Data
         fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address']
-
     def create(self, validated_data):
         validated_data['avatar'] = 'avatars/avatar-1.png'
         data = Data.objects.create_user(
@@ -20,21 +19,18 @@ class DataSerializer(serializers.ModelSerializer):
             # address=validated_data['address']
         )
         return data
-
     def validate_phone(self, value):
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
 
-
 class DataSerializer_admin(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    birthDay = serializers.DateField(input_formats=['%d-%m-%Y'], required=False)
+    birthDay = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Data
         fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address']
-
     def create(self, validated_data):
         validated_data['avatar'] = 'avatars/avatar-1.png'
         if 'role' in validated_data:
@@ -48,13 +44,10 @@ class DataSerializer_admin(serializers.ModelSerializer):
                 address=validated_data['address']
             )
         return data
-
     def validate_phone(self, value):
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
-
-
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,7 +65,7 @@ class BookingSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DataSerializer_booking(serializers.ModelSerializer):
-    date = serializers.DateField(input_formats=['%d-%m-%Y'], required=False)
+    date = serializers.CharField(required=False, allow_blank=True)
     class Meta:
         model = Booking
         fields = ['fullname', 'date','time', 'forAnother','remark','service','account','doctor','status',]
