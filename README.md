@@ -161,20 +161,20 @@ This project is a Django-based REST API designed for managing user accounts, ser
   ```
 - **Response:**
   ```json
-{
-    "message": "Cập nhật thông tin thành công.",
-    "access_token": "",
-    "data": {
-        "id": ,
-        "fullname": "",
-        "phone": "",
-        "avatar": "default_avatar.png",
-        "role": "USER",
-        "birthDay": "",
-        "isBooking": false,
-        "address": ""
-    }
-}
+  {
+      "message": "Cập nhật thông tin thành công.",
+      "access_token": "",
+      "data": {
+          "id": ,
+          "fullname": "",
+          "phone": "",
+          "avatar": "default_avatar.png",
+          "role": "USER",
+          "birthDay": "",
+          "isBooking": false,
+          "address": ""
+      }
+  }
   ```
 #### `PUT /admin/Update_user/`
 - **Description:** Admin updates user details.
