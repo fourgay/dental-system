@@ -377,13 +377,18 @@ def Update_user(request):
     if password:
         user.set_password(password)
     user.save()
-    serializer = DataSerializer(user)
     refresh = RefreshToken.for_user(user)
+    user_data = DataSerializer(user).data
     return Response({
-        'message': 'Cập nhật thông tin thành công.',
-        'access_token': str(refresh.access_token),
-        'data': serializer.data
+        'message': 'Cập nhật không thành công.',
+        'data': {
+            'access_token': str(refresh.access_token),
+            'user': {
+                'id': user_data['id'],
+                'fullname': user_data['fullname'],
+                'phone': user_data['phone'],
+                'role': user_data['role'],  
+                'avatar': user_data.get('avatar', 'default_avatar.png')
+            }
+        }
     }, status=status.HTTP_200_OK)
-
-
-
