@@ -8,6 +8,7 @@ import {
   DeleteTwoTone,
   EditTwoTone,
   EllipsisOutlined,
+  EyeOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import { deleteUserAPI, getUsersAPI } from "@/services/api";
@@ -64,28 +65,18 @@ export const TableUser = () => {
       dataIndex: "index",
       valueType: "indexBorder",
       width: 48,
+      align: "center",
     },
     {
-      title: "SĐT",
+      title: "Tài khoản",
       dataIndex: "phone",
       copyable: true,
-      render(dom, entity, index, action, schema) {
-        return (
-          <a
-            onClick={() => {
-              setOpenViewDetail(true);
-              setDataViewDetail(entity);
-            }}
-            href="#"
-          >
-            {entity.phone}
-          </a>
-        );
-      },
+      align: "center",
     },
     {
       title: "Họ tên",
       dataIndex: "fullname",
+      align: "center",
     },
     {
       title: "Phân quyền",
@@ -97,11 +88,7 @@ export const TableUser = () => {
         DOCTOR: { text: "Doctor" },
       },
       hideInTable: true,
-    },
-    {
-      title: "Ngày sinh",
-      dataIndex: "birthDay",
-      hideInSearch: true,
+      align: "center",
     },
     {
       title: "Đặt lịch",
@@ -116,29 +103,30 @@ export const TableUser = () => {
         ),
     },
     {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      hideInSearch: true,
-      ellipsis: true,
-    },
-    {
       title: "Phân quyền",
       dataIndex: "role",
       hideInSearch: true,
+      align: "center",
     },
     {
       title: "Action",
       hideInSearch: true,
+      align: "center",
       render(dom, entity, index, action, schema) {
         return (
           <>
+            <EyeOutlined
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                setOpenViewDetail(true);
+                setDataViewDetail(entity);
+              }}
+            />
             <EditTwoTone
               twoToneColor="#f57800"
-              style={{ cursor: "pointer", marginRight: 15 }}
+              style={{ cursor: "pointer", margin: "0 35px" }}
               onClick={() => {
                 setDataUpdate(entity);
-                console.log(dataUpdate);
-
                 setOpenModalUpdate(true);
               }}
             />
@@ -151,7 +139,7 @@ export const TableUser = () => {
               cancelText="Hủy"
               okButtonProps={{ loading: isDeleteUser }}
             >
-              <span style={{ cursor: "pointer", marginLeft: 20 }}>
+              <span style={{ cursor: "pointer" }}>
                 <DeleteTwoTone
                   twoToneColor="#ff4d4f"
                   style={{ cursor: "pointer" }}

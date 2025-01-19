@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { App, Button, Dropdown, Popconfirm } from "antd";
+import { App, Button, Dropdown, Popconfirm, Tag } from "antd";
 import {
   CheckSquareFilled,
   CloseSquareFilled,
@@ -10,7 +10,8 @@ import {
   EllipsisOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { getBookingAPI } from "@/services/api";
+import { deleteBookingAPI, getBookingAPI } from "@/services/api";
+import { CreateBooking } from "./create.booking";
 
 type TSearch = {
   phone: string;
@@ -27,7 +28,7 @@ export const TableBooking = () => {
   const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
   const [dataUpdate, setDataUpdate] = useState<IBooking | null>(null);
 
-  const [isDeleteUser, setIsDeleteUser] = useState<boolean>(false);
+  const [isDeleteBooking, setIsDeleteBooking] = useState<boolean>(false);
   const { notification } = App.useApp();
 
   const [meta, setMeta] = useState({
@@ -38,23 +39,24 @@ export const TableBooking = () => {
   });
   const actionRef = useRef<ActionType>();
 
-  // const handleDeleteUser = async (phone: string) => {
-  //   setIsDeleteUser(true);
-  //   const res = await deleteUserAPI(phone);
-  //   if (res.message) {
-  //     notification.success({
-  //       message: "Xoá user thành công",
-  //       description: res.message,
-  //     });
-  //     refreshTable();
-  //   } else {
-  //     notification.error({
-  //       message: "Đã có lỗi xảy ra",
-  //       description: res.message,
-  //     });
-  //   }
-  //   setIsDeleteUser(false);
-  // };
+  const handleDeleteBooking = async (phone: string) => {
+    setIsDeleteBooking(true);
+    const res = await deleteBookingAPI(phone);
+
+    if (res.message) {
+      notification.success({
+        message: "Xoá lịch khám thành công",
+        description: res.message,
+      });
+      refreshTable();
+    } else {
+      notification.error({
+        message: "Đã có lỗi xảy ra",
+        description: res.message,
+      });
+    }
+    setIsDeleteBooking(false);
+  };
 
   const columns: ProColumns<IBooking>[] = [
     {
@@ -108,6 +110,8 @@ export const TableBooking = () => {
       title: "Trạng thái",
       dataIndex: "status",
       hideInSearch: true,
+      align: "center",
+      render: (_, record) => <Tag color="gold">{record.status}</Tag>,
     },
     {
       title: "Cho người khác",
@@ -139,12 +143,12 @@ export const TableBooking = () => {
             />
             <Popconfirm
               placement="leftTop"
-              title={"Xác nhận xóa user"}
-              description={"Bạn có chắc chắn muốn xóa user này ?"}
-              // onConfirm={() => handleDeleteUser(entity.phone)}
+              title={"Xác nhận xóa lịch khám"}
+              description={"Bạn có chắc chắn muốn xóa lịch khám này ?"}
+              onConfirm={() => handleDeleteBooking(entity.account)}
               okText="Xác nhận"
               cancelText="Hủy"
-              okButtonProps={{ loading: isDeleteUser }}
+              okButtonProps={{ loading: isDeleteBooking }}
             >
               <span style={{ cursor: "pointer", marginLeft: 20 }}>
                 <DeleteTwoTone
@@ -254,6 +258,11 @@ export const TableBooking = () => {
             </Button>
           </Dropdown>,
         ]}
+      />
+      <CreateBooking
+        openModalCreate={openModalCreate}
+        setOpenModalCreate={setOpenModalCreate}
+        refreshTable={refreshTable}
       />
     </>
   );

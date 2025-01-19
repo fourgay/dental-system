@@ -39,6 +39,7 @@ export const CreateUser = (props: IProps) => {
     const { phone, fullname, password, birthDay, address, role } = values;
 
     setIsSubmit(true);
+
     const res = await createUserAPI(
       phone,
       fullname,
@@ -47,12 +48,10 @@ export const CreateUser = (props: IProps) => {
       address,
       role
     );
-    console.log(res.data);
 
     if (res && res.data) {
       notification.success({
         message: res.message,
-        placement: "bottomLeft",
       });
       form.resetFields();
       setOpenModalCreate(false);

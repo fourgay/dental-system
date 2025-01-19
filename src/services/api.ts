@@ -54,6 +54,7 @@ export const createUserAPI = (
     birthDay,
     address,
     role,
+    isBooking: false,
   });
 };
 
@@ -80,4 +81,34 @@ export const updateUserAPI = (
 export const getBookingAPI = (query: string) => {
   const urlBackend = `/api/admin/Booking/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IBooking>>>(urlBackend);
+};
+
+export const createBookingAPI = (
+  fullname: string,
+  date: string,
+  time: string,
+  forAnother: boolean,
+  remark: string,
+  service: string,
+  account: string,
+  doctor: string,
+  status: string
+) => {
+  const urlBackend = "/api/admin/register_booking/";
+  return axios.post<IBackendRes<IRegister>>(urlBackend, {
+    fullname,
+    date,
+    time,
+    forAnother,
+    remark,
+    service,
+    account,
+    doctor,
+    status,
+  });
+};
+
+export const deleteBookingAPI = (phone: string) => {
+  const urlBackend = `/api/admin/delete-booking/?phone=${phone}`;
+  return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };

@@ -9,7 +9,7 @@ import {
   ProFormTextArea,
   StepsForm,
 } from "@ant-design/pro-components";
-import { Button, Input, Result } from "antd";
+import { Button, Input, Result, Spin } from "antd";
 import { useEffect, useState } from "react";
 import "styles/booking.scss";
 import { getListServicesAPI } from "@/services/api";
@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 
 export const Booking = () => {
   const [loading, setLoading] = useState(false);
+  const [servicesLoading, setServicesLoading] = useState<boolean>(false);
   const [listServices, setListServices] = useState<IServices[]>([]);
   const [OTP, setOTP] = useState<number>();
 
@@ -28,10 +29,12 @@ export const Booking = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const getServices = async () => {
+      setServicesLoading(true);
       const res = await getListServicesAPI();
       if (res?.data) {
         setListServices(res.data);
       }
+      setServicesLoading(false);
     };
     getServices();
   }, []);
@@ -106,29 +109,33 @@ export const Booking = () => {
             return true;
           }}
         >
-          <ProForm.Item
-            name="service"
-            rules={[{ required: true, message: "Vui lòng chọn một dịch vụ!" }]}
-          >
-            <CheckCard.Group
-              onChange={(value: any) => {
-                setChooseService(value);
-              }}
-              className="choose-services"
+          <Spin spinning={servicesLoading}>
+            <ProForm.Item
+              name="service"
+              rules={[
+                { required: true, message: "Vui lòng chọn một dịch vụ!" },
+              ]}
             >
-              {listServices.map((item, index) => (
-                <CheckCard
-                  key={index}
-                  avatar={item.img}
-                  title={item.title}
-                  description={item.detail}
-                  value={item}
-                  style={{ margin: "unset" }}
-                  size="large"
-                />
-              ))}
-            </CheckCard.Group>
-          </ProForm.Item>
+              <CheckCard.Group
+                onChange={(value: any) => {
+                  setChooseService(value);
+                }}
+                className="choose-services"
+              >
+                {listServices.map((item, index) => (
+                  <CheckCard
+                    key={index}
+                    avatar={item.img}
+                    title={item.title}
+                    description={item.detail}
+                    value={item}
+                    style={{ margin: "unset" }}
+                    size="large"
+                  />
+                ))}
+              </CheckCard.Group>
+            </ProForm.Item>
+          </Spin>
         </StepsForm.StepForm>
         <StepsForm.StepForm title="Điền thông tin">
           <ProFormText
