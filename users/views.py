@@ -90,7 +90,10 @@ def get_user_info(request):
                 'fullname': serializer.data['fullname'],
                 'phone': serializer.data['phone'],
                 'role': serializer.data['role'],
-                'avatar': serializer.data['avatar']
+                'avatar': serializer.data['avatar'],
+                'address': serializer.data['address'],
+                'isBooking': serializer.data['isBooking'],
+                'birthDay': serializer.data['birthDay']
             }
         }
     }, status=status.HTTP_200_OK)
