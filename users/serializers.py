@@ -66,16 +66,18 @@ class BookingSerializer(serializers.ModelSerializer):
 
 class DataSerializer_booking(serializers.ModelSerializer):
     date = serializers.CharField(required=False, allow_blank=True)
+    remark = serializers.CharField(required=False, allow_blank=True, default="") 
     class Meta:
         model = Booking
-        fields = ['fullname', 'date','time', 'forAnother','remark','service','account','doctor','status',]
+        fields = ['fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status']
     def create(self, validated_data):
+        validated_data.setdefault('remark', "")
         data = Data.objects.register_booking(
             fullname=validated_data['fullname'],
             date=validated_data['date'],
             time=validated_data['time'],
             forAnother=validated_data['forAnother'],
-            remark=validated_data['remark'],
+            remark=validated_data['remark'],  
             service=validated_data['service'],
             account=validated_data['account'],
             doctor=validated_data['doctor'],

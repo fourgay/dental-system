@@ -271,9 +271,9 @@ def Register_booking(request):
                 'error': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({
-        'message': 'Đặt lịch không thành công.',
-        'errors': serializer.errors  
+        'message': f"Đặt lịch không thành công. Lỗi: {serializer.errors}"
     }, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
