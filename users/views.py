@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Data, Service, Booking
-from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin,DataSerializer_booking,DoctorSerializer
+from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
+    DataSerializer_admin,DataSerializer_booking,DoctorSerializer, ResultsSerializer
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
@@ -395,3 +396,24 @@ def Update_user(request):
             }
         }
     }, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_results_slip(request):
+    if not hasattr(request.user, 'role') or (request.user.role != 'ADMIN' and request.user.role != 'Doctor'):
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)  
+        
+    serializer = ResultsSerializer(data=request.data)
+    if serializer.is_valid():
+        data = serializer.save()
+        response_serializer = ResultsSerializer(data)
+        return Response({
+            'message': 'Cập nhật thành công!',
+            'data': response_serializer.data
+        }, status=status.HTTP_201_CREATED)
+    return Response({
+        'message': 'Cập nhật không thành công!',
+        'errors': serializer.errors  
+    }, status=status.HTTP_400_BAD_REQUEST)
