@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Data, Service, Booking
-from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin,DataSerializer_booking
+from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin,DataSerializer_booking,DoctorSerializer
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
