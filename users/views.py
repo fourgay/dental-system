@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import Data, Service, Booking
-from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin,DataSerializer_booking
+from .serializers import DataSerializer, ServiceSerializer, BookingSerializer,DataSerializer_admin,DataSerializer_booking,DoctorSerializer
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
@@ -114,6 +114,7 @@ def get_all_doctors(request):
     if request.user.role != 'ADMIN':
             messages = [
                 'Bạn phải là ADMIN mới có thể truy cập được API này 👍'
+                'aaa'
             ]
             return Response({
                 'message': random.choice(messages)  
@@ -215,6 +216,7 @@ def Admin_Update_user(request):
     fullname = request.data.get('fullname')
     birthDay = request.data.get('birthDay')
     address = request.data.get('address')
+    avatar = request.data.get('avatar')
 
     if  not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
@@ -225,6 +227,7 @@ def Admin_Update_user(request):
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
+    user.avatar = avatar if avatar else user.avatar
     user.save()
     serializer = DataSerializer(user)
     return Response({
