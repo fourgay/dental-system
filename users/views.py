@@ -422,17 +422,22 @@ def delete_result(request):
             'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
-    phone = request.query_params.get('phone')
-    if not phone:
+    result_id = request.query_params.get('id')
+    account = request.query_params.get('account')
+    if not result_id or not account:
         return Response({
-            'message': 'Thiếu tham số phone trong query params.',
+            'message': 'Thiếu tham số id hoặc account trong query params.',
         }, status=status.HTTP_400_BAD_REQUEST)
     try:
-        result = Result.objects.get(account=phone)
+        result = Result.objects.get(id=result_id, account=account)
     except Result.DoesNotExist:
         return Response({
-            'message': f'Không tìm thấy tài khoản có số điện thoại {phone}.',
+            'message': f'Không tìm thấy kết quả cho tài khoản có số điện thoại {account} với id {result_id}.',
         }, status=status.HTTP_404_NOT_FOUND)
+    except Result.MultipleObjectsReturned:
+        return Response({
+            'message': f'Có nhiều kết quả cho tài khoản có số điện thoại {account} với id {result_id}.',
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     if request.user.role == 'USER' and result.account != request.user.phone:
         return Response({
@@ -442,7 +447,7 @@ def delete_result(request):
     try:
         with transaction.atomic():
             result.delete()
-            user = Data.objects.get(phone=phone)
+            user = Data.objects.get(phone=account)
             user.isBooking = False
             user.save()
 
@@ -461,7 +466,7 @@ def Update_Result(request):
             'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
-    phone = request.data.get('phone')
+    account = request.data.get('account')
     fullname = request.data.get('fullname')
     time = request.data.get('time')
     title = request.data.get('title')
@@ -469,18 +474,17 @@ def Update_Result(request):
     service = request.data.get('service')
     date = request.data.get('date')
     
-    if not phone:
+    if not account:
         return Response({'message': 'Thiếu sđt người cần tìm'}, status=status.HTTP_400_BAD_REQUEST)
     try:
-        user = Data.objects.get(phone=phone)
+        user = Data.objects.get(account)
     except Data.DoesNotExist:
         return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
 
     if fullname:
         user.fullname = fullname
-
     try:
-        result_instance = Result.objects.filter(account=phone, date=date).first()
+        result_instance = Result.objects.filter(account, date).first()
         if not result_instance:
             return Response({'message': 'Không tìm thấy kết quả phù hợp.'}, status=status.HTTP_404_NOT_FOUND)
         
@@ -519,4 +523,19 @@ def Update_Result(request):
                 }
             }
         }
+    }, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def get_all_results(request):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'DOCTOR']:
+        return Response({
+        'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    results = Result.objects.all()
+    serializer = ResultSerializer(results, many=True)
+    return Response({
+        'message': 'Lấy tất cả kết quả thành công.',
+        'data': serializer.data
     }, status=status.HTTP_200_OK)
