@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import register, login,Update_user, Admin_Update_user,update_booking,delete_booking,Register_booking, \
 get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user,\
-admin_get_in_for_booking, create_result
+admin_get_in_for_booking, create_result, delete_result, Update_Result
 
 urlpatterns = [
     path('accounts/register/', register, name='register'),
@@ -19,5 +19,7 @@ urlpatterns = [
     path('admin/register_booking/', Register_booking, name='Register_booking'),
     path('admin/delete-booking/', delete_booking, name='delete_booking'),
     path('admin/update-booking/', update_booking, name='update_booking'),
-    path('admin/update-result/', create_result, name='create_result'),
+    path('admin/create-result/', create_result, name='create_result'),
+    path('admin/delete-result/', delete_result, name='delete_result'),
+    path('admin/update-result/', Update_Result, name='Update_Result'),
 ]

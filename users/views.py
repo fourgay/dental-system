@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import Data, Service, Booking
+from .models import Data, Service, Booking, Result
 from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
     DataSerializer_admin,DataSerializer_booking,DoctorSerializer, ResultSerializer
 from .pagination import CustomPagination
@@ -403,14 +403,120 @@ def Update_user(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_result(request):
-    serializer = ResultSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
+    Result = ResultSerializer(data=request.data)
+    if Result.is_valid():
+        Result.save()
         return Response({
             'message': 'Tạo kết quả thành công!',
-            'data': serializer.data
+            'data': Result.data
         }, status=status.HTTP_201_CREATED)
     return Response({
         'message': 'Tạo kết quả không thành công.',
-        'errors': serializer.errors
+        'errors': Result.errors
     }, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_result(request):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'DOCTOR']:
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    phone = request.query_params.get('phone')
+    if not phone:
+        return Response({
+            'message': 'Thiếu tham số phone trong query params.',
+        }, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        result = Result.objects.get(account=phone)
+    except Result.DoesNotExist:
+        return Response({
+            'message': f'Không tìm thấy tài khoản có số điện thoại {phone}.',
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    if request.user.role == 'USER' and result.account != request.user.phone:
+        return Response({
+            'message': 'Unauthorized: Bạn không có quyền truy cập mục này.',
+        }, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        with transaction.atomic():
+            result.delete()
+            user = Data.objects.get(phone=phone)
+            user.isBooking = False
+            user.save()
+
+        return Response({
+            'message': 'Xóa kết quả thành công.',
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'message': f'Lỗi khi xóa kết quả: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def Update_Result(request):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'DOCTOR']:
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    phone = request.data.get('phone')
+    fullname = request.data.get('fullname')
+    time = request.data.get('time')
+    title = request.data.get('title')
+    decription = request.data.get('decription')
+    service = request.data.get('service')
+    date = request.data.get('date')
+    
+    if not phone:
+        return Response({'message': 'Thiếu sđt người cần tìm'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = Data.objects.get(phone=phone)
+    except Data.DoesNotExist:
+        return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if fullname:
+        user.fullname = fullname
+
+    try:
+        result_instance = Result.objects.filter(account=phone, date=date).first()
+        if not result_instance:
+            return Response({'message': 'Không tìm thấy kết quả phù hợp.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        if time:
+            result_instance.time = time
+        if title:
+            result_instance.title = title
+        if decription:
+            result_instance.decription = decription
+        if service:
+            result_instance.service = service
+
+        result_instance.save()
+    except Result.DoesNotExist:
+        return Response({'message': 'Không tìm thấy kết quả phù hợp.'}, status=status.HTTP_404_NOT_FOUND)
+
+    user.result = result_instance
+    user.save()
+
+    refresh = RefreshToken.for_user(user)
+    user_data = DataSerializer(user).data
+    return Response({
+        'message': 'Cập nhật thông tin thành công.',
+        'data': {
+            'access_token': str(refresh.access_token),
+            'user': {
+                'id': user_data['id'],
+                'fullname': user_data['fullname'],
+                'phone': user_data['phone'],
+                'result': {
+                    'time': result_instance.time,
+                    'title': result_instance.title,
+                    'decription': result_instance.decription,
+                    'service': result_instance.service,
+                    'date': result_instance.date,
+                }
+            }
+        }
+    }, status=status.HTTP_200_OK)

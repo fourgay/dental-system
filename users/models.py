@@ -133,7 +133,7 @@ class Booking(models.Model):
 
 class Result(models.Model):
     account = models.CharField(max_length=255)
-    date = models.CharField(max_length=255)
+    date = models.DateField()
     time = models.TimeField()
     title = models.CharField(max_length=255)
     decriptions = models.TextField(max_length=255)
@@ -141,3 +141,4 @@ class Result(models.Model):
     fullname = models.CharField(max_length=255)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
+    
