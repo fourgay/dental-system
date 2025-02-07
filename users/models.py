@@ -130,9 +130,8 @@ class Booking(models.Model):
 
     def __str__(self):
         return self.fullname
-    
-class Results_Slip(models.Model):
-    id = models.AutoField(primary_key=True)
+
+class Result(models.Model):
     account = models.CharField(max_length=255)
     date = models.CharField(max_length=255)
     time = models.TimeField()
@@ -142,6 +141,3 @@ class Results_Slip(models.Model):
     fullname = models.CharField(max_length=255)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
-    def __str__(self):
-        return id(self)
-    

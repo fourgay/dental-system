@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Data, Service, Booking, Results_Slip
+from .models import Data, Service, Booking, Result
 
 class DataSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -23,13 +23,6 @@ class DataSerializer(serializers.ModelSerializer):
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
-    
-class TimeSerializer(serializers.ModelSerializer):
-    time = serializers.TimeField(format="%H:%M:%S")
-
-    class Meta:
-        model = Results_Slip
-        fields = '__all__'
         
 class DataSerializer_admin(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -55,13 +48,7 @@ class DataSerializer_admin(serializers.ModelSerializer):
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
-class ResultsSerializer(serializers.Serializer):
-    class Meta:
-        model = Results_Slip
-        fields = ('account', 'title', 'description', 'service', 'time', 'date', 'fullname')
-    def create(self, validated_data):
-        return Results_Slip.objects.create(**validated_data)
-    
+
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Data
@@ -97,3 +84,8 @@ class DataSerializer_booking(serializers.ModelSerializer):
             status=validated_data['status']
         )
         return data
+
+class ResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Result
+        fields = '__all__'
