@@ -465,8 +465,8 @@ def Update_Result(request):
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
-
     account = request.data.get('account')
+    doctor = request.data.get('doctor')
     fullname = request.data.get('fullname')
     time = request.data.get('time')
     title = request.data.get('title')
@@ -474,15 +474,28 @@ def Update_Result(request):
     service = request.data.get('service')
     date = request.data.get('date')
     
-    if not account:
-        return Response({'message': 'Thiếu sđt người cần tìm'}, status=status.HTTP_400_BAD_REQUEST)
+    result_id = request.query_params.get('id')
+    account = request.query_params.get('account')
+    if not result_id or not account:
+        return Response({
+            'message': 'Thiếu tham số id hoặc account trong query params.',
+        }, status=status.HTTP_400_BAD_REQUEST)
     try:
-        user = Data.objects.get(account)
-    except Data.DoesNotExist:
-        return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+        result = Result.objects.get(id=result_id, account=account)
+    except Result.DoesNotExist:
+        return Response({
+            'message': f'Không tìm thấy kết quả cho tài khoản có số điện thoại {account} với id {result_id}.',
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Result.MultipleObjectsReturned:
+        return Response({
+            'message': f'Có nhiều kết quả cho tài khoản có số điện thoại {account} với id {result_id}.',
+        }, status=status.HTTP_400_BAD_REQUEST)
 
-    if fullname:
-        user.fullname = fullname
+    if request.user.role == 'USER' and result.account != request.user.phone:
+        return Response({
+            'message': 'Unauthorized: Bạn không có quyền truy cập mục này.',
+        }, status=status.HTTP_403_FORBIDDEN)
+
     try:
         result_instance = Result.objects.filter(account, date).first()
         if not result_instance:

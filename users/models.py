@@ -139,6 +139,5 @@ class Result(models.Model):
     decriptions = models.TextField(max_length=255)
     service = models.TextField(max_length=255)
     fullname = models.CharField(max_length=255)
-    createdAt = models.DateTimeField(auto_now_add=True)
+    doctor = models.CharField(max_length=255, default='Unknown Doctor')
     updatedAt = models.DateTimeField(auto_now=True)
-    
