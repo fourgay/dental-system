@@ -199,7 +199,26 @@ def admin_get_in_for_booking(request):
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
-    bookings = Booking.objects.all()
+
+    # Lấy các tham số lọc từ query params
+    fullname = request.query_params.get('fullname')
+    account = request.query_params.get('account')
+    service = request.query_params.get('service')
+    doctor = request.query_params.get('doctor')
+
+    # Tạo bộ lọc
+    filters = Q()
+    if fullname:
+        filters &= Q(fullname__icontains=fullname)
+    if account:
+        filters &= Q(account__icontains=account)
+    if service:
+        filters &= Q(service__icontains=service)
+    if doctor:
+        filters &= Q(doctor__icontains=doctor)
+
+    # Lọc các booking theo bộ lọc
+    bookings = Booking.objects.filter(filters)
     paginator = CustomPagination()
     paginated_bookings = paginator.paginate_queryset(bookings, request)
     serializer = BookingSerializer(paginated_bookings, many=True)
@@ -465,21 +484,14 @@ def Update_Result(request):
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
+
+    result_id = request.data.get('id')
     account = request.data.get('account')
-    doctor = request.data.get('doctor')
-    fullname = request.data.get('fullname')
-    time = request.data.get('time')
-    title = request.data.get('title')
-    decription = request.data.get('decription')
-    service = request.data.get('service')
-    date = request.data.get('date')
-    
-    result_id = request.query_params.get('id')
-    account = request.query_params.get('account')
     if not result_id or not account:
         return Response({
-            'message': 'Thiếu tham số id hoặc account trong query params.',
+            'message': 'Thiếu tham số id hoặc account trong dữ liệu gửi lên.',
         }, status=status.HTTP_400_BAD_REQUEST)
+
     try:
         result = Result.objects.get(id=result_id, account=account)
     except Result.DoesNotExist:
@@ -491,52 +503,18 @@ def Update_Result(request):
             'message': f'Có nhiều kết quả cho tài khoản có số điện thoại {account} với id {result_id}.',
         }, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.user.role == 'USER' and result.account != request.user.phone:
+    serializer = ResultSerializer(result, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
         return Response({
-            'message': 'Unauthorized: Bạn không có quyền truy cập mục này.',
-        }, status=status.HTTP_403_FORBIDDEN)
+            'message': 'Cập nhật kết quả thành công.',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
 
-    try:
-        result_instance = Result.objects.filter(account, date).first()
-        if not result_instance:
-            return Response({'message': 'Không tìm thấy kết quả phù hợp.'}, status=status.HTTP_404_NOT_FOUND)
-        
-        if time:
-            result_instance.time = time
-        if title:
-            result_instance.title = title
-        if decription:
-            result_instance.decription = decription
-        if service:
-            result_instance.service = service
-
-        result_instance.save()
-    except Result.DoesNotExist:
-        return Response({'message': 'Không tìm thấy kết quả phù hợp.'}, status=status.HTTP_404_NOT_FOUND)
-
-    user.result = result_instance
-    user.save()
-
-    refresh = RefreshToken.for_user(user)
-    user_data = DataSerializer(user).data
     return Response({
-        'message': 'Cập nhật thông tin thành công.',
-        'data': {
-            'access_token': str(refresh.access_token),
-            'user': {
-                'id': user_data['id'],
-                'fullname': user_data['fullname'],
-                'phone': user_data['phone'],
-                'result': {
-                    'time': result_instance.time,
-                    'title': result_instance.title,
-                    'decription': result_instance.decription,
-                    'service': result_instance.service,
-                    'date': result_instance.date,
-                }
-            }
-        }
-    }, status=status.HTTP_200_OK)
+        'message': 'Cập nhật không thành công.',
+        'errors': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdmin])
