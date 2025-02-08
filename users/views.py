@@ -530,12 +530,11 @@ def Update_Result(request):
 def get_all_results(request):
     if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'DOCTOR']:
         return Response({
-        'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
     results = Result.objects.all()
-    serializer = ResultSerializer(results, many=True)
-    return Response({
-        'message': 'Lấy tất cả kết quả thành công.',
-        'data': serializer.data
-    }, status=status.HTTP_200_OK)
+    paginator = CustomPagination()
+    paginated_results = paginator.paginate_queryset(results, request)
+    serializer = ResultSerializer(paginated_results, many=True)
+    return paginator.get_paginated_response(serializer.data)
