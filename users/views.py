@@ -524,8 +524,33 @@ def get_all_results(request):
             'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
-    results = Result.objects.all()
-    paginator = CustomPagination()
-    paginated_results = paginator.paginate_queryset(results, request)
-    serializer = ResultSerializer(paginated_results, many=True)
-    return paginator.get_paginated_response(serializer.data)
+    fullname = request.query_params.get('fullname')
+    account = request.query_params.get('account')
+    service = request.query_params.get('service')
+    doctor = request.query_params.get('doctor')
+
+    filters = Q()
+    if fullname:
+        filters &= Q(fullname__icontains=fullname)
+    if account:
+        filters &= Q(account__icontains=account)
+    if service:
+        filters &= Q(service__icontains=service)
+    if doctor:
+        filters &= Q(doctor__icontains=doctor)
+
+    try:
+        results = Result.objects.filter(filters)
+        if not results.exists():
+            return Response({
+                'message': 'Không tìm thấy kết quả với các điều kiện đã chọn.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        paginator = CustomPagination()
+        paginated_results = paginator.paginate_queryset(results, request)
+        serializer = ResultSerializer(paginated_results, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
