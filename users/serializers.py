@@ -70,7 +70,7 @@ class DataSerializer_booking(serializers.ModelSerializer):
     remark = serializers.CharField(required=False, allow_blank=True, default="") 
     class Meta:
         model = Booking
-        fields = ['fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status']
+        fields = ['fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status', 'createAt', 'updateAt']
     def create(self, validated_data):
         validated_data.setdefault('remark', "")
         data = Data.objects.register_booking(
@@ -82,7 +82,9 @@ class DataSerializer_booking(serializers.ModelSerializer):
             service=validated_data['service'],
             account=validated_data['account'],
             doctor=validated_data['doctor'],
-            status=validated_data['status']
+            status=validated_data['status'],
+            createAt=validated_data['createAt'],
+            updateAt=validated_data['updateAt']
         )
         return data
 
