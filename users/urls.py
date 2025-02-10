@@ -24,5 +24,5 @@ urlpatterns = [
     path('admin/Update_result/', Update_Result, name='Update_Result'),
     path('admin/Get_all_result/', get_all_results, name='get_all_results'),  
     path('doctor/Get_all_result/', Doctor_get_results, name='Doctor_get_results'),  
-    path('doctor/get_all_booking/', Doctor_get_booking, name='Doctor_get_booking')
-]
+    path('doctor/Get_all_booking/', Doctor_get_booking, name='Doctor_get_booking')
+] 
