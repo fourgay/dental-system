@@ -24,8 +24,8 @@ class DataSerializer(serializers.ModelSerializer):
         return data
 
     def validate_phone(self, value):
-        if not re.match(r'^\d{10}$', value):
-            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số.")
+        if not re.match(r'^0\d{9}$', value):
+            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số và bắt đầu bằng 0.")
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
@@ -58,7 +58,7 @@ class DataSerializer_admin(serializers.ModelSerializer):
             birthDay=validated_data.get('birthDay'),
             isBooking=validated_data.get('isBooking', False),
             address=validated_data.get('address')
-        )
+        ) 
         return data
 
     def validate_phone(self, value):
