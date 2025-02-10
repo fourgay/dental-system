@@ -447,7 +447,7 @@ def Update_user(request):
     refresh = RefreshToken.for_user(user)
     user_data = DataSerializer(user).data
     return Response({
-        'message': 'Cập nhật không thành công.',
+        'message': 'Cập nhật thành công.',
         'data': {
             'access_token': str(refresh.access_token),
             'user': {
@@ -455,6 +455,8 @@ def Update_user(request):
                 'fullname': user_data['fullname'],
                 'phone': user_data['phone'],
                 'role': user_data['role'],  
+                'birthDay': user_data['birthDay'],
+                'address': user_data['address'],
                 'avatar': user_data.get('avatar', 'default_avatar.png')
             }
         }
