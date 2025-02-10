@@ -1,7 +1,7 @@
 import {
   createBookingAPI,
+  getAllDoctorAPI,
   getListServicesAPI,
-  getUsersAPI,
 } from "@/services/api";
 import {
   App,
@@ -38,7 +38,7 @@ type FieldType = {
 export const CreateBooking = (props: IProps) => {
   const { openModalCreate, setOpenModalCreate, refreshTable } = props;
   const [listServices, setListServices] = useState<IServices[]>([]);
-  const [listDoctors, setListDoctors] = useState<IUser[]>([]);
+  const [listDoctors, setListDoctors] = useState<IDoctor[]>([]);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const { notification } = App.useApp();
 
@@ -96,9 +96,9 @@ export const CreateBooking = (props: IProps) => {
 
   useEffect(() => {
     const getDoctors = async () => {
-      const res = await getUsersAPI("page=1&role=DOCTOR");
-      if (res?.data) {
-        setListDoctors(res.data?.result);
+      const res = await getAllDoctorAPI();
+      if (res && res?.data) {
+        setListDoctors(res?.data);
       }
     };
     getDoctors();

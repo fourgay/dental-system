@@ -42,6 +42,12 @@ export const AppHeader = () => {
       key: "admin",
     });
   }
+  if (user?.role === "DOCTOR") {
+    itemsDropdown.push({
+      label: <Link to={"/doctor"}>Quản lý công việc</Link>,
+      key: "admin",
+    });
+  }
 
   //tạm logout
   const handleLogout = async () => {

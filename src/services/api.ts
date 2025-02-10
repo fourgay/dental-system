@@ -1,7 +1,7 @@
 import axios from "services/axios.customize";
 
 export const loginAPI = (phone: string, password: string) => {
-  const urlBackend = "/api/accounts/login/";
+  const urlBackend = "/api/accounts/Login/";
   return axios.post<IBackendRes<ILogin>>(urlBackend, { phone, password });
 };
 
@@ -10,7 +10,7 @@ export const registerAPI = async (
   phone: string,
   password: string
 ) => {
-  const urlBackend = "/api/accounts/register/";
+  const urlBackend = "/api/accounts/Register/";
   // await new Promise((resolve) => setTimeout(resolve, 1000)); // Thêm độ trễ
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
     fullname,
@@ -20,22 +20,22 @@ export const registerAPI = async (
 };
 
 export const fetchAccountAPI = () => {
-  const urlBackend = "/api/accounts/user/";
+  const urlBackend = "/api/accounts/User/";
   return axios.get<IBackendRes<IFetchAccount>>(urlBackend);
 };
 
 export const getAllDoctorAPI = () => {
-  const urlBackend = "/api/admin/get-all-doctor/";
+  const urlBackend = "/api/user/Get_all_doctor/";
   return axios.get<IBackendRes<IDoctor[]>>(urlBackend);
 };
 
 export const getListServicesAPI = () => {
-  const urlBackend = "/api/services/";
+  const urlBackend = "/api/Services/";
   return axios.get<IBackendRes<IModePaginate<IServices>>>(urlBackend);
 };
 
 export const getUsersAPI = (query: string) => {
-  const urlBackend = `/api/users/?${query}`;
+  const urlBackend = `/api/admin/Get_all_users/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IUser>>>(urlBackend);
 };
 
@@ -47,7 +47,7 @@ export const createUserAPI = (
   address: string,
   role: string
 ) => {
-  const urlBackend = "/api/admin/admin_register/";
+  const urlBackend = "/api/admin/Register_account/";
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
     phone,
     fullname,
@@ -60,7 +60,7 @@ export const createUserAPI = (
 };
 
 export const deleteUserAPI = (phone: string) => {
-  const urlBackend = `/api/admin/delete/?phone=${phone}`;
+  const urlBackend = `/api/admin/Delete/?phone=${phone}`;
   return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };
 
@@ -84,6 +84,11 @@ export const getBookingAPI = (query: string) => {
   return axios.get<IBackendRes<IModePaginate<IBooking>>>(urlBackend);
 };
 
+export const getDoctorBookingAPI = (query: string) => {
+  const urlBackend = `/api/doctor/get_all_booking/?${query}`;
+  return axios.get<IBackendRes<IModePaginate<IBooking>>>(urlBackend);
+};
+
 export const createBookingAPI = (
   fullname: string,
   date: string,
@@ -94,7 +99,7 @@ export const createBookingAPI = (
   account: string | undefined,
   doctor: string
 ) => {
-  const urlBackend = "/api/admin/register_booking/";
+  const urlBackend = "/api/admin/Register_booking/";
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
     fullname,
     date,
@@ -109,7 +114,7 @@ export const createBookingAPI = (
 };
 
 export const deleteBookingAPI = (phone: string | undefined) => {
-  const urlBackend = `/api/admin/delete-booking/?phone=${phone}`;
+  const urlBackend = `/api/admin/Delete_booking/?phone=${phone}`;
   return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };
 
@@ -139,7 +144,12 @@ export const updateBookingAPI = (
 };
 
 export const getResultAPI = (query: string) => {
-  const urlBackend = `/api/admin/Get-result/?${query}`;
+  const urlBackend = `/api/admin/Get_all_result/?${query}`;
+  return axios.get<IBackendRes<IModePaginate<IResult>>>(urlBackend);
+};
+
+export const getDoctorResultAPI = (query: string) => {
+  const urlBackend = `/api/doctor/Get_all_result/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IResult>>>(urlBackend);
 };
 
@@ -153,7 +163,7 @@ export const createResultAPI = (
   fullname: string | undefined,
   doctor: string | undefined
 ) => {
-  const urlBackend = "/api/admin/create-result/";
+  const urlBackend = "/api/admin/Create_result/";
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
     account,
     date,
@@ -172,7 +182,7 @@ export const updateResultAPI = (
   decriptions: string | undefined
   // doctor: string | undefined
 ) => {
-  const urlBackend = "/api/admin/update-result/";
+  const urlBackend = "/api/admin/Update_result/";
   return axios.put<IBackendRes<IRegister>>(urlBackend, {
     id,
     account,
@@ -184,6 +194,6 @@ export const deleteResultAPI = (
   id: number | undefined,
   account: string | undefined
 ) => {
-  const urlBackend = `/api/admin/delete-result/?id=${id}&account=${account}`;
+  const urlBackend = `/api/admin/Delete_result/?id=${id}&account=${account}`;
   return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };

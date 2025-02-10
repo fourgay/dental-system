@@ -21,6 +21,7 @@ import { ManageBookingPage } from "./pages/admin/manage.booking";
 import { ServicesPage } from "./pages/client/services";
 import { ResultPage } from "./pages/client/result";
 import { ManageResultPage } from "./pages/admin/manage.result";
+import { LayoutDoctor } from "./components/layout/layout.doctor";
 
 const router = createBrowserRouter([
   {
@@ -102,6 +103,36 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ManageUserPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "booking",
+        element: (
+          <ProtectedRoute>
+            <ManageBookingPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "result",
+        element: (
+          <ProtectedRoute>
+            <ManageResultPage />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "doctor",
+    element: <LayoutDoctor />,
+    children: [
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <DashBoardPage />
           </ProtectedRoute>
         ),
       },

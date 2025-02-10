@@ -4,19 +4,22 @@ import { ProTable } from "@ant-design/pro-components";
 import { App, Button, Dropdown, Popconfirm, Tag } from "antd";
 import {
   CheckOutlined,
-  CheckSquareFilled,
-  CloseSquareFilled,
   DeleteTwoTone,
   EditTwoTone,
   EllipsisOutlined,
   EyeOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { deleteBookingAPI, getBookingAPI } from "@/services/api";
+import {
+  deleteBookingAPI,
+  getBookingAPI,
+  getDoctorBookingAPI,
+} from "@/services/api";
 import { CreateBooking } from "./create.booking";
 import { DetailBooking } from "./detail.booking";
 import { UpdateBooking } from "./update.booking";
 import { DoneBooking } from "./done.booking";
+import { useLocation } from "react-router-dom";
 
 type TSearch = {
   service: string;
@@ -39,6 +42,8 @@ export const TableBooking = () => {
 
   const [isDeleteBooking, setIsDeleteBooking] = useState<boolean>(false);
   const { notification } = App.useApp();
+
+  const location = useLocation();
 
   const [meta, setMeta] = useState({
     current: 1,
@@ -108,11 +113,15 @@ export const TableBooking = () => {
       dataIndex: "service",
       align: "center",
     },
-    {
-      title: "Bác sĩ",
-      dataIndex: "doctor",
-      align: "center",
-    },
+    ...(location.pathname.startsWith("/admin/")
+      ? [
+          {
+            title: "Bác sĩ",
+            dataIndex: "doctor",
+            align: "center",
+          } as ProColumns<IBooking>,
+        ]
+      : []),
     {
       title: "Trạng thái",
       dataIndex: "status",
@@ -216,7 +225,10 @@ export const TableBooking = () => {
             }
           }
 
-          const res = await getBookingAPI(query);
+          const res = location.pathname.startsWith("/admin/")
+            ? await getBookingAPI(query)
+            : await getDoctorBookingAPI(query);
+
           if (res.data) {
             setMeta(res.data.meta);
           }

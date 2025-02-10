@@ -47,6 +47,7 @@ declare global {
     fullname: string;
     work: string;
     img: string;
+    phone: string;
   }
 
   interface IServices {

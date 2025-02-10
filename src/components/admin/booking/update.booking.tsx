@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   App,
-  Checkbox,
   DatePicker,
   Divider,
   Form,
@@ -12,10 +11,9 @@ import {
 } from "antd";
 import type { FormProps } from "antd";
 import {
+  getAllDoctorAPI,
   getListServicesAPI,
-  getUsersAPI,
   updateBookingAPI,
-  updateUserAPI,
 } from "@/services/api";
 import dayjs from "dayjs";
 
@@ -48,7 +46,7 @@ export const UpdateBooking = (props: IProps) => {
   } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [listServices, setListServices] = useState<IServices[]>([]);
-  const [listDoctors, setListDoctors] = useState<IUser[]>([]);
+  const [listDoctors, setListDoctors] = useState<IDoctor[]>([]);
   const { notification } = App.useApp();
 
   // https://ant.design/components/form#components-form-demo-control-hooks
@@ -81,15 +79,15 @@ export const UpdateBooking = (props: IProps) => {
     getServices();
   }, []);
 
-  // useEffect(() => {
-  //   const getDoctors = async () => {
-  //     const res = await getUsersAPI("page=1&role=DOCTOR");
-  //     if (res?.data) {
-  //       setListDoctors(res.data?.result);
-  //     }
-  //   };
-  //   getDoctors();
-  // }, []);
+  useEffect(() => {
+    const getDoctors = async () => {
+      const res = await getAllDoctorAPI();
+      if (res && res?.data) {
+        setListDoctors(res?.data);
+      }
+    };
+    getDoctors();
+  }, []);
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const { fullname, date, time, service, doctor, remark } = values;
@@ -221,7 +219,13 @@ export const UpdateBooking = (props: IProps) => {
                 name="doctor"
                 rules={[{ required: true, message: "Vui lòng chọn!" }]}
               >
-                <Input />
+                <Select
+                  style={{ width: 200 }}
+                  placeholder="Chọn"
+                  options={listDoctors?.map((item) => {
+                    return { value: item.fullname, label: item.fullname };
+                  })}
+                />
               </Form.Item>
             </Space.Compact>
           </Form.Item>

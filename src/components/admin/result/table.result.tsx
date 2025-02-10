@@ -11,7 +11,11 @@ import {
   EyeOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { deleteResultAPI, getResultAPI } from "@/services/api";
+import {
+  deleteResultAPI,
+  getDoctorResultAPI,
+  getResultAPI,
+} from "@/services/api";
 import dayjs from "dayjs";
 import { DetailResult } from "./detail.result";
 import { UpdateResult } from "./update.result";
@@ -107,11 +111,15 @@ export const TableResult = () => {
       dataIndex: "service",
       align: "center",
     },
-    {
-      title: "Bác sĩ",
-      dataIndex: "doctor",
-      align: "center",
-    },
+    ...(location.pathname.startsWith("/admin/")
+      ? [
+          {
+            title: "Bác sĩ",
+            dataIndex: "doctor",
+            align: "center",
+          } as ProColumns<IResult>,
+        ]
+      : []),
     {
       title: "Tạo",
       dataIndex: "createdAt",
@@ -214,7 +222,9 @@ export const TableResult = () => {
             }
           }
 
-          const res = await getResultAPI(query);
+          const res = location.pathname.startsWith("/admin/")
+            ? await getResultAPI(query)
+            : await getDoctorResultAPI(query);
 
           if (res.data) {
             setMeta(res.data.meta);
