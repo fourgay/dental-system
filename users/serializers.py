@@ -31,19 +31,20 @@ class DataSerializer_admin(serializers.ModelSerializer):
     class Meta:
         model = Data
         fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address']
+
     def create(self, validated_data):
         validated_data['avatar'] = 'avatars/avatar-1.png'
-        if 'role' in validated_data:
-            data = Data.objects.admin_create_user(
-                fullname=validated_data['fullname'],
-                phone=validated_data['phone'],
-                password=validated_data['password'],
-                role=validated_data['role'],
-                birthDay=validated_data['birthDay'],
-                isBooking=validated_data['isBooking'],
-                address=validated_data['address']
-            )
+        data = Data.objects.admin_create_user(
+            fullname=validated_data['fullname'],
+            phone=validated_data['phone'],
+            password=validated_data['password'],
+            role=validated_data.get('role', 'USER'),  
+            birthDay=validated_data.get('birthDay'),
+            isBooking=validated_data.get('isBooking', False),
+            address=validated_data.get('address')
+        )
         return data
+
     def validate_phone(self, value):
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
