@@ -128,12 +128,32 @@ def get_all_doctors(request):
 
 @api_view(['GET'])
 def get_services(request):
-    services = Service.objects.all()
-    serializer = ServiceSerializer(services, many=True)
-    return Response({
+    name = request.query_params.get('name')
+    title = request.query_params.get('title')
+    detail = request.query_params.get('detail')
+
+    # Tạo bộ lọc
+    filters = Q()
+    if name:
+        filters &= Q(name__icontains=name)
+    if title:
+        filters &= Q(title__icontains=title)
+    if detail:
+        filters &= Q(detail__icontains=detail)
+
+    # Lọc danh sách dịch vụ
+    services = Service.objects.filter(filters)
+
+    # Phân trang
+    paginator = CustomPagination()
+    paginated_services = paginator.paginate_queryset(services, request)
+    
+    serializer = ServiceSerializer(paginated_services, many=True)
+    
+    return paginator.get_paginated_response({
         'message': '',
         'data': serializer.data
-    }, status=status.HTTP_200_OK)
+    })
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def admin_delete_user(request):
