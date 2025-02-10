@@ -3,7 +3,6 @@ import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { App, Button, Dropdown, Popconfirm, Tag } from "antd";
 import {
-  CheckOutlined,
   CheckSquareFilled,
   CloseSquareFilled,
   DeleteTwoTone,
@@ -12,11 +11,14 @@ import {
   EyeOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { deleteBookingAPI, getBookingAPI } from "@/services/api";
-import { CreateBooking } from "./create.booking";
-import { DetailBooking } from "./detail.booking";
-import { UpdateBooking } from "./update.booking";
-import { DoneBooking } from "./done.booking";
+import { deleteResultAPI, getResultAPI } from "@/services/api";
+import dayjs from "dayjs";
+import { DetailResult } from "./detail.result";
+import { UpdateResult } from "./update.result";
+// import { deleteBookingAPI, getBookingAPI } from "@/services/api";
+// import { CreateBooking } from "./create.r";
+// import { DetailBooking } from "./detail.booking";
+// import { UpdateBooking } from "./update.booking";
 
 type TSearch = {
   service: string;
@@ -25,19 +27,16 @@ type TSearch = {
   doctor: string;
 };
 
-export const TableBooking = () => {
+export const TableResult = () => {
   const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
-  const [dataViewDetail, setDataViewDetail] = useState<IBooking | null>(null);
+  const [dataViewDetail, setDataViewDetail] = useState<IResult | null>(null);
 
   const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
 
   const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
-  const [dataUpdate, setDataUpdate] = useState<IBooking | null>(null);
+  const [dataUpdate, setDataUpdate] = useState<IResult | null>(null);
 
-  const [openModalDone, setOpenModalDone] = useState<boolean>(false);
-  const [dataDone, setDataDone] = useState<IBooking | null>(null);
-
-  const [isDeleteBooking, setIsDeleteBooking] = useState<boolean>(false);
+  const [isDeleteResult, setIsDeleteResult] = useState<boolean>(false);
   const { notification } = App.useApp();
 
   const [meta, setMeta] = useState({
@@ -48,9 +47,9 @@ export const TableBooking = () => {
   });
   const actionRef = useRef<ActionType>();
 
-  const handleDeleteBooking = async (phone: string) => {
-    setIsDeleteBooking(true);
-    const res = await deleteBookingAPI(phone);
+  const handleDeleteResult = async (id: number, account: string) => {
+    setIsDeleteResult(true);
+    const res = await deleteResultAPI(id, account);
 
     if (res.message) {
       notification.success({
@@ -64,10 +63,10 @@ export const TableBooking = () => {
         description: res.message,
       });
     }
-    setIsDeleteBooking(false);
+    setIsDeleteResult(false);
   };
 
-  const columns: ProColumns<IBooking>[] = [
+  const columns: ProColumns<IResult>[] = [
     {
       dataIndex: "index",
       valueType: "indexBorder",
@@ -98,10 +97,10 @@ export const TableBooking = () => {
       align: "center",
     },
     {
-      title: "Ngày khám",
-      dataIndex: "date",
-      hideInSearch: true,
+      title: "Kết quả",
+      dataIndex: "title",
       align: "center",
+      hideInSearch: true,
     },
     {
       title: "Dịch vụ",
@@ -114,11 +113,28 @@ export const TableBooking = () => {
       align: "center",
     },
     {
-      title: "Trạng thái",
-      dataIndex: "status",
+      title: "Tạo",
+      dataIndex: "createdAt",
       hideInSearch: true,
       align: "center",
-      render: (_, record) => <Tag color="gold">{record.status}</Tag>,
+      render: (createdAt) => {
+        if (typeof createdAt === "string" || typeof createdAt === "number") {
+          return dayjs(createdAt).format("DD-MM-YYYY");
+        }
+        return "--";
+      },
+    },
+    {
+      title: "Cập nhập",
+      dataIndex: "updatedAt",
+      hideInSearch: true,
+      align: "center",
+      render: (updatedAt) => {
+        if (typeof updatedAt === "string" || typeof updatedAt === "number") {
+          return dayjs(updatedAt).format("DD-MM-YYYY");
+        }
+        return "--";
+      },
     },
     {
       title: "Action",
@@ -144,30 +160,12 @@ export const TableBooking = () => {
             />
             <Popconfirm
               placement="leftTop"
-              title={"Xác nhận đã hoàn thành lịch khám"}
-              description={"Bạn có chắc chắn hoàn thành lịch khám này ?"}
-              onConfirm={() => {
-                setDataDone(entity);
-                setOpenModalDone(true);
-              }}
+              title={"Xác nhận xóa kết quả khám"}
+              description={"Bạn có chắc chắn muốn xóa kết quả khám này ?"}
+              onConfirm={() => handleDeleteResult(entity.id, entity.account)}
               okText="Xác nhận"
               cancelText="Hủy"
-            >
-              <span style={{ cursor: "pointer", marginRight: "20px" }}>
-                <CheckOutlined
-                  twoToneColor="#ff4d4f"
-                  style={{ cursor: "pointer" }}
-                />
-              </span>
-            </Popconfirm>
-            <Popconfirm
-              placement="leftTop"
-              title={"Xác nhận xóa lịch khám"}
-              description={"Bạn có chắc chắn muốn xóa lịch khám này ?"}
-              onConfirm={() => handleDeleteBooking(entity.account)}
-              okText="Xác nhận"
-              cancelText="Hủy"
-              okButtonProps={{ loading: isDeleteBooking }}
+              okButtonProps={{ loading: isDeleteResult }}
             >
               <span style={{ cursor: "pointer" }}>
                 <DeleteTwoTone
@@ -188,7 +186,7 @@ export const TableBooking = () => {
 
   return (
     <>
-      <ProTable<IBooking, TSearch>
+      <ProTable<IResult, TSearch>
         columns={columns}
         actionRef={actionRef}
         cardBordered
@@ -216,7 +214,8 @@ export const TableBooking = () => {
             }
           }
 
-          const res = await getBookingAPI(query);
+          const res = await getResultAPI(query);
+
           if (res.data) {
             setMeta(res.data.meta);
           }
@@ -279,29 +278,17 @@ export const TableBooking = () => {
           </Dropdown>,
         ]}
       />
-      <DetailBooking
+      <DetailResult
         openViewDetail={openViewDetail}
         setOpenViewDetail={setOpenViewDetail}
         dataViewDetail={dataViewDetail}
         setDataViewDetail={setDataViewDetail}
       />
-      <CreateBooking
-        openModalCreate={openModalCreate}
-        setOpenModalCreate={setOpenModalCreate}
-        refreshTable={refreshTable}
-      />
-      <UpdateBooking
+      <UpdateResult
         openModalUpdate={openModalUpdate}
         setOpenModalUpdate={setOpenModalUpdate}
         dataUpdate={dataUpdate}
         setDataUpdate={setDataUpdate}
-        refreshTable={refreshTable}
-      />
-      <DoneBooking
-        openModalDone={openModalDone}
-        setOpenModalDone={setOpenModalDone}
-        dataDone={dataDone}
-        setDataDone={setDataDone}
         refreshTable={refreshTable}
       />
     </>

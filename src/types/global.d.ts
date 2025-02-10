@@ -4,6 +4,7 @@ declare global {
   interface IBackendRes<T> {
     message: string;
     data?: T;
+    error?: string;
   }
 
   interface IModePaginate<T> {
@@ -67,5 +68,19 @@ declare global {
     account: string;
     doctor: string;
     status: string;
+  }
+
+  interface IResult {
+    id: number;
+    account: string;
+    date: string;
+    time: string;
+    title: string;
+    decriptions: string;
+    service: string;
+    doctor: string;
+    fullname: string;
+    createdAt: string;
+    updatedAt: string;
   }
 }

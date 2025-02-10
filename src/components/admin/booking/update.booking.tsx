@@ -1,8 +1,4 @@
-import {
-  createBookingAPI,
-  getListServicesAPI,
-  getUsersAPI,
-} from "@/services/api";
+import { useEffect, useState } from "react";
 import {
   App,
   Checkbox,
@@ -15,74 +11,65 @@ import {
   Space,
 } from "antd";
 import type { FormProps } from "antd";
+import {
+  getListServicesAPI,
+  getUsersAPI,
+  updateBookingAPI,
+  updateUserAPI,
+} from "@/services/api";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
 
 interface IProps {
-  openModalCreate: boolean;
-  setOpenModalCreate: (v: boolean) => void;
+  openModalUpdate: boolean;
+  setOpenModalUpdate: (v: boolean) => void;
   refreshTable: () => void;
+  setDataUpdate: (v: IBooking | null) => void;
+  dataUpdate: IBooking | null;
 }
 
 type FieldType = {
-  account: string;
   fullname: string;
   date: string;
   time: string;
-  forAnother: boolean;
-  remark: string;
   service: string;
   doctor: string;
+  remark: string;
+  account: string;
+  forAnother: boolean;
 };
 
-export const CreateBooking = (props: IProps) => {
-  const { openModalCreate, setOpenModalCreate, refreshTable } = props;
+export const UpdateBooking = (props: IProps) => {
+  const {
+    openModalUpdate,
+    setOpenModalUpdate,
+    refreshTable,
+    setDataUpdate,
+    dataUpdate,
+  } = props;
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [listServices, setListServices] = useState<IServices[]>([]);
   const [listDoctors, setListDoctors] = useState<IUser[]>([]);
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const { notification } = App.useApp();
 
+  // https://ant.design/components/form#components-form-demo-control-hooks
   const [form] = Form.useForm();
 
-  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const {
-      account,
-      fullname,
-      date,
-      time,
-      forAnother,
-      remark,
-      service,
-      doctor,
-    } = values;
-
-    setIsSubmit(true);
-    const res = await createBookingAPI(
-      fullname,
-      dayjs(date).format("DD-MM-YYYY"),
-      time,
-      forAnother,
-      remark,
-      service,
-      account,
-      doctor
-    );
-
-    if (res && res.data) {
-      notification.success({
-        message: res.message,
-      });
-      form.resetFields();
-      setOpenModalCreate(false);
-      refreshTable();
-    } else {
-      notification.error({
-        message: "Đã có lỗi xảy ra",
-        description: res.error,
+  useEffect(() => {
+    if (dataUpdate) {
+      form.setFieldsValue({
+        account: dataUpdate.account,
+        fullname: dataUpdate.fullname,
+        date: dataUpdate.date
+          ? dayjs(dataUpdate.date, "DD-MM-YYYY")
+          : undefined,
+        time: dataUpdate.time.substring(0, 5),
+        service: dataUpdate.service,
+        doctor: dataUpdate.doctor,
+        remark: dataUpdate.remark,
+        forAnother: dataUpdate.forAnother,
       });
     }
-    setIsSubmit(false);
-  };
+  }, [dataUpdate]);
 
   useEffect(() => {
     const getServices = async () => {
@@ -94,71 +81,85 @@ export const CreateBooking = (props: IProps) => {
     getServices();
   }, []);
 
-  useEffect(() => {
-    const getDoctors = async () => {
-      const res = await getUsersAPI("page=1&role=DOCTOR");
-      if (res?.data) {
-        setListDoctors(res.data?.result);
-      }
-    };
-    getDoctors();
-  }, []);
+  // useEffect(() => {
+  //   const getDoctors = async () => {
+  //     const res = await getUsersAPI("page=1&role=DOCTOR");
+  //     if (res?.data) {
+  //       setListDoctors(res.data?.result);
+  //     }
+  //   };
+  //   getDoctors();
+  // }, []);
+
+  const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
+    const { fullname, date, time, service, doctor, remark } = values;
+    const fdate = dayjs(date).format("DD-MM-YYYY");
+    console.log({ fullname, fdate, time, service, doctor, remark });
+
+    setIsSubmit(true);
+    const res = await updateBookingAPI(
+      fullname,
+      dayjs(date).format("DD-MM-YYYY"),
+      time,
+      dataUpdate?.forAnother,
+      remark,
+      service,
+      dataUpdate?.account,
+      doctor,
+      "Đang chờ"
+    );
+    if (res && res.data) {
+      notification.success({
+        message: "Cập nhập thành công",
+        description: res.message,
+      });
+      form.resetFields();
+      setOpenModalUpdate(false);
+      setDataUpdate(null);
+      refreshTable();
+    } else {
+      notification.error({
+        message: "Đã có lỗi xảy ra",
+        description: res.message,
+      });
+    }
+    setIsSubmit(false);
+  };
 
   return (
     <>
       <Modal
-        title="Thêm mới lịch khám"
-        open={openModalCreate}
+        title="Cập nhật lịch khám"
+        open={openModalUpdate}
         onOk={() => {
           form.submit();
         }}
         onCancel={() => {
-          setOpenModalCreate(false);
+          setOpenModalUpdate(false);
+          setDataUpdate(null);
           form.resetFields();
         }}
-        okText={"Tạo mới"}
+        okText={"Cập nhật"}
         cancelText={"Hủy"}
         confirmLoading={isSubmit}
+        destroyOnClose={true}
       >
         <Divider />
 
         <Form
           form={form}
-          name="basic"
+          name="form-update"
           style={{ maxWidth: 600 }}
           onFinish={onFinish}
           autoComplete="off"
-          initialValues={{
-            forAnother: false,
-          }}
         >
-          <Form.Item>
-            <Space.Compact>
-              <Form.Item<FieldType>
-                labelCol={{ span: 24 }}
-                label="Tài khoản"
-                name="account"
-                rules={[
-                  { required: true, message: "Vui lòng nhập số tài khoản!" },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item<FieldType>
-                labelCol={{ span: 24 }}
-                label="Họ và tên"
-                name="fullname"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập họ và tên người khám!",
-                  },
-                ]}
-              >
-                <Input />
-              </Form.Item>
-            </Space.Compact>
+          <Form.Item<FieldType>
+            labelCol={{ span: 24 }}
+            label="Tên hiển thị"
+            name="fullname"
+            rules={[{ required: true, message: "Vui lòng nhập tên hiển thị!" }]}
+          >
+            <Input />
           </Form.Item>
 
           <Form.Item>
@@ -167,12 +168,11 @@ export const CreateBooking = (props: IProps) => {
                 labelCol={{ span: 24 }}
                 label="Ngày khám"
                 name="date"
-                rules={[
-                  { required: true, message: "Vui lòng nhập ngày khám!" },
-                ]}
+                rules={[{ required: true, message: "Vui lòng chọn!" }]}
               >
                 <DatePicker format={"DD-MM-YYYY"} />
               </Form.Item>
+
               <Form.Item<FieldType>
                 labelCol={{ span: 24 }}
                 label="Thời gian khám"
@@ -207,6 +207,12 @@ export const CreateBooking = (props: IProps) => {
                   options={listServices?.map((item) => {
                     return { value: item.title, label: item.title };
                   })}
+                  // options={[
+                  //   { value: "08:00", label: "8:00 AM" },
+                  //   { value: "09:00", label: "9:00 AM" },
+                  //   { value: "10:00", label: "10:00 AM" },
+                  //   { value: "11:00", label: "11:00 AM" },
+                  // ]}
                 />
               </Form.Item>
               <Form.Item<FieldType>
@@ -215,23 +221,9 @@ export const CreateBooking = (props: IProps) => {
                 name="doctor"
                 rules={[{ required: true, message: "Vui lòng chọn!" }]}
               >
-                <Select
-                  style={{ width: 200 }}
-                  placeholder="Chọn"
-                  options={listDoctors?.map((item) => {
-                    return { value: item.fullname, label: item.fullname };
-                  })}
-                />
+                <Input />
               </Form.Item>
             </Space.Compact>
-          </Form.Item>
-
-          <Form.Item<FieldType>
-            labelCol={{ span: 24 }}
-            name="forAnother"
-            valuePropName="checked"
-          >
-            <Checkbox>Đăng ký cho người thân</Checkbox>
           </Form.Item>
 
           <Form.Item<FieldType>

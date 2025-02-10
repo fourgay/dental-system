@@ -124,7 +124,7 @@ export const TableUser = () => {
             />
             <EditTwoTone
               twoToneColor="#f57800"
-              style={{ cursor: "pointer", margin: "0 35px" }}
+              style={{ cursor: "pointer", margin: "0 20px" }}
               onClick={() => {
                 setDataUpdate(entity);
                 setOpenModalUpdate(true);
@@ -169,8 +169,6 @@ export const TableUser = () => {
             collapsed ? "Mở rộng +" : "Thu gọn -",
         }}
         request={async (params, sort, filter) => {
-          console.log(params, sort, filter);
-
           let query = "";
           if (params) {
             query += `page=${params?.current ?? 1}`;

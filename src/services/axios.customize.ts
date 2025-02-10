@@ -11,11 +11,7 @@ instance.interceptors.request.use(
     const token = localStorage.getItem("access_token");
     const auth = token ? `Bearer ${token}` : "";
     // config.headers["Authorization"] = auth;
-    if (
-      !config.url?.includes("/login") &&
-      !config.url?.includes("/register") &&
-      !config.url?.includes("/services")
-    ) {
+    if (!config.url?.includes("/login") && !config.url?.includes("/services")) {
       config.headers["Authorization"] = auth;
     }
     return config;

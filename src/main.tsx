@@ -19,6 +19,8 @@ import DashBoardPage from "./pages/admin/dashboard";
 import { ManageUserPage } from "./pages/admin/manage.user";
 import { ManageBookingPage } from "./pages/admin/manage.booking";
 import { ServicesPage } from "./pages/client/services";
+import { ResultPage } from "./pages/client/result";
+import { ManageResultPage } from "./pages/admin/manage.result";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +79,10 @@ const router = createBrowserRouter([
         path: "login",
         element: <LoginPage />,
       },
+      {
+        path: "ketqua",
+        element: <ResultPage />,
+      },
     ],
   },
   {
@@ -104,6 +110,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ManageBookingPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "result",
+        element: (
+          <ProtectedRoute>
+            <ManageResultPage />
           </ProtectedRoute>
         ),
       },

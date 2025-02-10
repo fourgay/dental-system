@@ -43,6 +43,11 @@ export const LayoutAdmin = () => {
       key: "/admin/booking",
       icon: <SnippetsOutlined />,
     },
+    {
+      label: <Link to="/admin/result">Quản lý kết quả</Link>,
+      key: "/admin/result",
+      icon: <SnippetsOutlined />,
+    },
   ];
 
   const itemsDropdown = [

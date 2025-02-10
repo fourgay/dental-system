@@ -16,7 +16,7 @@ export const ServicesPage = () => {
       setIsLoading(true);
       const res = await getListServicesAPI();
       if (res?.data) {
-        setListServices(res.data);
+        setListServices(res.data.result);
       }
       setIsLoading(false);
     };
@@ -26,14 +26,15 @@ export const ServicesPage = () => {
   return (
     <div className="services-page">
       <div className="list-services">
-        <div className="list-services__title">Services</div>
+        <div className="list-services__title">Dịch Vụ</div>
         <div className="list-services__detail">
-          We use only the best quality materials on the market in order to
-          provide the best products to our patients.
+          Các dịch vụ nha khoa toàn diện của chúng tôi bao gồm từ chăm sóc răng
+          miệng tổng quát đến nha khoa thẩm mỹ và phục hình, giúp bạn có một nụ
+          cười khỏe đẹp và tự tin hơn mỗi ngày!
         </div>
         <Spin spinning={isLoading}>
           <div className="list-services__content">
-            {listServices.map((item, index) => (
+            {listServices?.map((item, index) => (
               <div className="card">
                 <img src={item.img} />
                 <div className="name">{item.title}</div>

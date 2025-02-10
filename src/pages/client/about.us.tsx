@@ -20,17 +20,18 @@ export const AboutUsPage = () => {
           <img src={introduce} />
         </div>
         <div className="introduce__content">
-          <div className="title">Our Mission</div>
+          <div className="title">Sứ mệnh của chúng tôi</div>
           <div className="detail">
             <div>
-              At Northern Heights Dental, people come first. We help each of our
-              patients to achieve optimal wellness and health by using a whole
-              body approach to oral health. This means not just focusing on
-              cavities, but focusing on; cranio-facial development, bite and
-              joint balance, oral flora, proper muscle balance/function, and
-              bio-compatibility of dental materials. Great care and planning
-              ensure that everything we do helps promote overall health and well
-              being.
+              Tại ThreeGay, con người luôn là ưu tiên hàng đầu. Chúng tôi giúp
+              từng bệnh nhân đạt được sức khỏe tối ưu bằng cách tiếp cận toàn
+              diện đối với sức khỏe răng miệng. Điều này không chỉ dừng lại ở
+              việc điều trị sâu răng mà còn chú trọng đến sự phát triển sọ mặt,
+              cân bằng khớp cắn và khớp hàm, hệ vi khuẩn khoang miệng, chức năng
+              cơ hàm và tính tương thích sinh học của vật liệu nha khoa. Sự chăm
+              sóc tận tâm và kế hoạch điều trị kỹ lưỡng của chúng tôi luôn hướng
+              đến mục tiêu nâng cao sức khỏe tổng thể và chất lượng cuộc sống
+              cho bệnh nhân.
             </div>
             <div
               style={{
@@ -40,29 +41,34 @@ export const AboutUsPage = () => {
                 textTransform: "capitalize",
               }}
             >
-              More than anything else we love creating happy, healthy smiles.
+              Hơn bất cứ điều gì, chúng tôi yêu thích việc mang đến những nụ
+              cười rạng rỡ và khỏe mạnh!
             </div>
             <div>
-              We work hard to stay up to date with the most advanced techniques
-              and technologies to ensure that our patients receive the best care
-              possible. Our office utilizes 3D CBCT radiographs to allow for
-              guided surgical and endodontic protocols. This enables these
-              procedures to performed digitally before they are performed
-              surgically to ensure optimal results. 3D imaging also is utilized
-              for the analysis of airway growth and development. We also use the
-              best 3D optical scanner for all of our dental restoration and
-              Invisalign impressions. Dr Williams is a strong advocate for using
-              microsurgical techniques, this means less discomfort and faster
-              healing times.
+              Chúng tôi luôn nỗ lực cập nhật những kỹ thuật và công nghệ tiên
+              tiến nhất để đảm bảo bệnh nhân nhận được sự chăm sóc tốt nhất.
+              Phòng khám sử dụng công nghệ chụp X-quang 3D CBCT, giúp hỗ trợ
+              phẫu thuật và điều trị nội nha có hướng dẫn, cho phép mô phỏng kỹ
+              thuật số trước khi thực hiện phẫu thuật nhằm đạt kết quả tối ưu.
+              Hình ảnh 3D cũng được ứng dụng trong phân tích sự phát triển và
+              tăng trưởng đường thở. Ngoài ra, chúng tôi sử dụng máy quét quang
+              học 3D hiện đại nhất cho các phục hình nha khoa và lấy dấu
+              Invisalign. Bác sĩ Williams đặc biệt ủng hộ việc áp dụng kỹ thuật
+              vi phẫu, giúp giảm khó chịu và rút ngắn thời gian hồi phục cho
+              bệnh nhân.
             </div>
           </div>
         </div>
       </div>
       <div className="specialists">
-        <div className="specialists__title">Meet our specialists</div>
+        <div className="specialists__title">
+          {" "}
+          Gặp gỡ các chuyên gia nha khoa của chúng tôi!
+        </div>
         <div className="specialists__detail">
-          We use only the best quality materials on the market in order to
-          provide the best products to our patients.
+          Hãy gặp gỡ đội ngũ chuyên gia nha khoa giàu kinh nghiệm của chúng tôi,
+          những người luôn sẵn sàng mang đến cho bạn sự chăm sóc tận tâm và chất
+          lượng nhất!
         </div>
         <div className="specialists__content">
           <div className="card">
@@ -72,16 +78,14 @@ export const AboutUsPage = () => {
             <div className="card-content">
               <div className="title">DR. Brent</div>
               <div className="detail">
-                Dr. Brent provides general and cosmetic dentistry services at
-                Northern Heights Dental in Flagstaff, Arizona. He has extensive
-                experience in general and cosmetic dentistry, including full
-                mouth restoration, dental veneers, crowns, bridges, dental
-                implants, wisdom teeth extractions, Invisalign, and dentures.
-                Dr. Brent and his younger sister grew up in Massachusetts with a
-                mother who worked as a hygienist and a grandfather who was a
-                general dentist.
+                Bác sĩ Brent cung cấp các dịch vụ nha khoa tổng quát và thẩm mỹ
+                tại Northern Heights Dental ở Flagstaff, Arizona. Ông có nhiều
+                kinh nghiệm trong các lĩnh vực như phục hình toàn hàm, mặt dán
+                sứ, mão răng, cầu răng, cấy ghép implant, nhổ răng khôn,
+                Invisalign và răng giả. Bác sĩ Brent và em gái lớn lên tại
+                Massachusetts trong một gia đình có mẹ là chuyên viên vệ sinh
+                răng miệng và ông ngoại là bác sĩ nha khoa tổng quát.
               </div>
-              <Button type="primary">Đặt lịch với bác sĩ này!</Button>
             </div>
           </div>
           <div className="card">
@@ -91,15 +95,16 @@ export const AboutUsPage = () => {
             <div className="card-content">
               <div className="title">DR. Ashish J. Vashi</div>
               <div className="detail">
-                Dr. Ashish J. Vashi has been practicing general, cosmetic and
-                implant dentistry in California for over 18 years. He believes
-                in giving the highest quality dentistry in a comfortable, caring
-                environment. He strives to get to know his patients, not just
-                their teeth.including full mouth restoration, dental veneers,
-                crowns, bridges, dental implants, wisdom teeth extractions,
-                Invisalign, and dentures.
+                Bác sĩ Ashish J. Vashi đã có hơn 18 năm kinh nghiệm trong lĩnh
+                vực nha khoa tổng quát, thẩm mỹ và cấy ghép tại California. Ông
+                luôn đặt chất lượng điều trị lên hàng đầu, mang đến cho bệnh
+                nhân sự chăm sóc tận tâm trong một môi trường thoải mái. Bác sĩ
+                Vashi không chỉ quan tâm đến tình trạng răng miệng mà còn chú
+                trọng đến từng bệnh nhân với sự thấu hiểu và gắn kết. Ông có
+                chuyên môn sâu rộng trong các dịch vụ như phục hình toàn hàm,
+                mặt dán sứ, mão răng, cầu răng, cấy ghép implant, nhổ răng khôn,
+                Invisalign và răng giả.
               </div>
-              <Button type="primary">Đặt lịch với bác sĩ này!</Button>
             </div>
           </div>
           <div className="card">
@@ -109,26 +114,26 @@ export const AboutUsPage = () => {
             <div className="card-content">
               <div className="title">Dr. James Connors</div>
               <div className="detail">
-                When it comes to oral surgeons, few can compare to the
-                modern-day legend that is Dr. James Connors. As our oral and
-                maxillofacial surgery specialist, Dr. Connors will brighten your
-                day with his seasoned expertise, welcoming conversations, and –
-                of course – his signature rotation of fun bowties. Dr. Connors
-                and his younger sister grew up in Massachusetts with a mother
-                who worked as a hygienist and a grandfather who was a general
-                dentist.
+                Khi nhắc đến các bác sĩ phẫu thuật răng hàm mặt, ít ai có thể
+                sánh được với danh tiếng của bác sĩ James Connors. Là chuyên gia
+                phẫu thuật miệng và hàm mặt của chúng tôi, bác sĩ Connors không
+                chỉ mang đến chuyên môn dày dặn mà còn tạo cảm giác thoải mái
+                cho bệnh nhân bằng những cuộc trò chuyện thân thiện và – tất
+                nhiên – bộ sưu tập nơ bướm đầy phong cách của mình. Bác sĩ
+                Connors và em gái lớn lên tại Massachusetts trong một gia đình
+                có mẹ là chuyên viên vệ sinh răng miệng và ông ngoại là bác sĩ
+                nha khoa tổng quát.
               </div>
-              <Button type="primary">Đặt lịch với bác sĩ này!</Button>
             </div>
           </div>
         </div>
       </div>
 
       <div className="technology">
-        <div className="technology__title">Latest Technology</div>
+        <div className="technology__title">Công nghệ tiên tiến nhất</div>
         <div className="technology__detail">
-          Thanks to major technological advancements, dentistry allows treating
-          the most complex cases with less time and more efficiency.
+          Nhờ những bước tiến vượt bậc trong công nghệ, nha khoa ngày nay có thể
+          xử lý những ca phức tạp nhất một cách nhanh chóng và hiệu quả hơn.
         </div>
         <div className="technology__content">
           <div className="img">
@@ -143,26 +148,26 @@ export const AboutUsPage = () => {
                 marginBottom: "20px",
               }}
             >
-              The Future of Dentistry is Digital:
+              Tương lai của nha khoa là công nghệ kỹ thuật số!
             </div>
             <div>
               <div>
-                Dentists today already utilize software to capture insights in
-                clinical decision-making. These practices will continue to
-                develop to integrate AI algorithms that enable clinicians to
-                find the best modalities for their patients.
+                Ngày nay, các nha sĩ đã sử dụng phần mềm để thu thập dữ liệu hỗ
+                trợ quyết định lâm sàng. Trong tương lai, những công nghệ này sẽ
+                tiếp tục phát triển, tích hợp thuật toán AI giúp bác sĩ tìm ra
+                phương pháp điều trị tối ưu nhất cho bệnh nhân.
               </div>
-              <div style={{ margin: "30px 0" }}>
-                In the 21st century, digital radiographs and 3D imaging have
-                become the standard of dental care. Using an intraoral scanner
-                with digitized data for 3D dental impressions (vs. polyvinyl
-                siloxane and rubber base impressions) for a dental crown is now
-                commonplace.
+              <div style={{ margin: "20px 0" }}>
+                Trong thế kỷ 21, chụp X-quang kỹ thuật số và hình ảnh 3D đã trở
+                thành tiêu chuẩn trong chăm sóc nha khoa. Việc sử dụng máy quét
+                trong miệng với dữ liệu số hóa để lấy dấu răng 3D cho mão răng
+                (thay vì sử dụng chất lấy dấu polyvinyl siloxane hoặc cao su)
+                nay đã trở nên phổ biến.
               </div>
               <div>
-                Artificial intelligence is laying the groundwork for the future
-                of the dental industry. Dental robots can now perform functions
-                such as filling cavities and cleaning or extracting teeth
+                Trí tuệ nhân tạo đang đặt nền móng cho tương lai của ngành nha
+                khoa. Giờ đây, robot nha khoa có thể thực hiện các nhiệm vụ như
+                trám răng, làm sạch và thậm chí nhổ răng.
               </div>
             </div>
           </div>

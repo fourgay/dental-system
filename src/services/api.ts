@@ -31,13 +31,14 @@ export const getAllDoctorAPI = () => {
 
 export const getListServicesAPI = () => {
   const urlBackend = "/api/services/";
-  return axios.get<IBackendRes<IServices[]>>(urlBackend);
+  return axios.get<IBackendRes<IModePaginate<IServices>>>(urlBackend);
 };
 
 export const getUsersAPI = (query: string) => {
   const urlBackend = `/api/users/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IUser>>>(urlBackend);
 };
+
 export const createUserAPI = (
   phone: string,
   fullname: string,
@@ -89,13 +90,42 @@ export const createBookingAPI = (
   time: string,
   forAnother: boolean,
   remark: string,
-  service: string,
-  account: string,
-  doctor: string,
-  status: string
+  service: string | undefined,
+  account: string | undefined,
+  doctor: string
 ) => {
   const urlBackend = "/api/admin/register_booking/";
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
+    fullname,
+    date,
+    time,
+    forAnother,
+    remark,
+    service,
+    account,
+    doctor,
+    status: "Đang chờ",
+  });
+};
+
+export const deleteBookingAPI = (phone: string | undefined) => {
+  const urlBackend = `/api/admin/delete-booking/?phone=${phone}`;
+  return axios.delete<IBackendRes<IRegister>>(urlBackend);
+};
+
+export const updateBookingAPI = (
+  fullname: string,
+  date: string,
+  time: string,
+  forAnother: boolean | undefined,
+  remark: string,
+  service: string,
+  account: string | undefined,
+  doctor: string,
+  status: string
+) => {
+  const urlBackend = "/api/admin/update-booking/";
+  return axios.put<IBackendRes<IRegister>>(urlBackend, {
     fullname,
     date,
     time,
@@ -108,7 +138,52 @@ export const createBookingAPI = (
   });
 };
 
-export const deleteBookingAPI = (phone: string) => {
-  const urlBackend = `/api/admin/delete-booking/?phone=${phone}`;
+export const getResultAPI = (query: string) => {
+  const urlBackend = `/api/admin/Get-result/?${query}`;
+  return axios.get<IBackendRes<IModePaginate<IResult>>>(urlBackend);
+};
+
+export const createResultAPI = (
+  account: string | undefined,
+  date: string | undefined,
+  time: string | undefined,
+  title: string,
+  decriptions: string,
+  service: string | undefined,
+  fullname: string | undefined,
+  doctor: string | undefined
+) => {
+  const urlBackend = "/api/admin/create-result/";
+  return axios.post<IBackendRes<IRegister>>(urlBackend, {
+    account,
+    date,
+    time,
+    title,
+    decriptions,
+    service,
+    fullname,
+    doctor,
+  });
+};
+
+export const updateResultAPI = (
+  id: number | undefined,
+  account: string | undefined,
+  decriptions: string | undefined
+  // doctor: string | undefined
+) => {
+  const urlBackend = "/api/admin/update-result/";
+  return axios.put<IBackendRes<IRegister>>(urlBackend, {
+    id,
+    account,
+    decriptions,
+  });
+};
+
+export const deleteResultAPI = (
+  id: number | undefined,
+  account: string | undefined
+) => {
+  const urlBackend = `/api/admin/delete-result/?id=${id}&account=${account}`;
   return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };

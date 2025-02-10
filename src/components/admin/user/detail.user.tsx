@@ -1,7 +1,6 @@
 import { CheckSquareFilled, CloseSquareFilled } from "@ant-design/icons";
 import { Avatar, Badge, DatePicker, Descriptions, Drawer } from "antd";
 import dayjs from "dayjs";
-import { useEffect } from "react";
 
 interface IProps {
   openViewDetail: boolean;
@@ -18,9 +17,7 @@ export const DetailUser = (props: IProps) => {
     setDataViewDetail,
   } = props;
 
-  const avatarURL = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${
-    dataViewDetail?.avatar
-  }`;
+  const urlAvatar = import.meta.env.VITE_URL_AVATAR + dataViewDetail?.avatar;
 
   return (
     <>
@@ -31,6 +28,7 @@ export const DetailUser = (props: IProps) => {
           setOpenViewDetail(false);
           setDataViewDetail(null);
         }}
+        destroyOnClose={true}
         open={openViewDetail}
       >
         <Descriptions title="Thông tin user" bordered column={1}>
@@ -44,7 +42,7 @@ export const DetailUser = (props: IProps) => {
 
           <Descriptions.Item label="Ngày sinh">
             <DatePicker
-              defaultValue={dayjs("02-01-2005", "DD-MM-YYYY")}
+              defaultValue={dayjs(dataViewDetail?.birthDay, "DD-MM-YYYY")}
               format={"DD-MM-YYYY"}
               disabled
             />
@@ -67,7 +65,7 @@ export const DetailUser = (props: IProps) => {
           </Descriptions.Item>
 
           <Descriptions.Item label="Avatar">
-            <Avatar size={40} src={avatarURL}></Avatar>
+            <Avatar size={40} src={urlAvatar}></Avatar>
           </Descriptions.Item>
         </Descriptions>
       </Drawer>

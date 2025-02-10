@@ -3,10 +3,13 @@ import "./app.header.scss";
 import { FaFoursquare } from "react-icons/fa";
 import { Affix, Button, Dropdown, Space } from "antd";
 import { userCurrentApp } from "../context/app.context";
+import ManageAccount from "../account";
+import { useState } from "react";
 
 export const AppHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [openManageAccount, setOpenManageAccount] = useState<boolean>(false);
   const { isAuthenticated, user, setIsAuthenticated, setUser } =
     userCurrentApp();
 
@@ -15,7 +18,9 @@ export const AppHeader = () => {
       label: (
         <label
           style={{ cursor: "pointer" }}
-          onClick={() => alert("chưa phát triển")}
+          onClick={() => {
+            setOpenManageAccount(true);
+          }}
         >
           Quản lý tài khoản
         </label>
@@ -40,15 +45,6 @@ export const AppHeader = () => {
 
   //tạm logout
   const handleLogout = async () => {
-    //todo
-    // const res = await logoutAPI();
-    // if (res.data) {
-    //   setUser(null);
-    //   setCarts([]);
-    //   setIsAuthenticated(false);
-    //   localStorage.removeItem("access_token");
-    //   localStorage.removeItem("carts");
-    // }
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem("access_token");
@@ -126,6 +122,10 @@ export const AppHeader = () => {
           </header>
         </div>
       </Affix>
+      <ManageAccount
+        isModalOpen={openManageAccount}
+        setIsModalOpen={setOpenManageAccount}
+      />
     </>
   );
 };
