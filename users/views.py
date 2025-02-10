@@ -254,18 +254,23 @@ def Admin_Update_user(request):
     birthDay = request.data.get('birthDay')
     address = request.data.get('address')
     avatar = request.data.get('avatar')
+    password = request.data.get('password')
 
-    if  not phone:
+    if not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = Data.objects.get(phone=phone)
     except Data.DoesNotExist:
         return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+    
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
     user.avatar = avatar if avatar else user.avatar
+    if password:
+        user.set_password(password)  # Hash the new password
     user.save()
+    
     serializer = DataSerializer(user)
     return Response({
         'message': 'Cập nhật thông tin thành công.',
@@ -555,6 +560,45 @@ def get_all_results(request):
         filters &= Q(service__icontains=service)
     if doctor:
         filters &= Q(doctor__icontains=doctor)
+
+    try:
+        results = Result.objects.filter(filters)
+        if not results.exists():
+            return Response({
+                'message': 'Không tìm thấy kết quả với các điều kiện đã chọn.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        paginator = CustomPagination()
+        paginated_results = paginator.paginate_queryset(results, request)
+        serializer = ResultSerializer(paginated_results, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#api doctor
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsDoctor])
+def Doctor_get_results(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'DOCTOR':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền DOCTOR để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    doctor_phone = request.user.phone  # Lấy số điện thoại của bác sĩ từ request user
+
+    fullname = request.query_params.get('fullname')
+    account = request.query_params.get('account')
+    service = request.query_params.get('service')
+
+    filters = Q(doctor=account)  # Lọc kết quả theo số điện thoại của bác sĩ
+    if fullname:
+        filters &= Q(fullname__icontains=fullname)
+    if account:
+        filters &= Q(account__icontains=account)
+    if service:
+        filters &= Q(service__icontains=service)
 
     try:
         results = Result.objects.filter(filters)

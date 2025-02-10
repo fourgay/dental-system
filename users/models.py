@@ -127,6 +127,9 @@ class Booking(models.Model):
     account = models.CharField(max_length=255)
     doctor = models.CharField(max_length=255)
     status = models.CharField(max_length=255, null=True, blank=True)
+    Doctor_phone = models.CharField(max_length=255, default='Unknown Phone')
+    updatedAt = models.DateTimeField(auto_now=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.fullname
@@ -140,5 +143,6 @@ class Result(models.Model):
     service = models.TextField(max_length=255)
     fullname = models.CharField(max_length=255)
     doctor = models.CharField(max_length=255, default='Unknown Doctor')
+    Doctor_phone = models.CharField(max_length=255, default='Unknown Phone')
     updatedAt = models.DateTimeField(auto_now=True)
     createdAt = models.DateTimeField(auto_now_add=True)
