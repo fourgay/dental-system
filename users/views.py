@@ -605,7 +605,7 @@ def Doctor_get_results(request):
     account = request.query_params.get('account')
     service = request.query_params.get('service')
 
-    filters = Q(doctor=account)  # Lọc kết quả theo số điện thoại của bác sĩ
+    filters = Q(Doctor_phone=doctor_phone)  # Lọc kết quả theo số điện thoại của bác sĩ
     if fullname:
         filters &= Q(fullname__icontains=fullname)
     if account:

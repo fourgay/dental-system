@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Data, Service, Booking
+from .models import Data, Service, Booking, Result
 
 class DataAdmin(admin.ModelAdmin):
     list_display = ('fullname', 'phone', 'role', 'is_staff', 'is_active', 'is_superuser')
@@ -29,3 +29,4 @@ class BookingAdmin(admin.ModelAdmin):
 admin.site.register(Data, DataAdmin)
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(Booking, BookingAdmin)
+admin.site.register(Result)
