@@ -112,19 +112,33 @@ def get_user_profile(request, user_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_doctors(request):
-    if request.user.role != 'ADMIN':
-            messages = [
-                'Bạn phải là ADMIN mới có thể truy cập được API này 👍'
-                'aaa'
-            ]
+    fullname = request.query_params.get('fullname')
+    phone = request.query_params.get('phone')
+    work = request.query_params.get('work')
+
+    filters = Q(role='DOCTOR')  # Lọc kết quả theo vai trò bác sĩ
+    if fullname:
+        filters &= Q(fullname__icontains=fullname)
+    if phone:
+        filters &= Q(phone__icontains=phone)
+    if work:
+        filters &= Q(work__icontains=work)
+
+    try:
+        doctors = Data.objects.filter(filters)
+        if not doctors.exists():
             return Response({
-                'message': random.choice(messages)  
-            }, status=status.HTTP_401_UNAUTHORIZED)
-    doctors = Data.objects.filter(role='DOCTOR')
-    paginator = CustomPagination()
-    paginated_doctors = paginator.paginate_queryset(doctors, request)
-    serializer = DoctorSerializer(paginated_doctors, many=True)
-    return paginator.get_paginated_response(serializer.data)
+                'message': 'Không tìm thấy kết quả với các điều kiện đã chọn.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        paginator = CustomPagination()
+        paginated_doctors = paginator.paginate_queryset(doctors, request)
+        serializer = DoctorSerializer(paginated_doctors, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 def get_services(request):
@@ -587,7 +601,6 @@ def Doctor_get_results(request):
         }, status=status.HTTP_401_UNAUTHORIZED)
     
     doctor_phone = request.user.phone  # Lấy số điện thoại của bác sĩ từ request user
-
     fullname = request.query_params.get('fullname')
     account = request.query_params.get('account')
     service = request.query_params.get('service')
