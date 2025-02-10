@@ -10,7 +10,7 @@ from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
-
+ 
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
@@ -438,7 +438,7 @@ def Update_user(request):
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
-    if password:
+    if password: 
         user.set_password(password)
     user.save()
     refresh = RefreshToken.for_user(user)

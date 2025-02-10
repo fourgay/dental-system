@@ -40,7 +40,6 @@ class DataSerializer(serializers.ModelSerializer):
 class DataSerializer_admin(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     birthDay = serializers.CharField(required=False, allow_blank=True)
-    isBooking = serializers.BooleanField(required=False, default=False)
     phone = serializers.CharField(required=True)  # Change to CharField to allow custom validation
     work = serializers.CharField(required=True)
 
@@ -56,14 +55,13 @@ class DataSerializer_admin(serializers.ModelSerializer):
             password=validated_data['password'],
             role=validated_data.get('role', 'USER'),  
             birthDay=validated_data.get('birthDay'),
-            isBooking=validated_data.get('isBooking', False),
             address=validated_data.get('address')
         ) 
         return data
 
     def validate_phone(self, value):
-        if not re.match(r'^\d{10}$', value):
-            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số.")
+        if not re.match(r'^0\d{9}$', value):
+            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số và bắt đầu bằng 0.")
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
@@ -78,7 +76,7 @@ class DataSerializer_admin(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Data
-        fields = ['fullname', 'work', 'img', 'phone']
+        fields = ['id','fullname', 'work', 'img', 'phone']
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -96,7 +94,7 @@ class DataSerializer_booking(serializers.ModelSerializer):
 
     class Meta:
         model = Booking
-        fields = ['fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status', 'createAt', 'updateAt']
+        fields = ['id','fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status', 'createAt', 'updateAt']
 
     def create(self, validated_data):
         validated_data.setdefault('remark', "")

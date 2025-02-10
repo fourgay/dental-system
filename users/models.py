@@ -18,7 +18,7 @@ class CustomUserManager(BaseUserManager):
         if password:
             data.set_password(password)
         data.save(using=self._db)        
-        return data
+        return data 
 
     def create_superuser(self, fullname, phone, password=None):
         data = self.create_user(fullname, phone, password)
@@ -28,16 +28,25 @@ class CustomUserManager(BaseUserManager):
         data.save(using=self._db)
         return data
     
-    def admin_create_user(self, fullname, phone, password=None, role='USER', birthDay=None, isBooking=False, address=None):
+    def admin_create_user(self, fullname, phone, password=None, role='USER', birthDay=None, isBooking=False, address=None, service=None):
         if not fullname:
             raise ValueError('Tên không được để trống!')
         if not phone:
             raise ValueError('Số điện thoại không được để trống!')
-        data = self.model(fullname=fullname, phone=phone, role=role, birthDay=birthDay, isBooking=isBooking, address=address)
+        data = self.model(fullname=fullname, phone=phone, role=role, birthDay=birthDay, address=address)
         data.set_password(password)
         if role == 'admin':
             data.is_staff = True
             data.is_superuser = True
+        if role == 'DOCTOR':
+            data.is_staff = True
+        if service:
+            from .models import Service  # Import ở đây để tránh lỗi vòng lặp import
+            service_instance = Service.objects.filter(id=service).first()
+            if service_instance:
+                data.work = service_instance.name  # Gán tên service vào work của bác sĩ
+            else:
+                raise ValueError(f"Không tìm thấy Service với ID {service}!") 
         data.save(using=self._db)
         return data
 
