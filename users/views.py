@@ -134,7 +134,10 @@ def get_all_doctors(request):
         paginator = CustomPagination()
         paginated_doctors = paginator.paginate_queryset(doctors, request)
         serializer = DoctorSerializer(paginated_doctors, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        return Response({
+            'message': '',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({
             'error': f'Đã xảy ra lỗi: {str(e)}'
