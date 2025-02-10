@@ -150,10 +150,7 @@ def get_services(request):
     
     serializer = ServiceSerializer(paginated_services, many=True)
     
-    return paginator.get_paginated_response({
-        'message': '',
-        'data': serializer.data
-    })
+    return paginator.get_paginated_response(serializer.data)
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 def admin_delete_user(request):
