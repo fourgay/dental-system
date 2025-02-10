@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import register, login, Update_user, Admin_Update_user, update_booking, delete_booking, Register_booking, \
     get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
-    admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results,Doctor_get_results
+    admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results,Doctor_get_results,Doctor_get_booking
 
 urlpatterns = [
     path('accounts/Register/', register, name='register'),
@@ -24,5 +24,5 @@ urlpatterns = [
     path('admin/Update_result/', Update_Result, name='Update_Result'),
     path('admin/Get_all_result/', get_all_results, name='get_all_results'),  
     path('doctor/Get_all_result/', Doctor_get_results, name='Doctor_get_results'),  
-    # path('doctor/get_booking', get_booking, name='get_booking')
+    path('doctor/get_all_booking/', Doctor_get_booking, name='Doctor_get_booking')
 ]

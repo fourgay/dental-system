@@ -1,14 +1,16 @@
 from rest_framework import serializers
 from .models import Data, Service, Booking, Result
+import re
 
 class DataSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     birthDay = serializers.CharField(required=False, allow_blank=True)
-    phone = serializers.IntegerField(required=True)
+    phone = serializers.CharField(required=True)  # Change to CharField to allow custom validation
 
     class Meta:
         model = Data
         fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address']
+
     def create(self, validated_data):
         validated_data['avatar'] = 'avatars/avatar-1.png'
         data = Data.objects.create_user(
@@ -20,38 +22,38 @@ class DataSerializer(serializers.ModelSerializer):
             # address=validated_data['address']
         )
         return data
+
     def validate_phone(self, value):
+        if not re.match(r'^\d{10}$', value):
+            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số.")
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
-        
+
+    def validate_password(self, value):
+        if len(value) < 6:
+            raise serializers.ValidationError("Mật khẩu phải có ít nhất 6 ký tự.")
+        if not re.match(r'^[a-zA-Z0-9]+$', value):
+            raise serializers.ValidationError("Mật khẩu không được chứa ký tự đặc biệt.")
+        return value
+
 class DataSerializer_admin(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     birthDay = serializers.CharField(required=False, allow_blank=True)
     isBooking = serializers.BooleanField(required=False, default=False)
-    phone = serializers.IntegerField(required=True)
+    phone = serializers.CharField(required=True)  # Change to CharField to allow custom validation
     work = serializers.CharField(required=True)
+
     class Meta:
         model = Data
-        fields = 'id','fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address', 'work'
-    def create(self, validated_data):
-        validated_data['avatar'] = 'avatars/avatar-1.png'
-        if ('role') in validated_data:
-            data = Data.objects.admin_create_user(
-                fullname=validated_data['fullname'],
-                phone=validated_data['phone'],
-                password=validated_data['password'],
-                role=validated_data['role'],
-                birthDay=validated_data['birthDay'],
-                isBooking=validated_data['isBooking'],
-                address=validated_data['address']
-            )
-        fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address']
+        fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address', 'work']
 
     def create(self, validated_data):
         validated_data['avatar'] = 'avatars/avatar-1.png'
         data = Data.objects.admin_create_user(
-            
+            fullname=validated_data['fullname'],
+            phone=validated_data['phone'],
+            password=validated_data['password'],
             role=validated_data.get('role', 'USER'),  
             birthDay=validated_data.get('birthDay'),
             isBooking=validated_data.get('isBooking', False),
@@ -60,20 +62,29 @@ class DataSerializer_admin(serializers.ModelSerializer):
         return data
 
     def validate_phone(self, value):
+        if not re.match(r'^\d{10}$', value):
+            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số.")
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
+        return value
+
+    def validate_password(self, value):
+        if len(value) < 6:
+            raise serializers.ValidationError("Mật khẩu phải có ít nhất 6 ký tự.")
+        if not re.match(r'^[a-zA-Z0-9]+$', value):
+            raise serializers.ValidationError("Mật khẩu không được chứa ký tự đặc biệt.")
         return value
 
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Data
-        fields = ['fullname', 'work', 'img','phone']
+        fields = ['fullname', 'work', 'img', 'phone']
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Service
         fields = ['id', 'name', 'title', 'detail', 'img']
-        
+
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
@@ -81,10 +92,12 @@ class BookingSerializer(serializers.ModelSerializer):
 
 class DataSerializer_booking(serializers.ModelSerializer):
     date = serializers.CharField(required=False, allow_blank=True)
-    remark = serializers.CharField(required=False, allow_blank=True, default="") 
+    remark = serializers.CharField(required=False, allow_blank=True, default="")
+
     class Meta:
         model = Booking
         fields = ['fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status', 'createAt', 'updateAt']
+
     def create(self, validated_data):
         validated_data.setdefault('remark', "")
         data = Data.objects.register_booking(
@@ -92,7 +105,7 @@ class DataSerializer_booking(serializers.ModelSerializer):
             date=validated_data['date'],
             time=validated_data['time'],
             forAnother=validated_data['forAnother'],
-            remark=validated_data['remark'],  
+            remark=validated_data['remark'],
             service=validated_data['service'],
             account=validated_data['account'],
             doctor=validated_data['doctor'],
@@ -101,6 +114,11 @@ class DataSerializer_booking(serializers.ModelSerializer):
             updateAt=validated_data['updateAt']
         )
         return data
+
+    def validate_account(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("Tài khoản chỉ được chứa các chữ số.")
+        return value
 
 class ResultSerializer(serializers.ModelSerializer):
     class Meta:

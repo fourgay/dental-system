@@ -195,6 +195,7 @@ def get_all_users(request):
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
+    
     phone = request.query_params.get('phone')
     fullname = request.query_params.get('fullname')
     role = request.query_params.get('role')
@@ -202,21 +203,22 @@ def get_all_users(request):
     try:
         filters = Q()
         if phone:
-            filters &= Q(phone=phone)
+            filters &= Q(phone__icontains=phone)  
         if fullname:
-            filters &= Q(fullname=fullname)
+            filters &= Q(fullname__icontains=fullname)
         if role:
-            filters &= Q(role=role)
+            filters &= Q(role__iexact=role)  
+
         users = Data.objects.filter(filters)
         if not users.exists():
             return Response({
                 "message": "Không tìm thấy user với các điều kiện đã chọn."
             }, status=status.HTTP_404_NOT_FOUND)
+        
         paginator = CustomPagination()
         paginated_users = paginator.paginate_queryset(users, request)
         serializer = DataSerializer(paginated_users, many=True)
         return paginator.get_paginated_response(serializer.data)
-
     except Exception as e:
         return Response({
             "error": f"Đã xảy ra lỗi: {str(e)}"
@@ -623,6 +625,41 @@ def Doctor_get_results(request):
         paginator = CustomPagination()
         paginated_results = paginator.paginate_queryset(results, request)
         serializer = ResultSerializer(paginated_results, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsDoctor])
+def Doctor_get_booking(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'DOCTOR':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền DOCTOR để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    doctor_phone = request.user.phone  # Lấy số điện thoại của bác sĩ từ request user
+    fullname = request.query_params.get('fullname')
+    account = request.query_params.get('account')
+    service = request.query_params.get('service')
+
+    filters = Q(Doctor_phone=doctor_phone)  # Lọc kết quả theo số điện thoại của bác sĩ
+    if fullname:
+        filters &= Q(fullname__icontains=fullname)
+    if account:
+        filters &= Q(account__icontains=account)
+    if service:
+        filters &= Q(service__icontains=service)
+
+    try:
+        bookings = Booking.objects.filter(filters)
+        if not bookings.exists():
+            return Response({
+                'message': 'Không tìm thấy kết quả với các điều kiện đã chọn.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        paginator = CustomPagination()
+        paginated_Bookings = paginator.paginate_queryset(bookings, request)
+        serializer = BookingSerializer(paginated_Bookings, many=True)
         return paginator.get_paginated_response(serializer.data)
     except Exception as e:
         return Response({
