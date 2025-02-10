@@ -4,6 +4,7 @@ from .models import Data, Service, Booking, Result
 class DataSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     birthDay = serializers.CharField(required=False, allow_blank=True)
+    phone = serializers.IntegerField(required=True)
 
     class Meta:
         model = Data
@@ -27,17 +28,30 @@ class DataSerializer(serializers.ModelSerializer):
 class DataSerializer_admin(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     birthDay = serializers.CharField(required=False, allow_blank=True)
-
+    isBooking = serializers.BooleanField(required=False, default=False)
+    phone = serializers.IntegerField(required=True)
+    work = serializers.CharField(required=True)
     class Meta:
         model = Data
+        fields = 'id','fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address', 'work'
+    def create(self, validated_data):
+        validated_data['avatar'] = 'avatars/avatar-1.png'
+        if ('role') in validated_data:
+            data = Data.objects.admin_create_user(
+                fullname=validated_data['fullname'],
+                phone=validated_data['phone'],
+                password=validated_data['password'],
+                role=validated_data['role'],
+                birthDay=validated_data['birthDay'],
+                isBooking=validated_data['isBooking'],
+                address=validated_data['address']
+            )
         fields = ['id', 'fullname', 'phone', 'avatar', 'role', 'password', 'birthDay', 'isBooking', 'address']
 
     def create(self, validated_data):
         validated_data['avatar'] = 'avatars/avatar-1.png'
         data = Data.objects.admin_create_user(
-            fullname=validated_data['fullname'],
-            phone=validated_data['phone'],
-            password=validated_data['password'],
+            
             role=validated_data.get('role', 'USER'),  
             birthDay=validated_data.get('birthDay'),
             isBooking=validated_data.get('isBooking', False),

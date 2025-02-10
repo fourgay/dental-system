@@ -17,8 +17,7 @@ class CustomUserManager(BaseUserManager):
         )
         if password:
             data.set_password(password)
-        data.save(using=self._db)
-        
+        data.save(using=self._db)        
         return data
 
     def create_superuser(self, fullname, phone, password=None):
@@ -87,7 +86,7 @@ class Data(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     # Thông tin riêng cho bác sĩ
-    work = models.CharField(max_length=255, null=True, blank=True)  # Công việc (chỉ dành cho bác sĩ)
+    work = models.CharField(max_length=255, blank=True)  # Công việc (chỉ dành cho bác sĩ)
     img = models.CharField(max_length=255, null=True, blank=True)  # Ảnh đại diện (chỉ dành cho bác sĩ)
 
     objects = CustomUserManager()
@@ -146,3 +145,4 @@ class Result(models.Model):
     Doctor_phone = models.CharField(max_length=255, default='Unknown Phone')
     updatedAt = models.DateTimeField(auto_now=True)
     createdAt = models.DateTimeField(auto_now_add=True)
+ 
