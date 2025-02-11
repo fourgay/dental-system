@@ -131,3 +131,8 @@ class TimeWorkingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeWorking
         fields = '__all__'
+
+class CustomTimeWorkingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TimeWorking
+        fields = ['id', 'title', 'value']

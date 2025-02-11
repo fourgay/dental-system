@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 from .models import Data, Service, Booking, Result, TimeWorking
 from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
     DataSerializer_admin,DataSerializer_booking,DoctorSerializer, ResultSerializer,\
-    TimeWorkingSerializer
+    TimeWorkingSerializer,CustomTimeWorkingSerializer
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
@@ -802,6 +802,25 @@ def admin_get_tablesBooking(request):
                 'message': 'Không tìm thấy bảng thời gian làm việc nào.',
             }, status=status.HTTP_404_NOT_FOUND)
         serializer = TimeWorkingSerializer(TimeBookings, many=True)
+        return Response({
+            'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'message': f'Đã xảy ra lỗi: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_tablesBooking(request):
+    try:
+        TimeBookings = TimeWorking.objects.all()
+        if not TimeBookings.exists():
+            return Response({
+                'message': 'Không tìm thấy bảng thời gian làm việc nào.',
+            }, status=status.HTTP_404_NOT_FOUND)
+        serializer = CustomTimeWorkingSerializer(TimeBookings, many=True)
         return Response({
             'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
             'data': serializer.data
