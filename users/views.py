@@ -758,3 +758,37 @@ def admin_delete_tableBooking(request):
         return Response({
             'message': f'Lỗi khi xóa bảng thời gian làm việc: {str(e)}',
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_get_all_result(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'USER':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền USER để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    account = request.user.phone  # Lấy số điện thoại của người dùng từ request user
+    fullname = request.query_params.get('fullname')
+    service = request.query_params.get('service')
+
+    filters = Q(account=account)  # Lọc kết quả theo số điện thoại của người dùng
+    if fullname:
+        filters &= Q(fullname__icontains=fullname)
+    if service:
+        filters &= Q(service__icontains=service)
+
+    try:
+        results = Result.objects.filter(filters)
+        if not results.exists():
+            return Response({
+                'message': 'Không tìm thấy kết quả với các điều kiện đã chọn.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        paginator = CustomPagination()
+        paginated_results = paginator.paginate_queryset(results, request)
+        serializer = ResultSerializer(paginated_results, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
