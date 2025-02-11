@@ -274,18 +274,21 @@ def Admin_Update_user(request):
     address = request.data.get('address')
     avatar = request.data.get('avatar')
     password = request.data.get('password')
+    role = request.data.get('role')
 
     if not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = Data.objects.get(phone=phone)
     except Data.DoesNotExist:
-        return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Người dùng không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
     
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
     user.avatar = avatar if avatar else user.avatar
+    user.role = role if role else user.role  # Cập nhật role cho user
+    
     if password:
         user.set_password(password)  # Hash the new password
     user.save()

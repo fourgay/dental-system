@@ -53,7 +53,7 @@ class DataSerializer_admin(serializers.ModelSerializer):
             fullname=validated_data['fullname'],
             phone=validated_data['phone'],
             password=validated_data['password'],
-            role=validated_data.get('role', 'USER'),  
+            role=validated_data.get('DOCTOR','USER'),  
             birthDay=validated_data.get('birthDay'),
             address=validated_data.get('address')
         ) 

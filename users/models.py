@@ -35,18 +35,9 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Số điện thoại không được để trống!')
         data = self.model(fullname=fullname, phone=phone, role=role, birthDay=birthDay, address=address)
         data.set_password(password)
-        if role == 'admin':
+        if role == 'ADMIN':
             data.is_staff = True
-            data.is_superuser = True
-        if role == 'DOCTOR':
-            data.is_staff = True
-        if service:
-            from .models import Service  # Import ở đây để tránh lỗi vòng lặp import
-            service_instance = Service.objects.filter(id=service).first()
-            if service_instance:
-                data.work = service_instance.name  # Gán tên service vào work của bác sĩ
-            else:
-                raise ValueError(f"Không tìm thấy Service với ID {service}!") 
+            data.is_superuser = True 
         data.save(using=self._db)
         return data
 
