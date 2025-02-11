@@ -48,6 +48,11 @@ export const LayoutAdmin = () => {
       key: "/admin/result",
       icon: <SnippetsOutlined />,
     },
+    {
+      label: <Link to="/admin/time">Quản lý thời gian</Link>,
+      key: "/admin/time",
+      icon: <SnippetsOutlined />,
+    },
   ];
 
   const itemsDropdown = [

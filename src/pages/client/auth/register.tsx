@@ -22,6 +22,8 @@ export const RegisterPage = () => {
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     setIsSubmit(true);
     setIsAppLoading(true);
+    localStorage.removeItem("access_token");
+
     const { fullname, phone, password } = values;
 
     const res = await registerAPI(fullname, phone, password);

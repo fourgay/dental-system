@@ -20,6 +20,7 @@ import { DetailBooking } from "./detail.booking";
 import { UpdateBooking } from "./update.booking";
 import { DoneBooking } from "./done.booking";
 import { useLocation } from "react-router-dom";
+import dayjs from "dayjs";
 
 type TSearch = {
   service: string;
@@ -128,6 +129,30 @@ export const TableBooking = () => {
       hideInSearch: true,
       align: "center",
       render: (_, record) => <Tag color="gold">{record.status}</Tag>,
+    },
+    {
+      title: "Tạo",
+      dataIndex: "createdAt",
+      hideInSearch: true,
+      align: "center",
+      render: (createdAt) => {
+        if (typeof createdAt === "string" || typeof createdAt === "number") {
+          return dayjs(createdAt).format("DD-MM-YYYY");
+        }
+        return "--";
+      },
+    },
+    {
+      title: "Cập nhập",
+      dataIndex: "updatedAt",
+      hideInSearch: true,
+      align: "center",
+      render: (updatedAt) => {
+        if (typeof updatedAt === "string" || typeof updatedAt === "number") {
+          return dayjs(updatedAt).format("DD-MM-YYYY");
+        }
+        return "--";
+      },
     },
     {
       title: "Action",

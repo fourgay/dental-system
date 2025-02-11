@@ -1,22 +1,12 @@
 import { useRef, useState } from "react";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { App, Button, Dropdown, Popconfirm, Tag } from "antd";
-import {
-  DeleteTwoTone,
-  EditTwoTone,
-  EllipsisOutlined,
-  EyeOutlined,
-  PlusOutlined,
-} from "@ant-design/icons";
-import {
-  deleteResultAPI,
-  getDoctorResultAPI,
-  getResultAPI,
-} from "@/services/api";
+import { App, Button, Popconfirm, Tag } from "antd";
+import { DeleteTwoTone, EditTwoTone, PlusOutlined } from "@ant-design/icons";
+import { deleteTimeAPI, getTimeAPI } from "@/services/api";
 import dayjs from "dayjs";
-import { DetailResult } from "./detail.result";
-import { UpdateResult } from "./update.result";
+import { UpdateTime } from "./update.time";
+import { CreateTime } from "./create.time";
 
 type TSearch = {
   service: string;
@@ -25,14 +15,13 @@ type TSearch = {
   doctor: string;
 };
 
-export const TableResult = () => {
-  const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
-  const [dataViewDetail, setDataViewDetail] = useState<IResult | null>(null);
+export const TableTime = () => {
+  const [openModalCreate, setOpenModalCreate] = useState<boolean>(false);
 
   const [openModalUpdate, setOpenModalUpdate] = useState<boolean>(false);
-  const [dataUpdate, setDataUpdate] = useState<IResult | null>(null);
+  const [dataUpdate, setDataUpdate] = useState<ITime | null>(null);
 
-  const [isDeleteResult, setIsDeleteResult] = useState<boolean>(false);
+  const [isDeleteTime, setIsDeleteTime] = useState<boolean>(false);
   const { notification } = App.useApp();
 
   const [meta, setMeta] = useState({
@@ -43,13 +32,13 @@ export const TableResult = () => {
   });
   const actionRef = useRef<ActionType>();
 
-  const handleDeleteResult = async (id: number, account: string) => {
-    setIsDeleteResult(true);
-    const res = await deleteResultAPI(id, account);
+  const handleDeleteTime = async (id: number) => {
+    setIsDeleteTime(true);
+    const res = await deleteTimeAPI(id);
 
     if (res.message) {
       notification.success({
-        message: "Xoá lịch khám thành công",
+        message: "Xoá thời gian làm việc thành công",
         description: res.message,
       });
       refreshTable();
@@ -59,59 +48,27 @@ export const TableResult = () => {
         description: res.message,
       });
     }
-    setIsDeleteResult(false);
+    setIsDeleteTime(false);
   };
 
-  const columns: ProColumns<IResult>[] = [
+  const columns: ProColumns<ITime>[] = [
     {
       dataIndex: "index",
       valueType: "indexBorder",
       width: 48,
     },
     {
-      title: "Tài khoản",
-      dataIndex: "account",
-      copyable: true,
-      align: "center",
-      render(dom, entity, index, action, schema) {
-        return (
-          <a
-            onClick={() => {
-              setOpenViewDetail(true);
-              setDataViewDetail(entity);
-            }}
-            href="#"
-          >
-            {entity.account}
-          </a>
-        );
-      },
-    },
-    {
-      title: "Họ tên",
-      dataIndex: "fullname",
-      align: "center",
-    },
-    {
-      title: "Kết quả",
+      title: "Tên",
       dataIndex: "title",
       align: "center",
       hideInSearch: true,
     },
     {
-      title: "Dịch vụ",
-      dataIndex: "service",
+      title: "Giá trị",
+      dataIndex: "value",
       align: "center",
+      hideInSearch: true,
     },
-    ...(location.pathname.startsWith("/admin/")
-      ? [
-          {
-            title: "Bác sĩ",
-            dataIndex: "doctor",
-            align: "center",
-          } as ProColumns<IResult>,
-        ]
-      : []),
     {
       title: "Tạo",
       dataIndex: "createdAt",
@@ -143,13 +100,6 @@ export const TableResult = () => {
       render(dom, entity, index, action, schema) {
         return (
           <>
-            <EyeOutlined
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                setOpenViewDetail(true);
-                setDataViewDetail(entity);
-              }}
-            />
             <EditTwoTone
               twoToneColor="#f57800"
               style={{ cursor: "pointer", margin: "0 20px" }}
@@ -160,12 +110,12 @@ export const TableResult = () => {
             />
             <Popconfirm
               placement="leftTop"
-              title={"Xác nhận xóa kết quả khám"}
-              description={"Bạn có chắc chắn muốn xóa kết quả khám này ?"}
-              onConfirm={() => handleDeleteResult(entity.id, entity.account)}
+              title={"Xác nhận xóa"}
+              description={"Bạn có chắc chắn muốn xóa thời gian làm này?"}
+              onConfirm={() => handleDeleteTime(entity.id)}
               okText="Xác nhận"
               cancelText="Hủy"
-              okButtonProps={{ loading: isDeleteResult }}
+              okButtonProps={{ loading: isDeleteTime }}
             >
               <span style={{ cursor: "pointer" }}>
                 <DeleteTwoTone
@@ -186,7 +136,7 @@ export const TableResult = () => {
 
   return (
     <>
-      <ProTable<IResult, TSearch>
+      <ProTable<ITime, TSearch>
         columns={columns}
         actionRef={actionRef}
         cardBordered
@@ -197,26 +147,7 @@ export const TableResult = () => {
             collapsed ? "Mở rộng +" : "Thu gọn -",
         }}
         request={async (params, sort, filter) => {
-          let query = "";
-          if (params) {
-            query += `page=${params?.current ?? 1}`;
-            if (params.service) {
-              query += `&service=${params.service}`;
-            }
-            if (params.account) {
-              query += `&account=${params.account}`;
-            }
-            if (params.fullname) {
-              query += `&fullname=${params.fullname}`;
-            }
-            if (params.doctor) {
-              query += `&doctor=${params.doctor}`;
-            }
-          }
-
-          const res = location.pathname.startsWith("/admin/")
-            ? await getResultAPI(query)
-            : await getDoctorResultAPI(query);
+          const res = await getTimeAPI();
 
           if (res.data) {
             setMeta(res.data.meta);
@@ -245,38 +176,24 @@ export const TableResult = () => {
         }}
         headerTitle="Table user"
         toolBarRender={() => [
-          <Dropdown
-            key="menu"
-            menu={{
-              items: [
-                {
-                  label: "1st item",
-                  key: "1",
-                },
-                {
-                  label: "2nd item",
-                  key: "2",
-                },
-                {
-                  label: "3rd item",
-                  key: "3",
-                },
-              ],
+          <Button
+            key="button"
+            icon={<PlusOutlined />}
+            type="primary"
+            onClick={() => {
+              setOpenModalCreate(true);
             }}
           >
-            <Button>
-              <EllipsisOutlined />
-            </Button>
-          </Dropdown>,
+            Thêm
+          </Button>,
         ]}
       />
-      <DetailResult
-        openViewDetail={openViewDetail}
-        setOpenViewDetail={setOpenViewDetail}
-        dataViewDetail={dataViewDetail}
-        setDataViewDetail={setDataViewDetail}
+      <CreateTime
+        openModalCreate={openModalCreate}
+        setOpenModalCreate={setOpenModalCreate}
+        refreshTable={refreshTable}
       />
-      <UpdateResult
+      <UpdateTime
         openModalUpdate={openModalUpdate}
         setOpenModalUpdate={setOpenModalUpdate}
         dataUpdate={dataUpdate}

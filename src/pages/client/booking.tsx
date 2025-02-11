@@ -9,10 +9,14 @@ import {
   ProFormTextArea,
   StepsForm,
 } from "@ant-design/pro-components";
-import { App, Button, Input, message, Result, Spin } from "antd";
+import { App, Button, Result, Spin } from "antd";
 import { useEffect, useState } from "react";
 import "styles/booking.scss";
-import { createBookingAPI, getListServicesAPI } from "@/services/api";
+import {
+  createBookingAPI,
+  getListServicesAPI,
+  getRandomDoctorAPI,
+} from "@/services/api";
 import { userCurrentApp } from "@/components/context/app.context";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
@@ -22,11 +26,13 @@ export const Booking = () => {
   const [loading, setLoading] = useState(false);
   const [servicesLoading, setServicesLoading] = useState<boolean>(false);
   const [listServices, setListServices] = useState<IServices[]>([]);
+  const [listDoctors, setListDoctors] = useState<IDoctor[]>([]);
 
   const [chooseService, setChooseService] = useState<IServices>();
 
   const { user } = userCurrentApp();
   const navigate = useNavigate();
+
   useEffect(() => {
     const getServices = async () => {
       setServicesLoading(true);
@@ -45,6 +51,16 @@ export const Booking = () => {
         <StepsForm
           onFinish={async (values) => {
             const { fullname, date, dateTime, checkbox, remark } = values;
+
+            const resDoctor = await getRandomDoctorAPI(
+              chooseService?.title ?? "Tư vấn"
+            );
+            if (resDoctor && resDoctor?.data) {
+              setListDoctors(resDoctor?.data);
+            }
+
+            const randomDoctor: IDoctor =
+              listDoctors[Math.floor(Math.random() * listDoctors.length)];
             setServicesLoading(true);
             const res = await createBookingAPI(
               fullname,
@@ -54,7 +70,8 @@ export const Booking = () => {
               remark,
               chooseService?.title,
               user?.phone,
-              "doctor test"
+              randomDoctor.fullname,
+              randomDoctor.phone
             );
             setServicesLoading(false);
             if (res && res.data) {
@@ -164,7 +181,6 @@ export const Booking = () => {
                 fieldProps={{
                   format: "DD-MM-YYYY",
                 }}
-                initialValue={dayjs("01-01", "DD-MM")}
                 width="sm"
                 name="date"
                 label="ngày / tháng khám"

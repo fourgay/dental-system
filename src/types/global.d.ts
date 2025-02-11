@@ -69,6 +69,9 @@ declare global {
     account: string;
     doctor: string;
     status: string;
+    Doctor_phone: string;
+    createdAt: string;
+    updatedAt: string;
   }
 
   interface IResult {
@@ -81,6 +84,14 @@ declare global {
     service: string;
     doctor: string;
     fullname: string;
+    createdAt: string;
+    updatedAt: string;
+  }
+
+  interface ITime {
+    id: number;
+    title: string;
+    value: string;
     createdAt: string;
     updatedAt: string;
   }

@@ -41,7 +41,8 @@ export const DoneBooking = (props: IProps) => {
       decriptions,
       dataDone?.service,
       dataDone?.fullname,
-      dataDone?.doctor
+      dataDone?.doctor,
+      dataDone?.Doctor_phone
     );
     if (res && res.data) {
       notification.success({

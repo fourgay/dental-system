@@ -22,6 +22,7 @@ import { ServicesPage } from "./pages/client/services";
 import { ResultPage } from "./pages/client/result";
 import { ManageResultPage } from "./pages/admin/manage.result";
 import { LayoutDoctor } from "./components/layout/layout.doctor";
+import { ManageTimePage } from "./pages/admin/manage.time";
 
 const router = createBrowserRouter([
   {
@@ -119,6 +120,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ManageResultPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "time",
+        element: (
+          <ProtectedRoute>
+            <ManageTimePage />
           </ProtectedRoute>
         ),
       },

@@ -21,6 +21,7 @@ export const LoginPage = () => {
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     setIsSubmit(true);
     setIsAppLoading(true);
+    localStorage.removeItem("access_token");
     const { phone, password } = values;
     const res = await loginAPI(phone, password);
 

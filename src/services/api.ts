@@ -29,6 +29,11 @@ export const getAllDoctorAPI = () => {
   return axios.get<IBackendRes<IDoctor[]>>(urlBackend);
 };
 
+export const getRandomDoctorAPI = (work: string) => {
+  const urlBackend = `/api/user/Get_all_doctor/?work=${work}`;
+  return axios.get<IBackendRes<IDoctor[]>>(urlBackend);
+};
+
 export const getListServicesAPI = () => {
   const urlBackend = "/api/Services/";
   return axios.get<IBackendRes<IModePaginate<IServices>>>(urlBackend);
@@ -97,7 +102,8 @@ export const createBookingAPI = (
   remark: string,
   service: string | undefined,
   account: string | undefined,
-  doctor: string
+  doctor: string,
+  Doctor_phone: string
 ) => {
   const urlBackend = "/api/admin/Register_booking/";
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
@@ -110,6 +116,7 @@ export const createBookingAPI = (
     account,
     doctor,
     status: "Đang chờ",
+    Doctor_phone,
   });
 };
 
@@ -127,9 +134,10 @@ export const updateBookingAPI = (
   service: string,
   account: string | undefined,
   doctor: string,
+  Doctor_phone: string,
   status: string
 ) => {
-  const urlBackend = "/api/admin/update-booking/";
+  const urlBackend = "/api/admin/Update_booking/";
   return axios.put<IBackendRes<IRegister>>(urlBackend, {
     fullname,
     date,
@@ -139,6 +147,7 @@ export const updateBookingAPI = (
     service,
     account,
     doctor,
+    Doctor_phone,
     status,
   });
 };
@@ -161,7 +170,8 @@ export const createResultAPI = (
   decriptions: string,
   service: string | undefined,
   fullname: string | undefined,
-  doctor: string | undefined
+  doctor: string | undefined,
+  Doctor_phone: string | undefined
 ) => {
   const urlBackend = "/api/admin/Create_result/";
   return axios.post<IBackendRes<IRegister>>(urlBackend, {
@@ -173,12 +183,14 @@ export const createResultAPI = (
     service,
     fullname,
     doctor,
+    Doctor_phone,
   });
 };
 
 export const updateResultAPI = (
   id: number | undefined,
   account: string | undefined,
+  title: string | undefined,
   decriptions: string | undefined
   // doctor: string | undefined
 ) => {
@@ -186,6 +198,7 @@ export const updateResultAPI = (
   return axios.put<IBackendRes<IRegister>>(urlBackend, {
     id,
     account,
+    title,
     decriptions,
   });
 };
@@ -195,5 +208,36 @@ export const deleteResultAPI = (
   account: string | undefined
 ) => {
   const urlBackend = `/api/admin/Delete_result/?id=${id}&account=${account}`;
+  return axios.delete<IBackendRes<IRegister>>(urlBackend);
+};
+
+export const getTimeAPI = () => {
+  const urlBackend = `/api/admin/Get_Table_working/`;
+  return axios.get<IBackendRes<IModePaginate<ITime>>>(urlBackend);
+};
+
+export const createTimeAPI = (title: string, value: string) => {
+  const urlBackend = "/api/admin/Create_Table_working/";
+  return axios.post<IBackendRes<IRegister>>(urlBackend, {
+    title,
+    value,
+  });
+};
+
+export const updateTimeAPI = (
+  id: number | undefined,
+  title: string | undefined,
+  value: string | undefined
+) => {
+  const urlBackend = "/api/admin/Update_Table_working/";
+  return axios.put<IBackendRes<IRegister>>(urlBackend, {
+    id,
+    title,
+    value,
+  });
+};
+
+export const deleteTimeAPI = (id: number | undefined) => {
+  const urlBackend = `/api/admin/Delete_Table_working/?id=${id}`;
   return axios.delete<IBackendRes<IRegister>>(urlBackend);
 };

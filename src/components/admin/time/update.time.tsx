@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import { App, Divider, Form, Input, Modal } from "antd";
 import type { FormProps } from "antd";
-import { updateResultAPI } from "@/services/api";
+import { updateTimeAPI } from "@/services/api";
 
 interface IProps {
   openModalUpdate: boolean;
   setOpenModalUpdate: (v: boolean) => void;
   refreshTable: () => void;
-  setDataUpdate: (v: IResult | null) => void;
-  dataUpdate: IResult | null;
+  setDataUpdate: (v: ITime | null) => void;
+  dataUpdate: ITime | null;
 }
 
 type FieldType = {
   title: string;
-  decriptions: string;
+  value: string;
 };
 
-export const UpdateResult = (props: IProps) => {
+export const UpdateTime = (props: IProps) => {
   const {
     openModalUpdate,
     setOpenModalUpdate,
@@ -34,20 +34,15 @@ export const UpdateResult = (props: IProps) => {
     if (dataUpdate) {
       form.setFieldsValue({
         title: dataUpdate.title,
-        decriptions: dataUpdate.decriptions,
+        value: dataUpdate.value,
       });
     }
   }, [dataUpdate]);
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const { title, decriptions } = values;
+    const { title, value } = values;
     setIsSubmit(true);
-    const res = await updateResultAPI(
-      dataUpdate?.id,
-      dataUpdate?.account,
-      title,
-      decriptions
-    );
+    const res = await updateTimeAPI(dataUpdate?.id, title, value);
     if (res && res.data) {
       notification.success({
         message: "Cập nhập thành công",
@@ -69,7 +64,7 @@ export const UpdateResult = (props: IProps) => {
   return (
     <>
       <Modal
-        title="Cập nhập kết quả khám bệnh"
+        title="Cập nhập thời gian làm việc"
         open={openModalUpdate}
         onOk={() => {
           form.submit();
@@ -95,7 +90,7 @@ export const UpdateResult = (props: IProps) => {
         >
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
-            label="Tiêu đề"
+            label="Tên"
             name="title"
             rules={[{ required: true, message: "Vui lòng nhập!" }]}
           >
@@ -104,10 +99,10 @@ export const UpdateResult = (props: IProps) => {
 
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
-            label="Mô tả"
-            name="decriptions"
+            label="Giá trị"
+            name="value"
           >
-            <Input.TextArea />
+            <Input />
           </Form.Item>
         </Form>
       </Modal>

@@ -91,8 +91,7 @@ export const UpdateBooking = (props: IProps) => {
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const { fullname, date, time, service, doctor, remark } = values;
-    const fdate = dayjs(date).format("DD-MM-YYYY");
-    console.log({ fullname, fdate, time, service, doctor, remark });
+    const dataDoctor = JSON.parse(doctor);
 
     setIsSubmit(true);
     const res = await updateBookingAPI(
@@ -103,7 +102,8 @@ export const UpdateBooking = (props: IProps) => {
       remark,
       service,
       dataUpdate?.account,
-      doctor,
+      dataDoctor.fullname,
+      dataDoctor.phone,
       "Đang chờ"
     );
     if (res && res.data) {
@@ -223,7 +223,13 @@ export const UpdateBooking = (props: IProps) => {
                   style={{ width: 200 }}
                   placeholder="Chọn"
                   options={listDoctors?.map((item) => {
-                    return { value: item.fullname, label: item.fullname };
+                    return {
+                      value: JSON.stringify({
+                        phone: item.phone,
+                        fullname: item.fullname,
+                      }),
+                      label: item.fullname,
+                    };
                   })}
                 />
               </Form.Item>

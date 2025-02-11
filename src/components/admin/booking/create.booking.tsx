@@ -56,6 +56,8 @@ export const CreateBooking = (props: IProps) => {
       doctor,
     } = values;
 
+    const dataDoctor = JSON.parse(doctor);
+
     setIsSubmit(true);
     const res = await createBookingAPI(
       fullname,
@@ -65,7 +67,8 @@ export const CreateBooking = (props: IProps) => {
       remark,
       service,
       account,
-      doctor
+      dataDoctor.fullname,
+      dataDoctor.phone
     );
 
     if (res && res.data) {
@@ -81,6 +84,7 @@ export const CreateBooking = (props: IProps) => {
         description: res.error,
       });
     }
+
     setIsSubmit(false);
   };
 
@@ -219,7 +223,13 @@ export const CreateBooking = (props: IProps) => {
                   style={{ width: 200 }}
                   placeholder="Chọn"
                   options={listDoctors?.map((item) => {
-                    return { value: item.fullname, label: item.fullname };
+                    return {
+                      value: JSON.stringify({
+                        phone: item.phone,
+                        fullname: item.fullname,
+                      }),
+                      label: item.fullname,
+                    };
                   })}
                 />
               </Form.Item>

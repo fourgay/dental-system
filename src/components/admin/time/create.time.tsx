@@ -1,66 +1,43 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { App, Divider, Form, Input, Modal } from "antd";
 import type { FormProps } from "antd";
-import { updateResultAPI } from "@/services/api";
+import { createTimeAPI } from "@/services/api";
 
 interface IProps {
-  openModalUpdate: boolean;
-  setOpenModalUpdate: (v: boolean) => void;
+  openModalCreate: boolean;
+  setOpenModalCreate: (v: boolean) => void;
   refreshTable: () => void;
-  setDataUpdate: (v: IResult | null) => void;
-  dataUpdate: IResult | null;
 }
 
 type FieldType = {
   title: string;
-  decriptions: string;
+  value: string;
 };
 
-export const UpdateResult = (props: IProps) => {
-  const {
-    openModalUpdate,
-    setOpenModalUpdate,
-    refreshTable,
-    setDataUpdate,
-    dataUpdate,
-  } = props;
+export const CreateTime = (props: IProps) => {
+  const { openModalCreate, setOpenModalCreate, refreshTable } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const { notification } = App.useApp();
 
   // https://ant.design/components/form#components-form-demo-control-hooks
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    if (dataUpdate) {
-      form.setFieldsValue({
-        title: dataUpdate.title,
-        decriptions: dataUpdate.decriptions,
-      });
-    }
-  }, [dataUpdate]);
-
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const { title, decriptions } = values;
+    const { title, value } = values;
     setIsSubmit(true);
-    const res = await updateResultAPI(
-      dataUpdate?.id,
-      dataUpdate?.account,
-      title,
-      decriptions
-    );
+    const res = await createTimeAPI(title, value);
+
     if (res && res.data) {
       notification.success({
-        message: "Cập nhập thành công",
-        description: res.message,
+        message: res.message,
       });
       form.resetFields();
-      setOpenModalUpdate(false);
-      setDataUpdate(null);
+      setOpenModalCreate(false);
       refreshTable();
     } else {
       notification.error({
         message: "Đã có lỗi xảy ra",
-        description: res.message,
+        description: res.error,
       });
     }
     setIsSubmit(false);
@@ -69,17 +46,16 @@ export const UpdateResult = (props: IProps) => {
   return (
     <>
       <Modal
-        title="Cập nhập kết quả khám bệnh"
-        open={openModalUpdate}
+        title="Cập nhập thời gian làm việc"
+        open={openModalCreate}
         onOk={() => {
           form.submit();
         }}
         onCancel={() => {
-          setOpenModalUpdate(false);
-          setDataUpdate(null);
+          setOpenModalCreate(false);
           form.resetFields();
         }}
-        okText={"Cập nhập"}
+        okText={"Tạo"}
         cancelText={"Hủy"}
         confirmLoading={isSubmit}
         destroyOnClose={true}
@@ -95,7 +71,7 @@ export const UpdateResult = (props: IProps) => {
         >
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
-            label="Tiêu đề"
+            label="Tên"
             name="title"
             rules={[{ required: true, message: "Vui lòng nhập!" }]}
           >
@@ -104,10 +80,10 @@ export const UpdateResult = (props: IProps) => {
 
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
-            label="Mô tả"
-            name="decriptions"
+            label="Giá trị"
+            name="value"
           >
-            <Input.TextArea />
+            <Input />
           </Form.Item>
         </Form>
       </Modal>
