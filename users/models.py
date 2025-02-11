@@ -2,11 +2,19 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class CustomUserManager(BaseUserManager):
-    def create_user(self, fullname, phone, password=None, birthDay=None, isBooking=False, address=None):
+    def create_user(self, fullname, phone, password=None, birthDay=None, isBooking=False, address=None,work=None):
         if not fullname:
             raise ValueError('Tên không được để trống!')
         if not phone:
             raise ValueError('Số điện thoại không được để trống!')
+        service_name = None
+        if work:
+            try:
+                service = Service.objects.get(id=work)
+                service_name = service.name
+            except Service.DoesNotExist:
+                raise ValueError('Dịch vụ không tồn tại!')
+            
         data = self.model(
             fullname=fullname,
             phone=phone,
@@ -28,19 +36,35 @@ class CustomUserManager(BaseUserManager):
         data.save(using=self._db)
         return data
     
-    def admin_create_user(self, fullname, phone, password=None, role='USER', birthDay=None, isBooking=False, address=None, service=None):
+    def admin_create_user(self, fullname, phone, password=None, role='USER', birthDay=None, isBooking=False, address=None, work=None):
         if not fullname:
             raise ValueError('Tên không được để trống!')
         if not phone:
             raise ValueError('Số điện thoại không được để trống!')
-        data = self.model(fullname=fullname, phone=phone, role=role, birthDay=birthDay, address=address)
+
+        # Nếu work là ID của service, lấy tên của service
+        service_name = None
+        if work:
+            try:
+                service = Service.objects.get(id=work)
+                service_name = service.name
+            except Service.DoesNotExist:
+                raise ValueError('Dịch vụ không tồn tại!')
+
+        data = self.model(
+            fullname=fullname, 
+            phone=phone, 
+            role=role, 
+            birthDay=birthDay, 
+            address=address,
+            work=service_name  # Gán name của service vào work
+        )
+
         data.set_password(password)
         if role == 'ADMIN':
             data.is_staff = True
             data.is_superuser = True 
-        data.save(using=self._db)
         return data
-
 
     def register_booking(self, fullname, date, time, forAnother, remark, service, account, doctor, status):
         # Kiểm tra các trường bắt buộc

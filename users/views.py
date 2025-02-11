@@ -275,6 +275,7 @@ def Admin_Update_user(request):
     avatar = request.data.get('avatar')
     password = request.data.get('password')
     role = request.data.get('role')
+    work = request.data.get('work') 
 
     if not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
@@ -282,15 +283,16 @@ def Admin_Update_user(request):
         user = Data.objects.get(phone=phone)
     except Data.DoesNotExist:
         return Response({'message': 'Người dùng không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
-    
+
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
     user.avatar = avatar if avatar else user.avatar
-    user.role = role if role else user.role  # Cập nhật role cho user
-    
+    user.role = role if role else user.role
+    user.work = work if work else user.work
     if password:
         user.set_password(password)  # Hash the new password
+
     user.save()
     
     serializer = DataSerializer(user)
@@ -298,7 +300,6 @@ def Admin_Update_user(request):
         'message': 'Cập nhật thông tin thành công.',
         'data': serializer.data
     }, status=status.HTTP_200_OK)
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Register_booking(request):
