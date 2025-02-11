@@ -739,7 +739,7 @@ def admin_delete_tableWorking(request):
             'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
         }, status=status.HTTP_401_UNAUTHORIZED)
     
-    id = request.data.get('id')
+    id = request.query_params.get('id')
     if not id:
         return Response({
             'message': 'Thiếu thông tin id của bảng thời gian làm việc.',
