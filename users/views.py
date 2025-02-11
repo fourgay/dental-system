@@ -10,7 +10,7 @@ from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
-
+ 
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):
@@ -274,22 +274,25 @@ def Admin_Update_user(request):
     address = request.data.get('address')
     avatar = request.data.get('avatar')
     password = request.data.get('password')
-    work = request.data.get('work')
+    role = request.data.get('role')
+    work = request.data.get('work') 
 
     if not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
     try:
         user = Data.objects.get(phone=phone)
     except Data.DoesNotExist:
-        return Response({'message': 'User không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
-    
+        return Response({'message': 'Người dùng không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
     user.avatar = avatar if avatar else user.avatar
-    user.work = work if work else user.work 
+    user.role = role if role else user.role
+    user.work = work if work else user.work
     if password:
         user.set_password(password)  # Hash the new password
+
     user.save()
     
     serializer = DataSerializer(user)
@@ -297,7 +300,6 @@ def Admin_Update_user(request):
         'message': 'Cập nhật thông tin thành công.',
         'data': serializer.data
     }, status=status.HTTP_200_OK)
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Register_booking(request):
@@ -445,8 +447,7 @@ def Update_user(request):
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
-    user.work = work if work else user.work
-    if password:
+    if password: 
         user.set_password(password)
     user.save()
     refresh = RefreshToken.for_user(user)

@@ -17,9 +17,10 @@ class DataSerializer(serializers.ModelSerializer):
             fullname=validated_data['fullname'],
             phone=validated_data['phone'],
             password=validated_data['password'],
-            # birthDay=validated_data['birthDay'],
-            # isBooking=validated_data['isBooking'],
-            # address=validated_data['address']
+            role = validated_data.get('role', 'USER'),
+            birthDay=validated_data['birthDay'],
+            isBooking=validated_data['isBooking'],
+            address=validated_data['address']
         )
         return data
 
@@ -40,9 +41,8 @@ class DataSerializer(serializers.ModelSerializer):
 class DataSerializer_admin(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     birthDay = serializers.CharField(required=False, allow_blank=True)
-    isBooking = serializers.BooleanField(required=False, default=False)
-    phone = serializers.CharField(required=True)  # Change to CharField to allow custom validation
-    work = serializers.CharField(required=True)
+    phone = serializers.CharField(required=True)
+    work = serializers.CharField(required=True)  # Cho phép nhập work thủ công
 
     class Meta:
         model = Data
@@ -50,20 +50,22 @@ class DataSerializer_admin(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['avatar'] = 'avatars/avatar-1.png'
+
+        # Không cần lấy work từ Service, lưu nguyên giá trị nhập vào
         data = Data.objects.admin_create_user(
             fullname=validated_data['fullname'],
             phone=validated_data['phone'],
             password=validated_data['password'],
-            role=validated_data.get('role', 'USER'),  
+            role=validated_data.get('role', 'USER'),
             birthDay=validated_data.get('birthDay'),
-            isBooking=validated_data.get('isBooking', False),
-            address=validated_data.get('address')
-        ) 
+            address=validated_data.get('address'),
+            work=validated_data.get('work')  # Giữ nguyên giá trị work
+        )
         return data
 
     def validate_phone(self, value):
-        if not re.match(r'^\d{10}$', value):
-            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số.")
+        if not re.match(r'^0\d{9}$', value):
+            raise serializers.ValidationError("Số điện thoại phải chứa đúng 10 chữ số và bắt đầu bằng 0.")
         if Data.objects.filter(phone=value).exists():
             raise serializers.ValidationError("Số điện thoại đã tồn tại. Vui lòng thử số khác.")
         return value
@@ -78,7 +80,7 @@ class DataSerializer_admin(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Data
-        fields = ['fullname', 'work', 'img', 'phone']
+        fields = ['id', 'fullname', 'work', 'img', 'phone']
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
