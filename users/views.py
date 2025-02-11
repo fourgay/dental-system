@@ -801,11 +801,10 @@ def admin_get_tableWorking(request):
             return Response({
                 'message': 'Không tìm thấy bảng thời gian làm việc nào.',
             }, status=status.HTTP_404_NOT_FOUND)
-        serializer = TimeWorkingSerializer(TimeBookings, many=True)
-        return Response({
-            'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
-            'data': serializer.data
-        }, status=status.HTTP_200_OK)
+        paginator = CustomPagination()
+        paginated_TimeWorking = paginator.paginate_queryset(TimeBookings, request)
+        serializer = TimeWorkingSerializer(paginated_TimeWorking, many=True)
+        return paginator.get_paginated_response(serializer.data)
     except Exception as e:
         return Response({
             'message': f'Đã xảy ra lỗi: {str(e)}',
