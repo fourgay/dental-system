@@ -2,7 +2,8 @@ from django.urls import path
 from .views import register, login, Update_user, Admin_Update_user, update_booking, delete_booking, Register_booking, \
     get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
     admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
-    admin_create_tableBooking, admin_delete_tableBooking, admin_update_tableBooking, admin_get_tablesBooking
+    admin_create_tableBooking, admin_delete_tableBooking, admin_update_tableBooking, admin_get_tablesBooking, user_get_all_result,\
+    user_get_bookings
 
 urlpatterns = [
     path('accounts/Register/', register, name='register'),
@@ -16,7 +17,7 @@ urlpatterns = [
     path('admin/Register_account/', admin_register, name='admin_register'),
     path('admin/Delete/', admin_delete_user, name='admin_delete_user'),
     path('admin/Update_user/', Admin_Update_user, name='Admin_Update_user'),
-    path('admin/Booking/', admin_get_in_for_booking, name='admin_get_in_for_booking'),
+    path('admin/Get_booking/', admin_get_in_for_booking, name='admin_get_in_for_booking'),
     path('admin/Register_booking/', Register_booking, name='Register_booking'),
     path('admin/Delete_booking/', delete_booking, name='delete_booking'),
     path('admin/Update_booking/', update_booking, name='update_booking'),
@@ -30,4 +31,9 @@ urlpatterns = [
     path('admin/Delete_Table_booking/', admin_delete_tableBooking, name='admin_delete_tableBooking'),
     path('admin/Update_Table_booking/', admin_update_tableBooking, name='admin_update_tableBooking'),
     path('admin/Get_Table_booking/', admin_get_tablesBooking, name='admin_get_tablesBooking'),
+    path('user/Get_result/', user_get_all_result, name='user_get_all_result'),
+    path('user/Get_booking/', user_get_bookings, name='user_get_bookings')
+    
+    
+    
 ]

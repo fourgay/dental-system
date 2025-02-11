@@ -763,15 +763,20 @@ def admin_delete_tableBooking(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_get_all_result(request):
-    account = request.user.phone  # Lấy số điện thoại của người dùng từ request user
+    account = request.query_params.get('phone')
     fullname = request.query_params.get('fullname')
     service = request.query_params.get('service')
+    doctor = request.query_params.get('doctor')
 
-    filters = Q(account=account)  # Lọc kết quả theo số điện thoại của người dùng
+    filters = Q()
     if fullname:
         filters &= Q(fullname__icontains=fullname)
+    if account:
+        filters &= Q(account__icontains=account)
     if service:
         filters &= Q(service__icontains=service)
+    if doctor:
+        filters &= Q(doctor__icontains=doctor)
 
     try:
         results = Result.objects.filter(filters)
@@ -786,9 +791,9 @@ def user_get_all_result(request):
         return paginator.get_paginated_response(serializer.data)
     except Exception as e:
         return Response({
-            'error': f'Đã xảy ra lỗi: {str(e)}'})
-    
-@api_view(['GET'])
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 @permission_classes([IsAuthenticated, IsAdmin])
 def admin_get_tablesBooking(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
@@ -809,4 +814,35 @@ def admin_get_tablesBooking(request):
     except Exception as e:
         return Response({
             'message': f'Đã xảy ra lỗi: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_get_bookings(request):
+    # Kiểm tra nếu request.user có thuộc tính phone
+    account = getattr(request.user, 'phone', None)
+    if not account:
+        return Response({
+            'error': 'Tài khoản của bạn không hợp lệ hoặc thiếu thông tin số điện thoại.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Lọc danh sách lịch hẹn theo số điện thoại của người dùng
+        bookings = Booking.objects.filter(account=account).order_by('createdAt')  # Sắp xếp theo ngày tạo mới nhất
+        if not bookings.exists():
+            return Response({
+                'message': 'Không tìm thấy lịch hẹn nào cho tài khoản này.'
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        # Áp dụng phân trang
+        paginator = CustomPagination()
+        paginated_bookings = paginator.paginate_queryset(bookings, request)
+        serializer = BookingSerializer(paginated_bookings, many=True)
+        
+        return paginator.get_paginated_response(serializer.data)
+    
+    except Exception as e:
+        return Response({
+            'error': 'Đã xảy ra lỗi khi lấy danh sách lịch hẹn.',
+            'details': str(e)  # Chỉ hiển thị lỗi chi tiết trong môi trường debug
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
