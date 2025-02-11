@@ -758,3 +758,26 @@ def admin_delete_tableBooking(request):
         return Response({
             'message': f'Lỗi khi xóa bảng thời gian làm việc: {str(e)}',
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_get_tablesBooking(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        TimeBookings = TimeWorking.objects.all()
+        if not TimeBookings.exists():
+            return Response({
+                'message': 'Không tìm thấy bảng thời gian làm việc nào.',
+            }, status=status.HTTP_404_NOT_FOUND)
+        serializer = TimeWorkingSerializer(TimeBookings, many=True)
+        return Response({
+            'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'message': f'Đã xảy ra lỗi: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
