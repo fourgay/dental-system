@@ -96,7 +96,7 @@ class DataSerializer_booking(serializers.ModelSerializer):
 
     class Meta:
         model = Booking
-        fields = ['fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status', 'createAt', 'updateAt']
+        fields = ['fullname', 'date', 'time', 'forAnother', 'remark', 'service', 'account', 'doctor', 'status','Doctor_phone']
 
     def create(self, validated_data):
         validated_data.setdefault('remark', "")
@@ -110,8 +110,7 @@ class DataSerializer_booking(serializers.ModelSerializer):
             account=validated_data['account'],
             doctor=validated_data['doctor'],
             status=validated_data['status'],
-            createAt=validated_data['createAt'],
-            updateAt=validated_data['updateAt']
+            Doctor_phone=validated_data['Doctor_phone']
         )
         return data
 

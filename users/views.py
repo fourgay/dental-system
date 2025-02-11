@@ -274,6 +274,7 @@ def Admin_Update_user(request):
     address = request.data.get('address')
     avatar = request.data.get('avatar')
     password = request.data.get('password')
+    work = request.data.get('work')
 
     if not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
@@ -286,6 +287,7 @@ def Admin_Update_user(request):
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
     user.avatar = avatar if avatar else user.avatar
+    user.work = work if work else user.work 
     if password:
         user.set_password(password)  # Hash the new password
     user.save()
@@ -335,7 +337,8 @@ def Register_booking(request):
                 'error': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     return Response({
-        'message': f"Đặt lịch không thành công. Lỗi: {serializer.errors}"
+        'message': 'Đặt lịch không thành công.',
+        'error': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -431,6 +434,7 @@ def Update_user(request):
     birthDay = request.data.get('birthDay')
     address = request.data.get('address')
     password = request.data.get('password')
+    work = request.data.get('work')
 
     if not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
@@ -441,6 +445,7 @@ def Update_user(request):
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
+    user.work = work if work else user.work
     if password:
         user.set_password(password)
     user.save()

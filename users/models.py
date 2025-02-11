@@ -42,7 +42,7 @@ class CustomUserManager(BaseUserManager):
         return data
 
 
-    def register_booking(self, fullname, date, time, forAnother, remark, service, account, doctor, status):
+    def register_booking(self, fullname, date, time, forAnother, remark, service, account, doctor, status, Doctor_phone):
         # Kiểm tra các trường bắt buộc
         if not fullname:
             raise ValueError('Tên không được để trống!')
@@ -58,6 +58,8 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Bác sĩ không được để trống!')
         if not status:
             raise ValueError('Trạng thái không được để trống!')
+        if not Doctor_phone:
+            raise ValueError('Số điện thoại của bác sĩ không được để trống!')
         
         data = Booking(
             fullname=fullname,
@@ -68,7 +70,8 @@ class CustomUserManager(BaseUserManager):
             service=service,
             account=account,
             doctor=doctor,
-            status=status
+            status=status,
+            Doctor_phone=Doctor_phone
             )
         data.save(using=self._db)  
         return data
@@ -145,4 +148,3 @@ class Result(models.Model):
     Doctor_phone = models.CharField(max_length=255, default='Unknown Phone')
     updatedAt = models.DateTimeField(auto_now=True)
     createdAt = models.DateTimeField(auto_now_add=True)
- 
