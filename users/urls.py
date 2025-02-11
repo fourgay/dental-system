@@ -2,7 +2,7 @@ from django.urls import path
 from .views import register, login, Update_user, Admin_Update_user, update_booking, delete_booking, Register_booking, \
     get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
     admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
-    admin_create_tableBooking, admin_delete_tableBooking, admin_update_tableBooking
+    admin_create_tableBooking, admin_delete_tableBooking, admin_update_tableBooking, admin_get_tablesBooking
 
 urlpatterns = [
     path('accounts/Register/', register, name='register'),
@@ -29,4 +29,5 @@ urlpatterns = [
     path('admin/Create_Table_booking/', admin_create_tableBooking, name='admin_create_tableBooking'),
     path('admin/Delete_Table_booking/', admin_delete_tableBooking, name='admin_delete_tableBooking'),
     path('admin/Update_Table_booking/', admin_update_tableBooking, name='admin_update_tableBooking'),
+    path('admin/Get_Table_booking/', admin_get_tablesBooking, name='admin_get_tablesBooking'),
 ]

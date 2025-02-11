@@ -448,6 +448,7 @@ def Update_user(request):
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
+    user.work = work if work else user.work
     if password: 
         user.set_password(password)
     user.save()
@@ -762,11 +763,6 @@ def admin_delete_tableBooking(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_get_all_result(request):
-    if not hasattr(request.user, 'role') or request.user.role != 'USER':
-        return Response({
-            'message': 'Unauthorized: Bạn cần quyền USER để thực hiện hành động này.',
-        }, status=status.HTTP_401_UNAUTHORIZED)
-
     account = request.user.phone  # Lấy số điện thoại của người dùng từ request user
     fullname = request.query_params.get('fullname')
     service = request.query_params.get('service')
@@ -790,5 +786,27 @@ def user_get_all_result(request):
         return paginator.get_paginated_response(serializer.data)
     except Exception as e:
         return Response({
-            'error': f'Đã xảy ra lỗi: {str(e)}'
+            'error': f'Đã xảy ra lỗi: {str(e)}'})
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_get_tablesBooking(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        TimeBookings = TimeWorking.objects.all()
+        if not TimeBookings.exists():
+            return Response({
+                'message': 'Không tìm thấy bảng thời gian làm việc nào.',
+            }, status=status.HTTP_404_NOT_FOUND)
+        serializer = TimeWorkingSerializer(TimeBookings, many=True)
+        return Response({
+            'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'message': f'Đã xảy ra lỗi: {str(e)}',
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
