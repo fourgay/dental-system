@@ -178,3 +178,4 @@ class TimeWorking(models.Model):
     value = models.CharField(max_length=255)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
+
