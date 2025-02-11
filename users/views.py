@@ -681,7 +681,7 @@ def Doctor_get_booking(request):
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_create_tableBooking(request):
+def admin_create_tableWorking(request):
     if request.user.role != 'ADMIN':
         return Response({
             'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
@@ -700,7 +700,7 @@ def admin_create_tableBooking(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_update_tableBooking(request):
+def admin_update_tableWorking(request):
     if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN']:
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
@@ -733,7 +733,7 @@ def admin_update_tableBooking(request):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_delete_tableBooking(request):
+def admin_delete_tableWorking(request):
     if request.user.role != 'ADMIN':
         return Response({
             'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
@@ -790,7 +790,7 @@ def user_get_all_result(request):
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_get_tablesBooking(request):
+def admin_get_tableWorking(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
@@ -813,7 +813,7 @@ def admin_get_tablesBooking(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def get_tablesBooking(request):
+def get_tableWorking(request):
     try:
         TimeBookings = TimeWorking.objects.all()
         if not TimeBookings.exists():

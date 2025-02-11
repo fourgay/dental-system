@@ -2,7 +2,7 @@ from django.urls import path
 from .views import register, login, Update_user, Admin_Update_user, update_booking, delete_booking, Register_booking, \
     get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
     admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
-    admin_create_tableBooking, admin_delete_tableBooking, admin_update_tableBooking, admin_get_tablesBooking,get_tablesBooking
+    admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking
 
 urlpatterns = [
     path('accounts/Register/', register, name='register'),
@@ -26,9 +26,9 @@ urlpatterns = [
     path('admin/Get_all_result/', get_all_results, name='get_all_results'),
     path('doctor/Get_all_result/', Doctor_get_results, name='Doctor_get_results'),
     path('doctor/Get_all_booking/', Doctor_get_booking, name='Doctor_get_booking'),
-    path('admin/Create_Table_booking/', admin_create_tableBooking, name='admin_create_tableBooking'),
-    path('admin/Delete_Table_booking/', admin_delete_tableBooking, name='admin_delete_tableBooking'),
-    path('admin/Update_Table_booking/', admin_update_tableBooking, name='admin_update_tableBooking'),
-    path('admin/Get_Table_booking/', admin_get_tablesBooking, name='admin_get_tablesBooking'),
-    path('user/Get_Table_booking/', get_tablesBooking, name='get_tablesBooking'),
+    path('admin/Create_Table_working/', admin_create_tableWorking, name='admin_create_tableWorking'),
+    path('admin/Delete_Table_working/', admin_delete_tableWorking, name='admin_delete_tableWorking'),
+    path('admin/Update_Table_working/', admin_update_tableWorking, name='admin_update_tableWorking'),
+    path('admin/Get_Table_working/', admin_get_tableWorking, name='admin_get_tableWorking'),
+    path('user/Get_Table_working/', get_tableWorking, name='get_tableWorking'),
 ]
