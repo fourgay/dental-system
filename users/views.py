@@ -448,6 +448,7 @@ def Update_user(request):
     user.fullname = fullname if fullname else user.fullname
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
+    user.work = work if work else user.work
     if password: 
         user.set_password(password)
     user.save()
