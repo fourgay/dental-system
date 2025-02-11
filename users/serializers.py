@@ -95,6 +95,7 @@ class BookingSerializer(serializers.ModelSerializer):
 class DataSerializer_booking(serializers.ModelSerializer):
     date = serializers.CharField(required=False, allow_blank=True)
     remark = serializers.CharField(required=False, allow_blank=True, default="")
+    status = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Booking
