@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Data, Service, Booking, Result
+from .models import Data, Service, Booking, Result,TimeWorking
 import re
 
 class DataSerializer(serializers.ModelSerializer):
@@ -124,4 +124,10 @@ class DataSerializer_booking(serializers.ModelSerializer):
 class ResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
+        fields = '__all__'
+
+
+class TimeWorkingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TimeWorking
         fields = '__all__'

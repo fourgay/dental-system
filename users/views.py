@@ -4,9 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import Data, Service, Booking, Result
+from .models import Data, Service, Booking, Result, TimeWorking
 from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
-    DataSerializer_admin,DataSerializer_booking,DoctorSerializer, ResultSerializer
+    DataSerializer_admin,DataSerializer_booking,DoctorSerializer, ResultSerializer,\
+    TimeWorkingSerializer
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
@@ -675,4 +676,85 @@ def Doctor_get_booking(request):
     except Exception as e:
         return Response({
             'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_create_tableBooking(request):
+    if request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    TimeBooking = TimeWorkingSerializer(data=request.data)
+    if TimeBooking.is_valid():
+        TimeBooking.save()
+        return Response({
+            'message': 'Tạo bảng thời gian làm việc thành công!',
+            'data': TimeBooking.data
+        }, status=status.HTTP_201_CREATED)
+    return Response({
+        'message': 'Tạo bảng thời gian làm việc thất bại!',
+        'errors': TimeBooking.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_update_tableBooking(request):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN']:
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    id = request.data.get('id')
+    if not id:
+        return Response({
+            'message': 'Thiếu thông tin id của bảng thời gian làm việc.',
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        TimeBooking = TimeWorking.objects.get(id=id)
+    except TimeWorking.DoesNotExist:
+        return Response({
+            'message': 'Không tìm thấy bảng thời gian làm việc.',
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    TimeBooking_serializer = TimeWorkingSerializer(TimeBooking, data=request.data, partial=True)
+    if TimeBooking_serializer.is_valid():
+        TimeBooking_serializer.save()
+        return Response({
+            'message': 'Cập nhật bảng thời gian làm việc thành công!',
+            'data': TimeBooking_serializer.data
+        }, status=status.HTTP_200_OK)
+    return Response({
+        'message': 'Cập nhật bảng thời gian làm việc thất bại!',
+        'errors': TimeBooking_serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_delete_tableBooking(request):
+    if request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    id = request.data.get('id')
+    if not id:
+        return Response({
+            'message': 'Thiếu thông tin id của bảng thời gian làm việc.',
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        TimeBooking = TimeWorking.objects.get(id=id)
+        TimeBooking.delete()
+        return Response({
+            'message': 'Xóa bảng thời gian làm việc thành công!',
+        }, status=status.HTTP_200_OK)
+    except TimeWorking.DoesNotExist:
+        return Response({
+            'message': 'Không tìm thấy bảng thời gian làm việc.',
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'message': f'Lỗi khi xóa bảng thời gian làm việc: {str(e)}',
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

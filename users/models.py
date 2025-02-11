@@ -172,3 +172,9 @@ class Result(models.Model):
     Doctor_phone = models.CharField(max_length=255, default='Unknown Phone')
     updatedAt = models.DateTimeField(auto_now=True)
     createdAt = models.DateTimeField(auto_now_add=True)
+
+class TimeWorking(models.Model):
+    title = models.CharField(max_length=255)
+    value = models.CharField(max_length=255)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
