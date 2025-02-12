@@ -4,7 +4,7 @@ get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, a
 admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
 admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking, get_tableWorking, \
 admin_Create_tableAvatar, admin_update_tableAvatar, admin_delete_tableAvatar, admin_get_tableAvatar, get_tableAvatar, \
-user_get_results, user_get_booking\
+user_get_results, user_get_booking,change_password
 
 
         
@@ -47,4 +47,5 @@ urlpatterns = [
     path('admin/Delete_Table_avatar/', admin_delete_tableAvatar, name='admin_delete_tableAvatar'),
     path('admin/Get_Table_avatar/', admin_get_tableAvatar, name='admin_get_tableAvatar'),
     path('user/Get_Table_avatar/', get_tableAvatar, name='get_tableAvatar'),
+    path('change_password/', change_password, name='change_password')
 ]

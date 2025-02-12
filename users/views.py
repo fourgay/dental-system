@@ -965,3 +965,25 @@ def user_get_booking(request):
         return Response({
             'error': f'Đã xảy ra lỗi: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    user = request.user
+    old_password = request.data.get('old_pass')
+    new_password = request.data.get('new_pass')
+
+    if not user.check_password(old_password):
+        return Response({'message': 'Mật khẩu cũ không chính xác.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if old_password == new_password:
+        return Response({'message': 'Mật khẩu mới không được trùng với mật khẩu cũ.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.set_password(new_password)
+    user.save()
+
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'message': 'Đổi mật khẩu thành công.',
+        'access_token': str(refresh.access_token)
+    }, status=status.HTTP_200_OK)
