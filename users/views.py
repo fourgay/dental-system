@@ -758,15 +758,20 @@ def admin_delete_tableWorking(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_get_all_result(request):
-    account = request.user.phone  # Lấy số điện thoại của người dùng từ request user
+    account = request.query_params.get('phone')
     fullname = request.query_params.get('fullname')
     service = request.query_params.get('service')
+    doctor = request.query_params.get('doctor')
 
-    filters = Q(account=account)  # Lọc kết quả theo số điện thoại của người dùng
+    filters = Q()
     if fullname:
         filters &= Q(fullname__icontains=fullname)
+    if account:
+        filters &= Q(account__icontains=account)
     if service:
         filters &= Q(service__icontains=service)
+    if doctor:
+        filters &= Q(doctor__icontains=doctor)
 
     try:
         results = Result.objects.filter(filters)
@@ -781,9 +786,9 @@ def user_get_all_result(request):
         return paginator.get_paginated_response(serializer.data)
     except Exception as e:
         return Response({
-            'error': f'Đã xảy ra lỗi: {str(e)}'})
-    
-@api_view(['GET'])
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 @permission_classes([IsAuthenticated, IsAdmin])
 def admin_get_tableWorking(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
