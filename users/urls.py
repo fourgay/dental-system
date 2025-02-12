@@ -47,5 +47,4 @@ urlpatterns = [
     path('admin/Delete_Table_avatar/', admin_delete_tableAvatar, name='admin_delete_tableAvatar'),
     path('admin/Get_Table_avatar/', admin_get_tableAvatar, name='admin_get_tableAvatar'),
     path('user/Get_Table_avatar/', get_tableAvatar, name='get_tableAvatar'),
-    ss
 ]
