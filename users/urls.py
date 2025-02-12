@@ -2,7 +2,8 @@ from django.urls import path
 from .views import register, login, Update_user, Admin_Update_user, update_booking, delete_booking, Register_booking, \
     get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
     admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
-    admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking
+    admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking,\
+    admin_Create_tableAvatar ,admin_update_tableAvatar,admin_delete_tableAvatar,admin_get_tableAvatar,get_tableAvatar
 
 urlpatterns = [
     path('accounts/Register/', register, name='register'),
@@ -31,4 +32,9 @@ urlpatterns = [
     path('admin/Update_Table_working/', admin_update_tableWorking, name='admin_update_tableWorking'),
     path('admin/Get_Table_working/', admin_get_tableWorking, name='admin_get_tableWorking'),
     path('user/Get_Table_working/', get_tableWorking, name='get_tableWorking'),
+    path('admin/Create_Table_avatar/', admin_Create_tableAvatar, name='admin_Create_tableAvatar'),
+    path('admin/Update_Table_avatar/', admin_update_tableAvatar, name='admin_update_tableAvatar'),
+    path('admin/Delete_Table_avatar/', admin_delete_tableAvatar, name='admin_delete_tableAvatar'),
+    path('admin/Get_Table_avatar/', admin_get_tableAvatar, name='admin_get_tableAvatar'),
+    path('user/Get_Table_avatar/', get_tableAvatar, name='get_tableAvatar'),
 ]

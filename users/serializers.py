@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Data, Service, Booking, Result,TimeWorking
+from .models import Data, Service, Booking, Result,TimeWorking,TableAvatar
 import re
 
 class DataSerializer(serializers.ModelSerializer):
@@ -137,3 +137,8 @@ class CustomTimeWorkingSerializer(serializers.ModelSerializer):
     class Meta:
         model = TimeWorking
         fields = ['id', 'title', 'value']
+
+class AvatarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TableAvatar
+        fields = '__all__'

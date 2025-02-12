@@ -179,3 +179,8 @@ class TimeWorking(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 
+class TableAvatar(models.Model):
+    name = models.CharField(max_length=255)
+    Link = models.CharField(max_length=255)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)

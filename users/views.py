@@ -4,10 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import Data, Service, Booking, Result, TimeWorking
+from .models import Data, Service, Booking, Result, TimeWorking, TableAvatar
 from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
     DataSerializer_admin,DataSerializer_booking,DoctorSerializer, ResultSerializer,\
-    TimeWorkingSerializer,CustomTimeWorkingSerializer
+    TimeWorkingSerializer,CustomTimeWorkingSerializer,AvatarSerializer
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
@@ -427,11 +427,6 @@ def update_booking(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def Update_user(request):
-    if not hasattr(request.user, 'role') or request.user.role != 'USER':
-        return Response({
-            'message': 'Unauthorized: Bạn cần quyền USER để thực hiện hành động này.',
-        }, status=status.HTTP_401_UNAUTHORIZED)
-
     phone = request.data.get('phone')
     fullname = request.data.get('fullname')
     birthDay = request.data.get('birthDay')
@@ -822,6 +817,129 @@ def get_tableWorking(request):
         serializer = CustomTimeWorkingSerializer(TimeBookings, many=True)
         return Response({
             'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'message': f'Đã xảy ra lỗi: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_Create_tableAvatar(request):
+    if request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    Avatar = AvatarSerializer(data=request.data)
+    if Avatar.is_valid():
+        Avatar.save()
+        return Response({
+            'message': 'Thêm Avatar thành công!',
+            'data': Avatar.data
+        }, status=status.HTTP_201_CREATED)
+    return Response({
+        'message': 'Thêm Avatar thất bại!',
+        'errors': Avatar.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_update_tableAvatar(request):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN']:
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    id = request.data.get('id')
+    if not id:
+        return Response({
+            'message': 'Thiếu thông tin id của Avatar.',
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        avatar = TableAvatar.objects.get(id=id)
+    except TableAvatar.DoesNotExist:
+        return Response({
+            'message': 'Không tìm thấy Avatar.',
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    avatar_serializer = AvatarSerializer(avatar, data=request.data, partial=True)
+    if avatar_serializer.is_valid():
+        avatar_serializer.save()
+        return Response({
+            'message': 'Cập nhật Avatar thành công!',
+            'data': avatar_serializer.data
+        }, status=status.HTTP_200_OK)
+    return Response({
+        'message': 'Cập nhật Avatar thất bại!',
+        'errors': avatar_serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_delete_tableAvatar(request):
+    if request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    
+    id = request.query_params.get('id')
+    if not id:
+        return Response({
+            'message': 'Thiếu thông tin id của Avatar.',
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        avatar = TableAvatar.objects.get(id=id)
+        avatar.delete()
+        return Response({
+            'message': 'Xóa Avatar thành công!',
+        }, status=status.HTTP_200_OK)
+    except TableAvatar.DoesNotExist:
+        return Response({
+            'message': 'Không tìm thấy Avatar.',
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'message': f'Lỗi khi xóa Avatar: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def admin_get_tableAvatar(request):
+    if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+    try:
+        avatars = TableAvatar.objects.all()
+        if not avatars.exists():
+            return Response({
+                'message': 'Không tìm thấy Avatar nào.',
+            }, status=status.HTTP_404_NOT_FOUND)
+        paginator = CustomPagination()
+        paginated_avatars = paginator.paginate_queryset(avatars, request)
+        serializer = AvatarSerializer(paginated_avatars, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'message': f'Đã xảy ra lỗi: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_tableAvatar(request):
+    try:
+        avatars = TableAvatar.objects.all()
+        if not avatars.exists():
+            return Response({
+                'message': 'Không tìm thấy Avatar nào.',
+            }, status=status.HTTP_404_NOT_FOUND)
+        serializer = AvatarSerializer(avatars, many=True)
+        return Response({
+            'message': 'Lấy danh sách Avatar thành công!',
             'data': serializer.data
         }, status=status.HTTP_200_OK)
     except Exception as e:
