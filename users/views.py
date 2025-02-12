@@ -757,33 +757,26 @@ def admin_delete_tableWorking(request):
         
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_get_all_result(request):
+def user_get_results(request):
     account = request.query_params.get('phone')
-    fullname = request.query_params.get('fullname')
-    service = request.query_params.get('service')
-    doctor = request.query_params.get('doctor')
 
-    filters = Q()
-    if fullname:
-        filters &= Q(fullname__icontains=fullname)
-    if account:
-        filters &= Q(account__icontains=account)
-    if service:
-        filters &= Q(service__icontains=service)
-    if doctor:
-        filters &= Q(doctor__icontains=doctor)
+    if not account:
+        return Response({
+            'message': 'Vui lòng cung cấp số điện thoại.'
+        }, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        results = Result.objects.filter(filters)
+        results = Result.objects.filter(account__icontains=account)
         if not results.exists():
             return Response({
-                'message': 'Không tìm thấy kết quả với các điều kiện đã chọn.'
+                'message': 'Không tìm thấy kết quả cho số điện thoại này.'
             }, status=status.HTTP_404_NOT_FOUND)
-        
+
         paginator = CustomPagination()
         paginated_results = paginator.paginate_queryset(results, request)
         serializer = ResultSerializer(paginated_results, many=True)
         return paginator.get_paginated_response(serializer.data)
+
     except Exception as e:
         return Response({
             'error': f'Đã xảy ra lỗi: {str(e)}'
@@ -948,36 +941,7 @@ def get_tableAvatar(request):
             'data': serializer.data
         }, status=status.HTTP_200_OK)
     except Exception as e:
-        return Response({
-            'message': f'Đã xảy ra lỗi: {str(e)}',
-        
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def user_get_bookings(request):
-    # Kiểm tra nếu request.user có thuộc tính phone
-    account = getattr(request.user, 'phone', None)
-    if not account:
-        return Response({
-            'error': 'Tài khoản của bạn không hợp lệ hoặc thiếu thông tin số điện thoại.'
-        }, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        # Lọc danh sách lịch hẹn theo số điện thoại của người dùng
-        bookings = Booking.objects.filter(account=account).order_by('createdAt')  # Sắp xếp theo ngày tạo mới nhất
-        if not bookings.exists():
             return Response({
-                'message': 'Không tìm thấy lịch hẹn nào cho tài khoản này.'
-            }, status=status.HTTP_404_NOT_FOUND)
-
-        # Áp dụng phân trang
-        paginator = CustomPagination()
-        paginated_bookings = paginator.paginate_queryset(bookings, request)
-        serializer = BookingSerializer(paginated_bookings, many=True)
-        
-        return paginator.get_paginated_response(serializer.data)
-    
-    except Exception as e:
-        return Response({
-            'error': 'Đã xảy ra lỗi khi lấy danh sách lịch hẹn.',
-            'details': str(e)  # Chỉ hiển thị lỗi chi tiết trong môi trường debug
-        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                'message': f'Đã xảy ra lỗi: {str(e)}',
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
