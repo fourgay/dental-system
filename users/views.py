@@ -758,7 +758,7 @@ def admin_delete_tableWorking(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_get_results(request):
-    account = request.query_params.get('phone')
+    account = request.query_params.get('account')
 
     if not account:
         return Response({
@@ -948,7 +948,7 @@ def get_tableAvatar(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_get_booking(request):
-    account = request.query_params.get('phone')
+    account = request.query_params.get('account')
 
     try:
         bookings = Booking.objects.filter(account=account)
