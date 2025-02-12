@@ -944,4 +944,24 @@ def get_tableAvatar(request):
             return Response({
                 'message': f'Đã xảy ra lỗi: {str(e)}',
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_get_booking(request):
+    account = request.query_params.get('phone')
+
+    try:
+        bookings = Booking.objects.filter(account=account)
+        if not bookings.exists():
+            return Response({
+                'message': 'Không tìm thấy lịch hẹn nào cho tài khoản này.'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        paginator = CustomPagination()
+        paginated_bookings = paginator.paginate_queryset(bookings, request)
+        serializer = BookingSerializer(paginated_bookings, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'error': f'Đã xảy ra lỗi: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
