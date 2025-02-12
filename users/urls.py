@@ -1,11 +1,11 @@
 from django.urls import path
 from .views import register, login, Update_user, Admin_Update_user, update_booking, delete_booking, Register_booking, \
-    get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
-    admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
-    admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking,\
-    admin_Create_tableAvatar ,admin_update_tableAvatar,admin_delete_tableAvatar,admin_get_tableAvatar,get_tableAvatar,\
-    admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking, user_get_results,\
-    user_get_bookings, admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking 
+get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
+admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
+admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking, get_tableWorking, \
+admin_Create_tableAvatar, admin_update_tableAvatar, admin_delete_tableAvatar, admin_get_tableAvatar, get_tableAvatar, \
+user_get_results, user_get_bookings
+
         
 
 urlpatterns = [
@@ -46,4 +46,5 @@ urlpatterns = [
     path('admin/Delete_Table_avatar/', admin_delete_tableAvatar, name='admin_delete_tableAvatar'),
     path('admin/Get_Table_avatar/', admin_get_tableAvatar, name='admin_get_tableAvatar'),
     path('user/Get_Table_avatar/', get_tableAvatar, name='get_tableAvatar'),
+    ss
 ]
