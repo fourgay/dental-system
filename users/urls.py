@@ -5,7 +5,7 @@ from .views import register, login, Update_user, Admin_Update_user, update_booki
     admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking,\
     admin_Create_tableAvatar ,admin_update_tableAvatar,admin_delete_tableAvatar,admin_get_tableAvatar,get_tableAvatar,\
     admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking, user_get_results,\
-    user_get_bookings, admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking 
+    user_get_booking, admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking 
         
 
 urlpatterns = [
@@ -35,7 +35,7 @@ urlpatterns = [
     path('admin/Update_Table_booking/', admin_update_tableWorking, name='admin_update_tableWorking'),
     path('admin/Get_Table_booking/', admin_get_tableWorking, name='admin_get_tablesBooking'),
     path('user/Get_result/', user_get_results, name='user_get_results'),
-    path('user/Get_booking/', user_get_bookings, name='user_get_bookings'),
+    path('user/Get_booking/', user_get_booking, name='user_get_booking'),
     path('admin/Create_Table_working/', admin_create_tableWorking, name='admin_create_tableWorking'),
     path('admin/Delete_Table_working/', admin_delete_tableWorking, name='admin_delete_tableWorking'),
     path('admin/Update_Table_working/', admin_update_tableWorking, name='admin_update_tableWorking'),
