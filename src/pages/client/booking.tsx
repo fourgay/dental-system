@@ -16,6 +16,7 @@ import {
   createBookingAPI,
   getListServicesAPI,
   getRandomDoctorAPI,
+  getUserTimeAPI,
 } from "@/services/api";
 import { userCurrentApp } from "@/components/context/app.context";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,7 @@ export const Booking = () => {
   const [servicesLoading, setServicesLoading] = useState<boolean>(false);
   const [listServices, setListServices] = useState<IServices[]>([]);
   const [listDoctors, setListDoctors] = useState<IDoctor[]>([]);
+  const [listTime, setListTime] = useState<ITime[]>([]);
 
   const [chooseService, setChooseService] = useState<IServices>();
 
@@ -43,6 +45,16 @@ export const Booking = () => {
       setServicesLoading(false);
     };
     getServices();
+  }, []);
+
+  useEffect(() => {
+    const getTime = async () => {
+      const res = await getUserTimeAPI();
+      if (res && res?.data) {
+        setListTime(res?.data);
+      }
+    };
+    getTime();
   }, []);
 
   return (
@@ -190,12 +202,9 @@ export const Booking = () => {
               <ProFormSelect
                 name="dateTime"
                 label="Thời gian"
-                options={[
-                  { value: "08:00", label: "8:00 AM" },
-                  { value: "09:00", label: "9:00 AM" },
-                  { value: "10:00", label: "10:00 AM" },
-                  { value: "11:00", label: "11:00 AM" },
-                ]}
+                options={listTime?.map((item) => {
+                  return { value: item.value, label: item.title };
+                })}
                 width="sm"
                 placeholder="Chọn"
                 rules={[{ required: true }]}

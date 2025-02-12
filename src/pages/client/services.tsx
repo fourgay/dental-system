@@ -1,6 +1,4 @@
-import { userCurrentApp } from "@/components/context/app.context";
 import { getListServicesAPI } from "@/services/api";
-import { CheckCard } from "@ant-design/pro-components";
 import { Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -35,7 +33,12 @@ export const ServicesPage = () => {
         <Spin spinning={isLoading}>
           <div className="list-services__content">
             {listServices?.map((item, index) => (
-              <div className="card">
+              <div
+                className="card"
+                onClick={() => {
+                  navigate(`/info-services#${item.name}`);
+                }}
+              >
                 <img src={item.img} />
                 <div className="name">{item.title}</div>
                 <div className="detail">{item.detail}</div>

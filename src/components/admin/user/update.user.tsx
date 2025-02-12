@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { App, DatePicker, Divider, Form, Input, Modal } from "antd";
+import { App, DatePicker, Divider, Form, Input, Modal, Select } from "antd";
 import type { FormProps } from "antd";
 import { updateUserAPI } from "@/services/api";
 import dayjs from "dayjs";
-import { userCurrentApp } from "@/components/context/app.context";
 
 interface IProps {
   openModalUpdate: boolean;
@@ -18,6 +17,7 @@ type FieldType = {
   fullname: string;
   birthDay: string;
   address: string;
+  role: string;
 };
 
 export const UpdateUser = (props: IProps) => {
@@ -43,20 +43,21 @@ export const UpdateUser = (props: IProps) => {
           ? dayjs(dataUpdate.birthDay, "DD-MM-YYYY")
           : undefined,
         address: dataUpdate.address,
+        role: dataUpdate.role,
       });
-      console.log(dataUpdate);
     }
   }, [dataUpdate]);
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const { phone, fullname, birthDay, address } = values;
+    const { phone, fullname, birthDay, address, role } = values;
 
     setIsSubmit(true);
     const res = await updateUserAPI(
       phone,
       fullname,
       dayjs(birthDay).format("DD-MM-YYYY"),
-      address
+      address,
+      role
     );
     if (res && res.data) {
       notification.success({
@@ -127,6 +128,23 @@ export const UpdateUser = (props: IProps) => {
             name="birthDay"
           >
             <DatePicker format={"DD-MM-YYYY"} />
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            labelCol={{ span: 24 }}
+            label="Phân quyền"
+            name="role"
+            rules={[{ required: true, message: "Vui lòng chọn!" }]}
+          >
+            <Select
+              style={{ width: 120 }}
+              placeholder="Chọn"
+              options={[
+                { value: "USER", label: <span>USER</span> },
+                { value: "DOCTOR", label: <span>DOCTOR</span> },
+                { value: "ADMIN", label: <span>ADMIN</span> },
+              ]}
+            />
           </Form.Item>
 
           <Form.Item<FieldType>

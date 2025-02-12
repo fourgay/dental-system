@@ -1,0 +1,33 @@
+.info-services-page {
+  padding: 0 100px;
+  .title {
+    font-weight: bold;
+    font-size: 50px;
+    margin: 40px 0;
+    text-align: center;
+  }
+  .service {
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
+    ul {
+      margin-bottom: 10px;
+    }
+    .title {
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    .content {
+      background-color: #e6f6fe;
+      border-radius: 50px;
+      padding: 30px;
+      div {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}

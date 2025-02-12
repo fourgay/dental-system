@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { App, Button, Dropdown, Popconfirm, Tag } from "antd";
@@ -12,8 +12,11 @@ import {
 } from "@ant-design/icons";
 import {
   deleteBookingAPI,
+  getAllDoctorAPI,
   getBookingAPI,
   getDoctorBookingAPI,
+  getListServicesAPI,
+  getUserTimeAPI,
 } from "@/services/api";
 import { CreateBooking } from "./create.booking";
 import { DetailBooking } from "./detail.booking";
@@ -42,6 +45,10 @@ export const TableBooking = () => {
   const [dataDone, setDataDone] = useState<IBooking | null>(null);
 
   const [isDeleteBooking, setIsDeleteBooking] = useState<boolean>(false);
+
+  const [listServices, setListServices] = useState<IServices[]>([]);
+  const [listDoctors, setListDoctors] = useState<IDoctor[]>([]);
+  const [listTime, setListTime] = useState<ITime[]>([]);
   const { notification } = App.useApp();
 
   const location = useLocation();
@@ -72,6 +79,36 @@ export const TableBooking = () => {
     }
     setIsDeleteBooking(false);
   };
+
+  useEffect(() => {
+    const getServices = async () => {
+      const res = await getListServicesAPI();
+      if (res?.data) {
+        setListServices(res.data.result);
+      }
+    };
+    getServices();
+  }, []);
+
+  useEffect(() => {
+    const getDoctors = async () => {
+      const res = await getAllDoctorAPI();
+      if (res && res?.data) {
+        setListDoctors(res?.data);
+      }
+    };
+    getDoctors();
+  }, []);
+
+  useEffect(() => {
+    const getTime = async () => {
+      const res = await getUserTimeAPI();
+      if (res && res?.data) {
+        setListTime(res?.data);
+      }
+    };
+    getTime();
+  }, []);
 
   const columns: ProColumns<IBooking>[] = [
     {
@@ -128,7 +165,19 @@ export const TableBooking = () => {
       dataIndex: "status",
       hideInSearch: true,
       align: "center",
-      render: (_, record) => <Tag color="gold">{record.status}</Tag>,
+      render: (_, record) => (
+        <Tag
+          color={
+            record.status === "Chờ xác nhận"
+              ? "gold"
+              : record.status === "Đã xác nhận"
+              ? "green"
+              : "red"
+          }
+        >
+          {record.status}
+        </Tag>
+      ),
     },
     {
       title: "Tạo",
@@ -326,6 +375,9 @@ export const TableBooking = () => {
         openModalCreate={openModalCreate}
         setOpenModalCreate={setOpenModalCreate}
         refreshTable={refreshTable}
+        listServices={listServices}
+        listDoctors={listDoctors}
+        listTime={listTime}
       />
       <UpdateBooking
         openModalUpdate={openModalUpdate}
@@ -333,6 +385,9 @@ export const TableBooking = () => {
         dataUpdate={dataUpdate}
         setDataUpdate={setDataUpdate}
         refreshTable={refreshTable}
+        listServices={listServices}
+        listDoctors={listDoctors}
+        listTime={listTime}
       />
       <DoneBooking
         openModalDone={openModalDone}

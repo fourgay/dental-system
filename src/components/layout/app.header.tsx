@@ -82,7 +82,6 @@ export const AppHeader = () => {
               >
                 Dịch Vụ
               </div>
-              <div className="blogs">Blogs</div>
               <div
                 className={
                   location.pathname == "/aboutus" ? "aboutus bold" : "aboutus"
@@ -91,7 +90,6 @@ export const AppHeader = () => {
               >
                 Giới Thiệu
               </div>
-              <div className="contact">Liên Hệ</div>
             </div>
             <div className="page-header__auth">
               {!isAuthenticated ? (

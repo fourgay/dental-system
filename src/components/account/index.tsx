@@ -1,6 +1,7 @@
 import { Modal, Tabs } from "antd";
 import UserInfo from "./user.info";
 import ChangePassword from "./change.password";
+import { UserResult } from "./user.result";
 
 interface IProps {
   isModalOpen: boolean;
@@ -19,7 +20,12 @@ const ManageAccount = (props: IProps) => {
     {
       key: "password",
       label: `Đổi mật khẩu`,
-      children: <UserInfo />,
+      children: <ChangePassword />,
+    },
+    {
+      key: "get-result",
+      label: `Kết quả khám bệnh`,
+      children: <UserResult />,
     },
   ];
 
@@ -31,6 +37,8 @@ const ManageAccount = (props: IProps) => {
       onCancel={() => setIsModalOpen(false)}
       maskClosable={false}
       width={"60vw"}
+      height={"100vh"}
+      destroyOnClose={true}
     >
       <Tabs defaultActiveKey="info" items={items} />
     </Modal>

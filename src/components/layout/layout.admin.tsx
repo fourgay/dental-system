@@ -8,8 +8,11 @@ import {
   AppstoreOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  FieldTimeOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { userCurrentApp } from "../context/app.context";
+import ManageAccount from "../account";
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -17,6 +20,7 @@ type MenuItem = Required<MenuProps>["items"][number];
 export const LayoutAdmin = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState("");
+  const [openManageAccount, setOpenManageAccount] = useState<boolean>(false);
   const location = useLocation();
 
   const { user, setUser, setIsAuthenticated } = userCurrentApp();
@@ -41,7 +45,7 @@ export const LayoutAdmin = () => {
     {
       label: <Link to="/admin/booking">Quản lý lịch đăng ký</Link>,
       key: "/admin/booking",
-      icon: <SnippetsOutlined />,
+      icon: <FormOutlined />,
     },
     {
       label: <Link to="/admin/result">Quản lý kết quả</Link>,
@@ -51,7 +55,12 @@ export const LayoutAdmin = () => {
     {
       label: <Link to="/admin/time">Quản lý thời gian</Link>,
       key: "/admin/time",
-      icon: <SnippetsOutlined />,
+      icon: <FieldTimeOutlined />,
+    },
+    {
+      label: <Link to="/admin/avatar">Quản lý avatar</Link>,
+      key: "/admin/avatar",
+      icon: <FieldTimeOutlined />,
     },
   ];
 
@@ -60,7 +69,9 @@ export const LayoutAdmin = () => {
       label: (
         <label
           style={{ cursor: "pointer" }}
-          onClick={() => alert("chưa phát triển")}
+          onClick={() => {
+            setOpenManageAccount(true);
+          }}
         >
           Quản lý tài khoản
         </label>
@@ -144,6 +155,10 @@ export const LayoutAdmin = () => {
           </Content>
         </Layout>
       </Layout>
+      <ManageAccount
+        isModalOpen={openManageAccount}
+        setIsModalOpen={setOpenManageAccount}
+      />
     </>
   );
 };

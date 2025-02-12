@@ -1,8 +1,4 @@
-import {
-  createBookingAPI,
-  getAllDoctorAPI,
-  getListServicesAPI,
-} from "@/services/api";
+import { createBookingAPI } from "@/services/api";
 import {
   App,
   Checkbox,
@@ -16,12 +12,15 @@ import {
 } from "antd";
 import type { FormProps } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface IProps {
   openModalCreate: boolean;
   setOpenModalCreate: (v: boolean) => void;
   refreshTable: () => void;
+  listServices: IServices[];
+  listDoctors: IDoctor[];
+  listTime: ITime[];
 }
 
 type FieldType = {
@@ -33,12 +32,18 @@ type FieldType = {
   remark: string;
   service: string;
   doctor: string;
+  status: string;
 };
 
 export const CreateBooking = (props: IProps) => {
-  const { openModalCreate, setOpenModalCreate, refreshTable } = props;
-  const [listServices, setListServices] = useState<IServices[]>([]);
-  const [listDoctors, setListDoctors] = useState<IDoctor[]>([]);
+  const {
+    openModalCreate,
+    setOpenModalCreate,
+    refreshTable,
+    listServices,
+    listDoctors,
+    listTime,
+  } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const { notification } = App.useApp();
 
@@ -54,6 +59,7 @@ export const CreateBooking = (props: IProps) => {
       remark,
       service,
       doctor,
+      status,
     } = values;
 
     const dataDoctor = JSON.parse(doctor);
@@ -68,7 +74,8 @@ export const CreateBooking = (props: IProps) => {
       service,
       account,
       dataDoctor.fullname,
-      dataDoctor.phone
+      dataDoctor.phone,
+      status
     );
 
     if (res && res.data) {
@@ -87,26 +94,6 @@ export const CreateBooking = (props: IProps) => {
 
     setIsSubmit(false);
   };
-
-  useEffect(() => {
-    const getServices = async () => {
-      const res = await getListServicesAPI();
-      if (res?.data) {
-        setListServices(res.data.result);
-      }
-    };
-    getServices();
-  }, []);
-
-  useEffect(() => {
-    const getDoctors = async () => {
-      const res = await getAllDoctorAPI();
-      if (res && res?.data) {
-        setListDoctors(res?.data);
-      }
-    };
-    getDoctors();
-  }, []);
 
   return (
     <>
@@ -186,12 +173,9 @@ export const CreateBooking = (props: IProps) => {
                 <Select
                   style={{ width: 120 }}
                   placeholder="Chọn"
-                  options={[
-                    { value: "08:00", label: "8:00 AM" },
-                    { value: "09:00", label: "9:00 AM" },
-                    { value: "10:00", label: "10:00 AM" },
-                    { value: "11:00", label: "11:00 AM" },
-                  ]}
+                  options={listTime?.map((item) => {
+                    return { value: item.value, label: item.title };
+                  })}
                 />
               </Form.Item>
             </Space.Compact>
@@ -234,6 +218,22 @@ export const CreateBooking = (props: IProps) => {
                 />
               </Form.Item>
             </Space.Compact>
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            labelCol={{ span: 24 }}
+            label="Trạng thái"
+            name="status"
+            rules={[{ required: true, message: "Vui lòng chọn!" }]}
+          >
+            <Select
+              style={{ width: 120 }}
+              placeholder="Chọn"
+              options={[
+                { value: "Chờ xác nhận", label: "Chờ xác nhận" },
+                { value: "Đã xác nhận", label: "Đã xác nhận" },
+              ]}
+            />
           </Form.Item>
 
           <Form.Item<FieldType>

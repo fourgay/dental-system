@@ -1,8 +1,8 @@
-import { Button, Flex, Space, Input, Form, Collapse, Card } from "antd";
+import { Button, Flex, Collapse, Card } from "antd";
 import welcome from "assets/home/welcome.png";
 import welcomeDoctor from "assets/home/welcome-doctor.png";
 import rootCanal from "assets/home/root-canal-treatment.png";
-import dentalImplans from "assets/home/cosmetic-dentist.png";
+import dentalImplans from "assets/home/dental-implans.png";
 import cosmeticDentist from "assets/home/cosmetic-dentist.png";
 import callUs from "assets/home/call-us.png";
 import whyChoose from "assets/home/why-choose.png";
@@ -20,18 +20,18 @@ import { useEffect, useState } from "react";
 import { getAllDoctorAPI } from "@/services/api";
 
 export const HomePage = () => {
-  // const [doctors, setDoctors] = useState<IDoctor[]>([]);
+  const [doctors, setDoctors] = useState<IDoctor[]>([]);
 
-  // useEffect(() => {
-  //   const getDataDoctor = async () => {
-  //     const res = await getAllDoctorAPI();
-  //     if (res && res?.data) {
-  //       setDoctors(res.data);
-  //     }
-  //     console.log(doctors);
-  //   };
-  //   getDataDoctor();
-  // }, []);
+  useEffect(() => {
+    const getDataDoctor = async () => {
+      const res = await getAllDoctorAPI();
+      if (res && res?.data) {
+        setDoctors(res.data);
+      }
+      console.log(doctors);
+    };
+    getDataDoctor();
+  }, []);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -91,32 +91,29 @@ export const HomePage = () => {
       <div className="top-services">
         <div className="top-services__card">
           <img src={rootCanal} />
-          <div className="name">Root Canal Treatment</div>
+          <div className="name"> Điều trị tủy răng</div>
           <div className="detail">
-            Root canal treatment (endodontics) is a dental procedure used to
-            treat infection at the centre of a tooth.
+            Điều trị tủy răng (nội nha) là một thủ thuật nha khoa dùng để chữa
+            trị nhiễm trùng ở trung tâm của răng.
           </div>
-          <div className="learn-more">Learn More</div>
         </div>
 
         <div className="top-services__card">
           <img src={cosmeticDentist} />
-          <div className="name">Cosmetic Dentist</div>
+          <div className="name">Nha khoa thẩm mỹ</div>
           <div className="detail">
-            Cosmetic dentistry is the branch of dentistry that focuses on
-            improving the appearance of your smile.
+            Nha khoa thẩm mỹ là một nhánh của nha khoa tập trung vào việc cải
+            thiện vẻ đẹp của nụ cười.
           </div>
-          <div className="learn-more">Learn More</div>
         </div>
 
         <div className="top-services__card">
           <img src={dentalImplans} />
-          <div className="name">Dental Implants</div>
+          <div className="name">Cấy ghép nha khoa</div>
           <div className="detail">
-            A dental implant is an artificial tooth root that’s placed into your
-            jaw to hold a prosthetic tooth or bridge.
+            Cấy ghép nha khoa là một chân răng nhân tạo được đặt vào hàm để giữ
+            răng giả hoặc cầu răng.
           </div>
-          <div className="learn-more">Learn More</div>
         </div>
       </div>
       <div className="call-us">
@@ -128,14 +125,6 @@ export const HomePage = () => {
             Chúng tôi cam kết sử dụng công nghệ tiên tiến và vật liệu cao cấp để
             mang đến cho bạn dịch vụ nha khoa an toàn và hiệu quả nhất!
           </div>
-          <Form name="submit-phone" autoComplete="off">
-            <Form.Item name="phone">
-              <Space.Compact style={{ width: "80%" }}>
-                <Input placeholder="SĐT" />
-                <Button type="primary">Gửi</Button>
-              </Space.Compact>
-            </Form.Item>
-          </Form>
         </div>
         <div className="call-us__img">
           <img src={callUs} />
@@ -173,7 +162,11 @@ export const HomePage = () => {
               <div>Đăng ký nhanh chóng và dễ dàng!</div>
             </div>
           </div>
-          <Button type="primary" style={{ width: "100px" }}>
+          <Button
+            type="primary"
+            style={{ width: "100px" }}
+            onClick={() => navigate("/booking")}
+          >
             Đặt lịch
           </Button>
         </div>
@@ -188,7 +181,11 @@ export const HomePage = () => {
             và tận hưởng một nụ cười khỏe mạnh, rạng rỡ với sự chăm sóc tận tâm
             từ các chuyên gia của chúng tôi!
           </div>
-          <Button type="primary" style={{ width: "100px" }}>
+          <Button
+            type="primary"
+            style={{ width: "100px" }}
+            onClick={() => navigate("/booking")}
+          >
             Đặt lịch
           </Button>
         </div>
@@ -221,53 +218,22 @@ export const HomePage = () => {
             modules={[Autoplay, FreeMode, Pagination]}
             className="mySwiper"
           >
-            <SwiperSlide>
-              <Card
-                hoverable
-                style={{ width: 240 }}
-                cover={
-                  <img alt="example" src="https://i.imgur.com/V6vsg6o.png" />
-                }
-              >
-                <Meta title="Doctor 1" description="working" />
-              </Card>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <Card
-                hoverable
-                style={{ width: 240 }}
-                cover={
-                  <img alt="example" src="https://i.imgur.com/LV2W6ub.png" />
-                }
-              >
-                <Meta title="Doctor 2" description="working" />
-              </Card>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <Card
-                hoverable
-                style={{ width: 240 }}
-                cover={
-                  <img alt="example" src="https://i.imgur.com/fQDbbJv.png" />
-                }
-              >
-                <Meta title="Doctor 3" description="working" />
-              </Card>
-            </SwiperSlide>
-
-            <SwiperSlide>
-              <Card
-                hoverable
-                style={{ width: 240 }}
-                cover={
-                  <img alt="example" src="https://i.imgur.com/wzktDHu.png" />
-                }
-              >
-                <Meta title="Doctor 4" description="working" />
-              </Card>
-            </SwiperSlide>
+            {doctors.map((doctor) => (
+              <SwiperSlide>
+                <Card
+                  hoverable
+                  style={{ width: 240 }}
+                  cover={
+                    <img
+                      alt="example"
+                      src={import.meta.env.VITE_URL_AVATAR + doctor.img}
+                    />
+                  }
+                >
+                  <Meta title={doctor.fullname} description={doctor.work} />
+                </Card>
+              </SwiperSlide>
+            ))}
           </Swiper>
         </div>
       </div>

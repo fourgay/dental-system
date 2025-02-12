@@ -23,6 +23,8 @@ import { ResultPage } from "./pages/client/result";
 import { ManageResultPage } from "./pages/admin/manage.result";
 import { LayoutDoctor } from "./components/layout/layout.doctor";
 import { ManageTimePage } from "./pages/admin/manage.time";
+import { InfoServicesPage } from "./pages/client/info.services";
+import { ManageAvatarPage } from "./pages/admin/manage.avatar";
 
 const router = createBrowserRouter([
   {
@@ -43,6 +45,15 @@ const router = createBrowserRouter([
         element: (
           <>
             <ServicesPage />
+            <AppFooter />
+          </>
+        ),
+      },
+      {
+        path: "info-services",
+        element: (
+          <>
+            <InfoServicesPage />
             <AppFooter />
           </>
         ),
@@ -128,6 +139,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ManageTimePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "avatar",
+        element: (
+          <ProtectedRoute>
+            <ManageAvatarPage />
           </ProtectedRoute>
         ),
       },

@@ -28,6 +28,10 @@ declare global {
     password: string;
   }
 
+  interface IChangePassword {
+    access_token: string;
+  }
+
   interface IUser {
     id: string;
     fullname: string;
@@ -92,6 +96,14 @@ declare global {
     id: number;
     title: string;
     value: string;
+    createdAt: string;
+    updatedAt: string;
+  }
+
+  interface IAvatar {
+    id: number;
+    name: string;
+    Link: string;
     createdAt: string;
     updatedAt: string;
   }

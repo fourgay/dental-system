@@ -24,11 +24,17 @@
       background-color: #e6f6fe;
       flex-wrap: wrap;
       .card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
         padding: 40px;
         background-color: #fff;
         width: 25%;
+        height: 200px;
         text-align: center;
         border-radius: 10px;
+        cursor: pointer;
         .name {
           font-weight: bold;
           font-size: 20px;

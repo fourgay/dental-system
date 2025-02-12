@@ -24,10 +24,12 @@ export const AppFooter = () => {
               <div className="home" onClick={() => navigate("/")}>
                 Trang Chủ
               </div>
-              <div className="services">Dịch Vụ</div>
-              <div className="blogs">Blogs</div>
-              <div className="about-us">Giới Thiệu</div>
-              <div className="contact">Liên Hệ</div>
+              <div className="services" onClick={() => navigate("/services")}>
+                Dịch Vụ
+              </div>
+              <div className="about-us" onClick={() => navigate("/aboutus")}>
+                Giới Thiệu
+              </div>
             </div>
           </div>
           <Divider style={{ border: "2px solid black" }}></Divider>

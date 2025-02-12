@@ -10,11 +10,7 @@ import {
   Space,
 } from "antd";
 import type { FormProps } from "antd";
-import {
-  getAllDoctorAPI,
-  getListServicesAPI,
-  updateBookingAPI,
-} from "@/services/api";
+import { updateBookingAPI } from "@/services/api";
 import dayjs from "dayjs";
 
 interface IProps {
@@ -23,6 +19,9 @@ interface IProps {
   refreshTable: () => void;
   setDataUpdate: (v: IBooking | null) => void;
   dataUpdate: IBooking | null;
+  listServices: IServices[];
+  listDoctors: IDoctor[];
+  listTime: ITime[];
 }
 
 type FieldType = {
@@ -34,6 +33,7 @@ type FieldType = {
   remark: string;
   account: string;
   forAnother: boolean;
+  status: string;
 };
 
 export const UpdateBooking = (props: IProps) => {
@@ -43,10 +43,11 @@ export const UpdateBooking = (props: IProps) => {
     refreshTable,
     setDataUpdate,
     dataUpdate,
+    listServices,
+    listDoctors,
+    listTime,
   } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-  const [listServices, setListServices] = useState<IServices[]>([]);
-  const [listDoctors, setListDoctors] = useState<IDoctor[]>([]);
   const { notification } = App.useApp();
 
   // https://ant.design/components/form#components-form-demo-control-hooks
@@ -65,33 +66,23 @@ export const UpdateBooking = (props: IProps) => {
         doctor: dataUpdate.doctor,
         remark: dataUpdate.remark,
         forAnother: dataUpdate.forAnother,
+        status: dataUpdate.status,
       });
     }
   }, [dataUpdate]);
 
-  useEffect(() => {
-    const getServices = async () => {
-      const res = await getListServicesAPI();
-      if (res?.data) {
-        setListServices(res.data.result);
-      }
-    };
-    getServices();
-  }, []);
-
-  useEffect(() => {
-    const getDoctors = async () => {
-      const res = await getAllDoctorAPI();
-      if (res && res?.data) {
-        setListDoctors(res?.data);
-      }
-    };
-    getDoctors();
-  }, []);
-
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const { fullname, date, time, service, doctor, remark } = values;
-    const dataDoctor = JSON.parse(doctor);
+    const { fullname, date, time, service, doctor, remark, status } = values;
+    let dataDoctor;
+
+    try {
+      dataDoctor = JSON.parse(doctor);
+    } catch (error) {
+      dataDoctor = {
+        fullname: dataUpdate?.doctor,
+        phone: dataUpdate?.Doctor_phone,
+      };
+    }
 
     setIsSubmit(true);
     const res = await updateBookingAPI(
@@ -104,7 +95,7 @@ export const UpdateBooking = (props: IProps) => {
       dataUpdate?.account,
       dataDoctor.fullname,
       dataDoctor.phone,
-      "Đang chờ"
+      status
     );
     if (res && res.data) {
       notification.success({
@@ -180,12 +171,9 @@ export const UpdateBooking = (props: IProps) => {
                 <Select
                   style={{ width: 120 }}
                   placeholder="Chọn"
-                  options={[
-                    { value: "08:00", label: "8:00 AM" },
-                    { value: "09:00", label: "9:00 AM" },
-                    { value: "10:00", label: "10:00 AM" },
-                    { value: "11:00", label: "11:00 AM" },
-                  ]}
+                  options={listTime?.map((item) => {
+                    return { value: item.value, label: item.title };
+                  })}
                 />
               </Form.Item>
             </Space.Compact>
@@ -205,12 +193,6 @@ export const UpdateBooking = (props: IProps) => {
                   options={listServices?.map((item) => {
                     return { value: item.title, label: item.title };
                   })}
-                  // options={[
-                  //   { value: "08:00", label: "8:00 AM" },
-                  //   { value: "09:00", label: "9:00 AM" },
-                  //   { value: "10:00", label: "10:00 AM" },
-                  //   { value: "11:00", label: "11:00 AM" },
-                  // ]}
                 />
               </Form.Item>
               <Form.Item<FieldType>
@@ -234,6 +216,22 @@ export const UpdateBooking = (props: IProps) => {
                 />
               </Form.Item>
             </Space.Compact>
+          </Form.Item>
+
+          <Form.Item<FieldType>
+            labelCol={{ span: 24 }}
+            label="Trạng thái"
+            name="status"
+            rules={[{ required: true, message: "Vui lòng chọn!" }]}
+          >
+            <Select
+              style={{ width: 200 }}
+              placeholder="Chọn"
+              options={[
+                { value: "Chờ xác nhận", label: "Chờ xác nhận" },
+                { value: "Đã xác nhận", label: "Đã xác nhận" },
+              ]}
+            />
           </Form.Item>
 
           <Form.Item<FieldType>

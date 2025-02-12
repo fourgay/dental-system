@@ -1,4 +1,4 @@
-import { AntDesignOutlined, UploadOutlined } from "@ant-design/icons";
+import { AntDesignOutlined } from "@ant-design/icons";
 import {
   App,
   Avatar,
@@ -8,12 +8,13 @@ import {
   Form,
   Input,
   Row,
-  Upload,
+  Select,
 } from "antd";
 import { useEffect, useState } from "react";
 import type { FormProps } from "antd";
 import { userCurrentApp } from "components/context/app.context";
 import dayjs from "dayjs";
+import { getUserAvatarAPI, updateAPI } from "@/services/api";
 
 type FieldType = {
   fullname: string;
@@ -29,11 +30,13 @@ const UserInfo = () => {
   const [form] = Form.useForm();
   const { user, setUser } = userCurrentApp();
 
+  const [listAvatar, setListAvatar] = useState<IAvatar[]>([]);
   const [isSubmit, setIsSubmit] = useState(false);
-  const urlAvatar = import.meta.env.VITE_URL_AVATAR + user?.avatar;
+  const [avatar, setAvatar] = useState<string>(user?.avatar ?? "");
+  const urlAvatar = import.meta.env.VITE_URL_AVATAR + avatar;
+  const { notification } = App.useApp();
 
   useEffect(() => {
-    console.log(user);
     if (user) {
       form.setFieldsValue({
         phone: user.phone,
@@ -46,28 +49,45 @@ const UserInfo = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    const getAvatar = async () => {
+      const res = await getUserAvatarAPI();
+      if (res && res?.data) {
+        setListAvatar(res?.data);
+      }
+    };
+    getAvatar();
+  }, []);
+
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    // const { fullName, phone, _id } = values;
-    // setIsSubmit(true);
-    // const res = await updateUserInfoAPI(_id, userAvatar, fullName, phone);
-    // if (res && res.data) {
-    //   //update react context
-    //   setUser({
-    //     ...user!,
-    //     avatar: userAvatar,
-    //     fullName,
-    //     phone,
-    //   });
-    //   message.success("Cập nhật thông tin user thành công");
-    //   //force renew token
-    //   localStorage.removeItem("access_token");
-    // } else {
-    //   notification.error({
-    //     message: "Đã có lỗi xảy ra",
-    //     description: res.message,
-    //   });
-    // }
-    // setIsSubmit(false);
+    const { fullname, birthDay, address } = values;
+
+    setIsSubmit(true);
+    const res = await updateAPI(
+      fullname,
+      user?.phone ?? "",
+      birthDay,
+      address,
+      avatar
+    );
+    if (res && res.data) {
+      localStorage.removeItem("access_token");
+
+      setUser(res.data.user);
+      localStorage.setItem("access_token", res.data.access_token);
+
+      notification.success({
+        message: res.message,
+        placement: "topRight",
+      });
+    } else {
+      notification.error({
+        message: "Đã có lỗi xảy ra",
+        description: res.message,
+        placement: "topRight",
+      });
+    }
+    setIsSubmit(false);
   };
 
   return (
@@ -75,12 +95,29 @@ const UserInfo = () => {
       <Row>
         <Col sm={24} md={12}>
           <Row justify="center" align="middle">
-            <Col>
+            <Col
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <Avatar
                 size={{ xs: 32, sm: 64, md: 80, lg: 128, xl: 160, xxl: 200 }}
                 icon={<AntDesignOutlined />}
                 src={urlAvatar}
                 shape="circle"
+              />
+              <Select
+                style={{ width: 120 }}
+                placeholder="Chọn"
+                options={listAvatar?.map((item) => {
+                  return { value: item.Link, label: item.name };
+                })}
+                onChange={(value) => {
+                  setAvatar(value);
+                }}
               />
             </Col>
           </Row>
@@ -92,15 +129,6 @@ const UserInfo = () => {
             name="user-info"
             autoComplete="off"
           >
-            <Form.Item<FieldType>
-              hidden
-              labelCol={{ span: 24 }}
-              label="SĐT"
-              name="phone"
-            >
-              <Input disabled />
-            </Form.Item>
-
             <Form.Item<FieldType>
               labelCol={{ span: 24 }}
               label="Họ và tên"
@@ -126,7 +154,11 @@ const UserInfo = () => {
             >
               <Input.TextArea />
             </Form.Item>
-            <Button loading={isSubmit} onClick={() => form.submit()}>
+            <Button
+              type="primary"
+              loading={isSubmit}
+              onClick={() => form.submit()}
+            >
               Cập nhật
             </Button>
           </Form>

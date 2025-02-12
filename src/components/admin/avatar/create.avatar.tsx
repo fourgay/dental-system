@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { App, Divider, Form, Input, Modal } from "antd";
 import type { FormProps } from "antd";
-import { createTimeAPI } from "@/services/api";
+import { createAvatarAPI } from "@/services/api";
 
 interface IProps {
   openModalCreate: boolean;
@@ -10,11 +10,11 @@ interface IProps {
 }
 
 type FieldType = {
-  title: string;
-  value: string;
+  name: string;
+  link: string;
 };
 
-export const CreateTime = (props: IProps) => {
+export const CreateAvatar = (props: IProps) => {
   const { openModalCreate, setOpenModalCreate, refreshTable } = props;
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const { notification } = App.useApp();
@@ -23,9 +23,9 @@ export const CreateTime = (props: IProps) => {
   const [form] = Form.useForm();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const { title, value } = values;
+    const { name, link } = values;
     setIsSubmit(true);
-    const res = await createTimeAPI(title, value);
+    const res = await createAvatarAPI(name, link);
 
     if (res && res.data) {
       notification.success({
@@ -46,7 +46,7 @@ export const CreateTime = (props: IProps) => {
   return (
     <>
       <Modal
-        title="Thêm mới thời gian làm việc"
+        title="Thêm mới avatar"
         open={openModalCreate}
         onOk={() => {
           form.submit();
@@ -72,7 +72,7 @@ export const CreateTime = (props: IProps) => {
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
             label="Tên"
-            name="title"
+            name="name"
             rules={[{ required: true, message: "Vui lòng nhập!" }]}
           >
             <Input />
@@ -80,8 +80,8 @@ export const CreateTime = (props: IProps) => {
 
           <Form.Item<FieldType>
             labelCol={{ span: 24 }}
-            label="Giá trị"
-            name="value"
+            label="Link"
+            name="link"
           >
             <Input />
           </Form.Item>
