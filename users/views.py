@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 from .models import Data, Service, Booking, Result, TimeWorking
 from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
     DataSerializer_admin,DataSerializer_booking,DoctorSerializer, ResultSerializer,\
-    TimeWorkingSerializer
+    TimeWorkingSerializer,CustomTimeWorkingSerializer
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
@@ -681,7 +681,7 @@ def Doctor_get_booking(request):
     
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_create_tableBooking(request):
+def admin_create_tableWorking(request):
     if request.user.role != 'ADMIN':
         return Response({
             'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
@@ -700,7 +700,7 @@ def admin_create_tableBooking(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_update_tableBooking(request):
+def admin_update_tableWorking(request):
     if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN']:
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
@@ -733,13 +733,13 @@ def admin_update_tableBooking(request):
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_delete_tableBooking(request):
+def admin_delete_tableWorking(request):
     if request.user.role != 'ADMIN':
         return Response({
             'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
         }, status=status.HTTP_401_UNAUTHORIZED)
     
-    id = request.data.get('id')
+    id = request.query_params.get('id')
     if not id:
         return Response({
             'message': 'Thiếu thông tin id của bảng thời gian làm việc.',
@@ -795,7 +795,7 @@ def user_get_all_result(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 @permission_classes([IsAuthenticated, IsAdmin])
-def admin_get_tablesBooking(request):
+def admin_get_tableWorking(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
@@ -806,7 +806,25 @@ def admin_get_tablesBooking(request):
             return Response({
                 'message': 'Không tìm thấy bảng thời gian làm việc nào.',
             }, status=status.HTTP_404_NOT_FOUND)
-        serializer = TimeWorkingSerializer(TimeBookings, many=True)
+        paginator = CustomPagination()
+        paginated_TimeWorking = paginator.paginate_queryset(TimeBookings, request)
+        serializer = TimeWorkingSerializer(paginated_TimeWorking, many=True)
+        return paginator.get_paginated_response(serializer.data)
+    except Exception as e:
+        return Response({
+            'message': f'Đã xảy ra lỗi: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_tableWorking(request):
+    try:
+        TimeBookings = TimeWorking.objects.all()
+        if not TimeBookings.exists():
+            return Response({
+                'message': 'Không tìm thấy bảng thời gian làm việc nào.',
+            }, status=status.HTTP_404_NOT_FOUND)
+        serializer = CustomTimeWorkingSerializer(TimeBookings, many=True)
         return Response({
             'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
             'data': serializer.data

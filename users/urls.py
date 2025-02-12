@@ -3,7 +3,9 @@ from .views import register, login, Update_user, Admin_Update_user, update_booki
     get_user_info, get_user_profile, get_all_doctors, get_services, get_all_users, admin_register, admin_delete_user, \
     admin_get_in_for_booking, create_result, delete_result, Update_Result, get_all_results, Doctor_get_results, Doctor_get_booking, \
     admin_create_tableBooking, admin_delete_tableBooking, admin_update_tableBooking, admin_get_tablesBooking, user_get_all_result,\
-    user_get_bookings
+    user_get_bookings, admin_create_tableWorking, admin_delete_tableWorking, admin_update_tableWorking, admin_get_tableWorking,get_tableWorking 
+        
+        
 
 urlpatterns = [
     path('accounts/Register/', register, name='register'),
@@ -32,8 +34,10 @@ urlpatterns = [
     path('admin/Update_Table_booking/', admin_update_tableBooking, name='admin_update_tableBooking'),
     path('admin/Get_Table_booking/', admin_get_tablesBooking, name='admin_get_tablesBooking'),
     path('user/Get_result/', user_get_all_result, name='user_get_all_result'),
-    path('user/Get_booking/', user_get_bookings, name='user_get_bookings')
-    
-    
-    
+    path('user/Get_booking/', user_get_bookings, name='user_get_bookings'),
+    path('admin/Create_Table_working/', admin_create_tableWorking, name='admin_create_tableWorking'),
+    path('admin/Delete_Table_working/', admin_delete_tableWorking, name='admin_delete_tableWorking'),
+    path('admin/Update_Table_working/', admin_update_tableWorking, name='admin_update_tableWorking'),
+    path('admin/Get_Table_working/', admin_get_tableWorking, name='admin_get_tableWorking'),
+    path('user/Get_Table_working/', get_tableWorking, name='get_tableWorking'),
 ]
