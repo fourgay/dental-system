@@ -825,7 +825,7 @@ def get_tableWorking(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def admin_create_tableAvatar(request):
+def admin_Create_tableAvatar(request):
     if request.user.role != 'ADMIN' and (request.user.role != 'DOCTOR' or request.user.phone != request.data.get('Doctor_phone')):
         return Response({
             'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR với số điện thoại hợp lệ để thực hiện hành động này.',
