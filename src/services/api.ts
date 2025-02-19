@@ -133,18 +133,24 @@ export const createBookingAPI = (
   status: string
 ) => {
   const urlBackend = "/api/admin/Register_booking/";
-  return axios.post<IBackendRes<IRegister>>(urlBackend, {
-    fullname,
-    date,
-    time,
-    forAnother,
-    remark,
-    service,
-    account,
-    doctor,
-    status,
-    Doctor_phone,
-  });
+  return axios.post<IBackendRes<IRegister>>(
+    urlBackend,
+    {
+      fullname,
+      date,
+      time,
+      forAnother,
+      remark,
+      service,
+      account,
+      doctor,
+      status,
+      Doctor_phone,
+    },
+    {
+      timeout: 5000,
+    }
+  );
 };
 
 export const deleteBookingAPI = (phone: string | undefined) => {

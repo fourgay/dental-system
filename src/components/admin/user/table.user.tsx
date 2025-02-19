@@ -221,29 +221,6 @@ export const TableUser = () => {
           >
             Thêm
           </Button>,
-          <Dropdown
-            key="menu"
-            menu={{
-              items: [
-                {
-                  label: "1st item",
-                  key: "1",
-                },
-                {
-                  label: "2nd item",
-                  key: "2",
-                },
-                {
-                  label: "3rd item",
-                  key: "3",
-                },
-              ],
-            }}
-          >
-            <Button>
-              <EllipsisOutlined />
-            </Button>
-          </Dropdown>,
         ]}
       />
       <DetailUser

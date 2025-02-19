@@ -9,7 +9,7 @@ import {
   ProFormTextArea,
   StepsForm,
 } from "@ant-design/pro-components";
-import { App, Button, Result, Spin } from "antd";
+import { Button, Result, Spin } from "antd";
 import { useEffect, useState } from "react";
 import "styles/booking.scss";
 import {
@@ -20,10 +20,9 @@ import {
 } from "@/services/api";
 import { userCurrentApp } from "@/components/context/app.context";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
+import { sample } from "lodash";
 
 export const Booking = () => {
-  const { notification } = App.useApp();
   const [loading, setLoading] = useState(false);
   const [servicesLoading, setServicesLoading] = useState<boolean>(false);
   const [listServices, setListServices] = useState<IServices[]>([]);
@@ -71,9 +70,18 @@ export const Booking = () => {
               setListDoctors(resDoctor?.data);
             }
 
-            const randomDoctor: IDoctor =
-              listDoctors[Math.floor(Math.random() * listDoctors.length)];
             setServicesLoading(true);
+            let randomDoctor: IDoctor = listDoctors[0];
+            if (!randomDoctor) {
+              randomDoctor = {
+                fullname: "Dr Michael",
+                img: "wzktDHu.png",
+                phone: "014",
+                work: "Tư vấn",
+              };
+            }
+            console.log(randomDoctor);
+
             const res = await createBookingAPI(
               fullname,
               date,
