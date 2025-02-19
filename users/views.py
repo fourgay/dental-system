@@ -473,7 +473,7 @@ def Update_user(request):
                 'role': user_data['role'],  
                 'birthDay': user_data['birthDay'],
                 'address': user_data['address'],
-                'avatar': user_data.get['avatar']
+                'avatar': user_data.get('avatar')
             }
         }
     }, status=status.HTTP_200_OK)

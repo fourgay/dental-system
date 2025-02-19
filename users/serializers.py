@@ -42,7 +42,7 @@ class DataSerializer_admin(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     birthDay = serializers.CharField(required=False, allow_blank=True)
     phone = serializers.CharField(required=True)
-    work = serializers.CharField(required=True)  # Cho phép nhập work thủ công
+    work = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = Data
