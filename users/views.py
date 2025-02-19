@@ -444,6 +444,7 @@ def Update_user(request):
     address = request.data.get('address')
     password = request.data.get('password')
     work = request.data.get('work')
+    avatar = request.data.get('avatar')
 
     if not phone:
         return Response({'message': 'Thiếu thông tin phone'}, status=status.HTTP_400_BAD_REQUEST)
@@ -455,6 +456,7 @@ def Update_user(request):
     user.birthDay = birthDay if birthDay else user.birthDay
     user.address = address if address else user.address
     user.work = work if work else user.work
+    user.avatar = avatar if avatar else user.avatar
     if password: 
         user.set_password(password)
     user.save()
@@ -471,7 +473,7 @@ def Update_user(request):
                 'role': user_data['role'],  
                 'birthDay': user_data['birthDay'],
                 'address': user_data['address'],
-                'avatar': user_data.get('avatar', 'default_avatar.png')
+                'avatar': user_data.get['avatar']
             }
         }
     }, status=status.HTTP_200_OK)
