@@ -6,3 +6,4 @@ whitenoise
 requests
 django-cors-headers
 python-dotenv
+pymysql
