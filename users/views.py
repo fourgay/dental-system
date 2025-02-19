@@ -986,12 +986,12 @@ def user_get_booking(request):
     account = request.user.phone
 
     try:
-        bookings = Booking.objects.filter(account=account)
-        if not bookings.exists():
+        booking = Booking.objects.filter(account=account).first()
+        if not booking:
             return Response({
                 'message': 'Không tìm thấy lịch hẹn nào cho tài khoản này.'
             }, status=status.HTTP_404_NOT_FOUND)
-        serializer = BookingSerializer(bookings, many=True)
+        serializer = BookingSerializer(booking)
         return Response({
             'message': 'Lấy danh sách lịch hẹn thành công!',
             'data': serializer.data
