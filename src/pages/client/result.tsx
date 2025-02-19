@@ -22,7 +22,13 @@ export const ResultPage = () => {
       title="Đặt lịch thành công !!!"
       subTitle="Lịch của bạn đã được đặt. Chúng tôi sẽ liên hệ bạn sớm nhất có thể! Cảm ơn đã tin dùng dịch vụ của ThreeGay."
       extra={[
-        <Button type="primary" onClick={() => navigate("/")}>
+        <Button
+          type="primary"
+          onClick={() => {
+            navigate("/");
+            window.location.reload();
+          }}
+        >
           Về trang chủ
         </Button>,
       ]}

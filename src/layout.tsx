@@ -1,16 +1,36 @@
 import { Outlet } from "react-router-dom";
 import { AppHeader } from "components/layout/app.header";
-import { FloatButton } from "antd";
+import { App, FloatButton } from "antd";
 import {
   AppstoreOutlined,
   BellOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
-import { getUserBookingAPI } from "./services/api";
+import { deleteUserBookingAPI, getUserBookingAPI } from "./services/api";
 
 function Layout() {
   const [userBooking, setUserBooking] = useState<IBooking | null>(null);
+  const { notification } = App.useApp();
+  const deteleBooking = async () => {
+    const res = await deleteUserBookingAPI();
+
+    if (res.message) {
+      notification.success({
+        message: "Xoá thành công",
+        description: res.message,
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } else {
+      notification.error({
+        message: "Đã có lỗi xảy ra",
+        description: res.message,
+      });
+    }
+  };
   useEffect(() => {
     const getUserBooking = async () => {
       const res = await getUserBookingAPI();
@@ -44,6 +64,9 @@ function Layout() {
               }
             />
             <FloatButton
+              onClick={() => {
+                deteleBooking();
+              }}
               icon={<DeleteOutlined />}
               tooltip={<div>Xoá lịch đăng ký hiện tại</div>}
             />

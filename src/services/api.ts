@@ -200,6 +200,11 @@ export const getUserBookingAPI = () => {
   return axios.get<IBackendRes<IBooking>>(urlBackend);
 };
 
+export const deleteUserBookingAPI = () => {
+  const urlBackend = `/api/user/user_delete_booking/`;
+  return axios.delete<IBackendRes<IRegister>>(urlBackend);
+};
+
 export const getDoctorResultAPI = (query: string) => {
   const urlBackend = `/api/doctor/Get_all_result/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IResult>>>(urlBackend);
