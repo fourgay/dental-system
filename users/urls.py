@@ -43,6 +43,6 @@ urlpatterns = [
     path('admin/Delete_Table_avatar/', admin_delete_tableAvatar, name='admin_delete_tableAvatar'),
     path('admin/Get_Table_avatar/', admin_get_tableAvatar, name='admin_get_tableAvatar'),
     path('user/Get_Table_avatar/', get_tableAvatar, name='get_tableAvatar'),
-    path('change_password/', change_password, name='change_password')
+    path('change_password/', change_password, name='change_password'),
     path('user/user_delete_booking ',user_delete_booking, name='user_delete_booking')
 ]
