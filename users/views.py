@@ -682,17 +682,17 @@ def admin_create_tableWorking(request):
         return Response({
             'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
         }, status=status.HTTP_401_UNAUTHORIZED)
-    TimeBooking = TimeWorkingSerializer(data=request.data)
-    if TimeBooking.is_valid():
-        TimeBooking.save()
+    serializer = TimeWorkingSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
         return Response({
             'message': 'Tạo bảng thời gian làm việc thành công!',
-            'data': TimeBooking.data
+            'data': serializer.data
         }, status=status.HTTP_201_CREATED)
     return Response({
         'message': 'Tạo bảng thời gian làm việc thất bại!',
-        'errors': TimeBooking.errors
-        }, status=status.HTTP_400_BAD_REQUEST)
+        'errors': serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAdmin])
@@ -709,22 +709,22 @@ def admin_update_tableWorking(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        TimeBooking = TimeWorking.objects.get(id=id)
-    except TimeWorking.DoesNotExist:
+        time_working = TimeWorking.objects.get(id=id)
+    except time_working.DoesNotExist:
         return Response({
             'message': 'Không tìm thấy bảng thời gian làm việc.',
         }, status=status.HTTP_404_NOT_FOUND)
 
-    TimeBooking_serializer = TimeWorkingSerializer(TimeBooking, data=request.data, partial=True)
-    if TimeBooking_serializer.is_valid():
-        TimeBooking_serializer.save()
+    time_working_serializer = TimeWorkingSerializer(time_working, data=request.data, partial=True)
+    if time_working_serializer.is_valid():
+        time_working_serializer.save()
         return Response({
             'message': 'Cập nhật bảng thời gian làm việc thành công!',
-            'data': TimeBooking_serializer.data
+            'data': time_working_serializer.data
         }, status=status.HTTP_200_OK)
     return Response({
         'message': 'Cập nhật bảng thời gian làm việc thất bại!',
-        'errors': TimeBooking_serializer.errors
+        'errors': time_working_serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['DELETE'])
@@ -742,8 +742,8 @@ def admin_delete_tableWorking(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        TimeBooking = TimeWorking.objects.get(id=id)
-        TimeBooking.delete()
+        time_working = TimeWorking.objects.get(id=id)
+        time_working.delete()
         return Response({
             'message': 'Xóa bảng thời gian làm việc thành công!',
         }, status=status.HTTP_200_OK)
@@ -783,6 +783,7 @@ def user_get_results(request):
             'error': f'Đã xảy ra lỗi: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+@api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAdmin])
 def admin_get_tableWorking(request):
     if not hasattr(request.user, 'role') or request.user.role != 'ADMIN':
@@ -790,14 +791,14 @@ def admin_get_tableWorking(request):
             'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
     try:
-        TimeBookings = TimeWorking.objects.all()
-        if not TimeBookings.exists():
+        time_working = TimeWorking.objects.all()
+        if not time_working.exists():
             return Response({
                 'message': 'Không tìm thấy bảng thời gian làm việc nào.',
             }, status=status.HTTP_404_NOT_FOUND)
         paginator = CustomPagination()
-        paginated_TimeWorking = paginator.paginate_queryset(TimeBookings, request)
-        serializer = TimeWorkingSerializer(paginated_TimeWorking, many=True)
+        paginated_time_working = paginator.paginate_queryset(time_working, request)
+        serializer = TimeWorkingSerializer(paginated_time_working, many=True)
         return paginator.get_paginated_response(serializer.data)
     except Exception as e:
         return Response({
@@ -808,12 +809,12 @@ def admin_get_tableWorking(request):
 @permission_classes([IsAuthenticated])
 def get_tableWorking(request):
     try:
-        TimeBookings = TimeWorking.objects.all()
-        if not TimeBookings.exists():
+        TimeWorking = TimeWorking.objects.all()
+        if not TimeWorking.exists():
             return Response({
                 'message': 'Không tìm thấy bảng thời gian làm việc nào.',
             }, status=status.HTTP_404_NOT_FOUND)
-        serializer = CustomTimeWorkingSerializer(TimeBookings, many=True)
+        serializer = CustomTimeWorkingSerializer(TimeWorking, many=True)
         return Response({
             'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
             'data': serializer.data
