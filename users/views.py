@@ -950,7 +950,7 @@ def get_tableAvatar(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def user_get_booking(request):
-    account = request.query_params.get('account')
+    account = request.user.phone
 
     try:
         bookings = Booking.objects.filter(account=account)
@@ -958,11 +958,11 @@ def user_get_booking(request):
             return Response({
                 'message': 'Không tìm thấy lịch hẹn nào cho tài khoản này.'
             }, status=status.HTTP_404_NOT_FOUND)
-        
-        paginator = CustomPagination()
-        paginated_bookings = paginator.paginate_queryset(bookings, request)
-        serializer = BookingSerializer(paginated_bookings, many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer = BookingSerializer(bookings, many=True)
+        return Response({
+            'message': 'Lấy danh sách lịch hẹn thành công!',
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({
             'error': f'Đã xảy ra lỗi: {str(e)}'
