@@ -843,12 +843,12 @@ def admin_get_tableWorking(request):
 @permission_classes([IsAuthenticated])
 def get_tableWorking(request):
     try:
-        TimeWorking = TimeWorking.objects.all()
-        if not TimeWorking.exists():
+        time_working = TimeWorking.objects.all()
+        if not time_working.exists():
             return Response({
                 'message': 'Không tìm thấy bảng thời gian làm việc nào.',
             }, status=status.HTTP_404_NOT_FOUND)
-        serializer = CustomTimeWorkingSerializer(TimeWorking, many=True)
+        serializer = CustomTimeWorkingSerializer(time_working, many=True)
         return Response({
             'message': 'Lấy danh sách bảng thời gian làm việc thành công!',
             'data': serializer.data
@@ -857,7 +857,6 @@ def get_tableWorking(request):
         return Response({
             'message': f'Đã xảy ra lỗi: {str(e)}',
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAdmin])
 def admin_Create_tableAvatar(request):
