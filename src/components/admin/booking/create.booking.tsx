@@ -1,3 +1,4 @@
+import { userCurrentApp } from "@/components/context/app.context";
 import { createBookingAPI } from "@/services/api";
 import {
   App,
@@ -13,6 +14,7 @@ import {
 import type { FormProps } from "antd";
 import dayjs from "dayjs";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 interface IProps {
   openModalCreate: boolean;
@@ -48,6 +50,8 @@ export const CreateBooking = (props: IProps) => {
   const { notification } = App.useApp();
 
   const [form] = Form.useForm();
+  const location = useLocation();
+  const { user } = userCurrentApp();
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
     const {
@@ -62,7 +66,25 @@ export const CreateBooking = (props: IProps) => {
       status,
     } = values;
 
-    const dataDoctor = JSON.parse(doctor);
+    let dataDoctor;
+    if (location.pathname.startsWith("/admin")) {
+      dataDoctor = JSON.parse(doctor);
+    }
+
+    console.log(
+      fullname,
+      dayjs(date).format("DD-MM-YYYY"),
+      time,
+      forAnother,
+      remark,
+      service,
+      account,
+      location.pathname.startsWith("/admin/")
+        ? dataDoctor.fullname
+        : user?.fullname,
+      location.pathname.startsWith("/admin/") ? dataDoctor.phone : user?.phone,
+      status
+    );
 
     setIsSubmit(true);
     const res = await createBookingAPI(
@@ -73,8 +95,10 @@ export const CreateBooking = (props: IProps) => {
       remark,
       service,
       account,
-      dataDoctor.fullname,
-      dataDoctor.phone,
+      location.pathname.startsWith("/admin/")
+        ? dataDoctor.fullname
+        : user?.fullname,
+      location.pathname.startsWith("/admin/") ? dataDoctor.phone : user?.phone,
       status
     );
 
@@ -197,26 +221,28 @@ export const CreateBooking = (props: IProps) => {
                   })}
                 />
               </Form.Item>
-              <Form.Item<FieldType>
-                labelCol={{ span: 24 }}
-                label="Bác sĩ"
-                name="doctor"
-                rules={[{ required: true, message: "Vui lòng chọn!" }]}
-              >
-                <Select
-                  style={{ width: 200 }}
-                  placeholder="Chọn"
-                  options={listDoctors?.map((item) => {
-                    return {
-                      value: JSON.stringify({
-                        phone: item.phone,
-                        fullname: item.fullname,
-                      }),
-                      label: item.fullname,
-                    };
-                  })}
-                />
-              </Form.Item>
+              {location.pathname.startsWith("/admin/") && (
+                <Form.Item<FieldType>
+                  labelCol={{ span: 24 }}
+                  label="Bác sĩ"
+                  name="doctor"
+                  rules={[{ required: true, message: "Vui lòng chọn!" }]}
+                >
+                  <Select
+                    style={{ width: 200 }}
+                    placeholder="Chọn"
+                    options={listDoctors?.map((item) => {
+                      return {
+                        value: JSON.stringify({
+                          phone: item.phone,
+                          fullname: item.fullname,
+                        }),
+                        label: item.fullname,
+                      };
+                    })}
+                  />
+                </Form.Item>
+              )}
             </Space.Compact>
           </Form.Item>
 

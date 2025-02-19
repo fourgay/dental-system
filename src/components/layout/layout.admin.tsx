@@ -1,7 +1,7 @@
 import { Button, Dropdown, Layout, Menu, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
   UserOutlined,
   SnippetsOutlined,
@@ -10,6 +10,7 @@ import {
   MenuFoldOutlined,
   FieldTimeOutlined,
   FormOutlined,
+  SmileOutlined,
 } from "@ant-design/icons";
 import { userCurrentApp } from "../context/app.context";
 import ManageAccount from "../account";
@@ -22,13 +23,22 @@ export const LayoutAdmin = () => {
   const [activeMenu, setActiveMenu] = useState("");
   const [openManageAccount, setOpenManageAccount] = useState<boolean>(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user, setUser, setIsAuthenticated } = userCurrentApp();
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleLogout = async () => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem("access_token");
+    navigate("/login");
   };
 
   const items: MenuItem[] = [
@@ -60,7 +70,7 @@ export const LayoutAdmin = () => {
     {
       label: <Link to="/admin/avatar">Quản lý avatar</Link>,
       key: "/admin/avatar",
-      icon: <FieldTimeOutlined />,
+      icon: <SmileOutlined />,
     },
   ];
 
@@ -82,15 +92,15 @@ export const LayoutAdmin = () => {
       label: <Link to={"/"}>Trang chủ</Link>,
       key: "home",
     },
-    {
-      label: (
-        <label style={{ cursor: "pointer" }} onClick={() => handleLogout()}>
-          Đăng xuất
-        </label>
-      ),
-      key: "logout",
-    },
   ];
+  itemsDropdown.push({
+    label: (
+      <label style={{ cursor: "pointer" }} onClick={() => handleLogout()}>
+        Đăng xuất
+      </label>
+    ),
+    key: "logout",
+  });
 
   useEffect(() => {
     const active: any =
@@ -142,8 +152,6 @@ export const LayoutAdmin = () => {
             </span>
             <Dropdown menu={{ items: itemsDropdown }} trigger={["click"]}>
               <Space style={{ cursor: "pointer" }}>
-                {/* <Avatar src={urlAvatar} />
-                {user?.fullName} */}
                 <Button type="primary" size="large">
                   {user?.fullname}
                 </Button>

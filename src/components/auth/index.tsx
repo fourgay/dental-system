@@ -1,5 +1,5 @@
 import { Button, Result } from "antd";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { userCurrentApp } from "components/context/app.context";
 
 interface IProps {
@@ -8,8 +8,10 @@ interface IProps {
 
 export const ProtectedRoute = (props: IProps) => {
   const { isAuthenticated, user } = userCurrentApp();
+  const navigate = useNavigate();
   const location = useLocation();
   if (isAuthenticated === false) {
+    navigate("/login");
     return (
       <Result
         status="404"

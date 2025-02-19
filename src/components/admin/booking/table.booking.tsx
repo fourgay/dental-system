@@ -150,6 +150,19 @@ export const TableBooking = () => {
       title: "Dịch vụ",
       dataIndex: "service",
       align: "center",
+      hideInSearch: true,
+    },
+    {
+      title: "Dịch vụ",
+      dataIndex: "service",
+      valueType: "select",
+      valueEnum: {
+        ADMIN: { text: "Admin" },
+        USER: { text: "User" },
+        DOCTOR: { text: "Doctor" },
+      },
+      hideInTable: true,
+      align: "center",
     },
     ...(location.pathname.startsWith("/admin/")
       ? [

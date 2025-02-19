@@ -32,8 +32,8 @@ const UserInfo = () => {
 
   const [listAvatar, setListAvatar] = useState<IAvatar[]>([]);
   const [isSubmit, setIsSubmit] = useState(false);
-  const [avatar, setAvatar] = useState<string>(user?.avatar ?? "");
-  const urlAvatar = import.meta.env.VITE_URL_AVATAR + avatar;
+  const [avatarUser, setAvatarUser] = useState<string>(user?.avatar ?? "");
+  const urlAvatar = import.meta.env.VITE_URL_AVATAR + avatarUser;
   const { notification } = App.useApp();
 
   useEffect(() => {
@@ -66,9 +66,9 @@ const UserInfo = () => {
     const res = await updateAPI(
       fullname,
       user?.phone ?? "",
-      birthDay,
+      dayjs(birthDay).format("DD-MM-YYYY"),
       address,
-      avatar
+      avatarUser
     );
     if (res && res.data) {
       localStorage.removeItem("access_token");
@@ -116,7 +116,7 @@ const UserInfo = () => {
                   return { value: item.Link, label: item.name };
                 })}
                 onChange={(value) => {
-                  setAvatar(value);
+                  setAvatarUser(value);
                 }}
               />
             </Col>

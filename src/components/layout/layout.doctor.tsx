@@ -1,15 +1,15 @@
 import { Button, Dropdown, Layout, Menu, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import type { MenuProps } from "antd";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
-  UserOutlined,
   SnippetsOutlined,
   AppstoreOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
 } from "@ant-design/icons";
 import { userCurrentApp } from "../context/app.context";
+import ManageAccount from "../account";
 const { Content, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -17,9 +17,19 @@ type MenuItem = Required<MenuProps>["items"][number];
 export const LayoutDoctor = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState("");
+  const [openManageAccount, setOpenManageAccount] = useState<boolean>(false);
+
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { user, setUser, setIsAuthenticated } = userCurrentApp();
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleLogout = async () => {
     setUser(null);
@@ -50,7 +60,9 @@ export const LayoutDoctor = () => {
       label: (
         <label
           style={{ cursor: "pointer" }}
-          onClick={() => alert("chưa phát triển")}
+          onClick={() => {
+            setOpenManageAccount(true);
+          }}
         >
           Quản lý tài khoản
         </label>
@@ -134,6 +146,10 @@ export const LayoutDoctor = () => {
           </Content>
         </Layout>
       </Layout>
+      <ManageAccount
+        isModalOpen={openManageAccount}
+        setIsModalOpen={setOpenManageAccount}
+      />
     </>
   );
 };

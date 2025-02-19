@@ -111,12 +111,12 @@ export const updateUserAPI = (
 };
 
 export const getBookingAPI = (query: string) => {
-  const urlBackend = `/api/admin/Booking/?${query}`;
+  const urlBackend = `/api/admin/Get_booking/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IBooking>>>(urlBackend);
 };
 
 export const getDoctorBookingAPI = (query: string) => {
-  const urlBackend = `/api/doctor/get_all_booking/?${query}`;
+  const urlBackend = `/api/doctor/Get_all_booking/?${query}`;
   return axios.get<IBackendRes<IModePaginate<IBooking>>>(urlBackend);
 };
 
@@ -187,6 +187,11 @@ export const getResultAPI = (query: string) => {
 export const getUserResultAPI = (account: string) => {
   const urlBackend = `/api/user/Get_result/?account=${account}`;
   return axios.get<IBackendRes<IModePaginate<IResult>>>(urlBackend);
+};
+
+export const getUserBookingAPI = () => {
+  const urlBackend = `/api/user/Get_booking/`;
+  return axios.get<IBackendRes<IBooking>>(urlBackend);
 };
 
 export const getDoctorResultAPI = (query: string) => {

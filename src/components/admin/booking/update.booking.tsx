@@ -195,26 +195,28 @@ export const UpdateBooking = (props: IProps) => {
                   })}
                 />
               </Form.Item>
-              <Form.Item<FieldType>
-                labelCol={{ span: 24 }}
-                label="Bác sĩ"
-                name="doctor"
-                rules={[{ required: true, message: "Vui lòng chọn!" }]}
-              >
-                <Select
-                  style={{ width: 200 }}
-                  placeholder="Chọn"
-                  options={listDoctors?.map((item) => {
-                    return {
-                      value: JSON.stringify({
-                        phone: item.phone,
-                        fullname: item.fullname,
-                      }),
-                      label: item.fullname,
-                    };
-                  })}
-                />
-              </Form.Item>
+              {location.pathname.startsWith("/admin/") && (
+                <Form.Item<FieldType>
+                  labelCol={{ span: 24 }}
+                  label="Bác sĩ"
+                  name="doctor"
+                  rules={[{ required: true, message: "Vui lòng chọn!" }]}
+                >
+                  <Select
+                    style={{ width: 200 }}
+                    placeholder="Chọn"
+                    options={listDoctors?.map((item) => {
+                      return {
+                        value: JSON.stringify({
+                          phone: item.phone,
+                          fullname: item.fullname,
+                        }),
+                        label: item.fullname,
+                      };
+                    })}
+                  />
+                </Form.Item>
+              )}
             </Space.Compact>
           </Form.Item>
 

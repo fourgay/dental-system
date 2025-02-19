@@ -83,7 +83,8 @@ export const Booking = () => {
               chooseService?.title,
               user?.phone,
               randomDoctor.fullname,
-              randomDoctor.phone
+              randomDoctor.phone,
+              "Chờ xác nhận"
             );
             setServicesLoading(false);
             if (res && res.data) {

@@ -42,6 +42,9 @@ export const ServicesPage = () => {
                 <img src={item.img} />
                 <div className="name">{item.title}</div>
                 <div className="detail">{item.detail}</div>
+                <div style={{ color: "#acacac", marginTop: 20 }}>
+                  Tìm hiểu thêm
+                </div>
               </div>
             ))}
           </div>

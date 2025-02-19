@@ -27,14 +27,6 @@ export const AppHeader = () => {
       ),
       key: "account",
     },
-    {
-      label: (
-        <label style={{ cursor: "pointer" }} onClick={() => handleLogout()}>
-          Đăng xuất
-        </label>
-      ),
-      key: "logout",
-    },
   ];
   if (user?.role === "ADMIN") {
     itemsDropdown.push({
@@ -48,6 +40,14 @@ export const AppHeader = () => {
       key: "admin",
     });
   }
+  itemsDropdown.push({
+    label: (
+      <label style={{ cursor: "pointer" }} onClick={() => handleLogout()}>
+        Đăng xuất
+      </label>
+    ),
+    key: "logout",
+  });
 
   //tạm logout
   const handleLogout = async () => {
@@ -113,8 +113,6 @@ export const AppHeader = () => {
                 <div>
                   <Dropdown menu={{ items: itemsDropdown }} trigger={["click"]}>
                     <Space style={{ cursor: "pointer" }}>
-                      {/* <Avatar src={urlAvatar} />
-                {user?.fullName} */}
                       <Button type="primary" size="large">
                         {user?.fullname}
                       </Button>
