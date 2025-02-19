@@ -11,6 +11,7 @@ from .serializers import DataSerializer, ServiceSerializer, BookingSerializer, \
 from .pagination import CustomPagination
 from django.db.models import Q
 from django.db import transaction
+import re
  
 
 class IsDoctor(BasePermission):
@@ -675,11 +676,11 @@ def Doctor_get_booking(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdmin])
 def admin_create_tableWorking(request):
-    if request.user.role != 'ADMIN' and (request.user.role != 'DOCTOR' or request.user.phone != request.data.get('Doctor_phone')):
+    if request.user.role != 'ADMIN':
         return Response({
-            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR với số điện thoại hợp lệ để thực hiện hành động này.',
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
         }, status=status.HTTP_401_UNAUTHORIZED)
     TimeBooking = TimeWorkingSerializer(data=request.data)
     if TimeBooking.is_valid():
@@ -691,14 +692,14 @@ def admin_create_tableWorking(request):
     return Response({
         'message': 'Tạo bảng thời gian làm việc thất bại!',
         'errors': TimeBooking.errors
-    }, status=status.HTTP_400_BAD_REQUEST)
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdmin])
 def admin_update_tableWorking(request):
-    if request.user.role != 'ADMIN' and (request.user.role != 'DOCTOR' or request.user.phone != request.data.get('Doctor_phone')):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN']:
         return Response({
-            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR với số điện thoại hợp lệ để thực hiện hành động này.',
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
     
     id = request.data.get('id')
@@ -823,11 +824,11 @@ def get_tableWorking(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdmin])
 def admin_Create_tableAvatar(request):
-    if request.user.role != 'ADMIN' and (request.user.role != 'DOCTOR' or request.user.phone != request.data.get('Doctor_phone')):
+    if request.user.role != 'ADMIN':
         return Response({
-            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR với số điện thoại hợp lệ để thực hiện hành động này.',
+            'message': 'Bạn Cần Access Token để truy cập APIs - Unauthorized (Token hết hạn, hoặc không hợp lệ, hoặc không truyền access token)',
         }, status=status.HTTP_401_UNAUTHORIZED)
     Avatar = AvatarSerializer(data=request.data)
     if Avatar.is_valid():
@@ -842,11 +843,11 @@ def admin_Create_tableAvatar(request):
     }, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdmin])
 def admin_update_tableAvatar(request):
-    if request.user.role != 'ADMIN' and (request.user.role != 'DOCTOR' or request.user.phone != request.data.get('Doctor_phone')):
+    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN']:
         return Response({
-            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR với số điện thoại hợp lệ để thực hiện hành động này.',
+            'message': 'Unauthorized: Bạn cần quyền ADMIN để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
     
     id = request.data.get('id')
