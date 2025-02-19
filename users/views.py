@@ -1026,3 +1026,29 @@ def change_password(request):
             'access_token': str(refresh.access_token)
         }
     }, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def user_delete_booking(request):
+    user = request.user
+    phone = user.phone  
+    try:
+        booking = Booking.objects.get(account=phone)
+    except Booking.DoesNotExist:
+        return Response({
+            'message': f'Không tìm thấy lịch hẹn cho số điện thoại {phone}.',
+        }, status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        with transaction.atomic():
+            booking.delete()
+            user.isBooking = False
+            user.save()
+
+        return Response({
+            'message': 'Xóa lịch hẹn thành công.',
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({
+            'message': f'Lỗi khi xóa lịch hẹn: {str(e)}',
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
