@@ -305,9 +305,10 @@ def Admin_Update_user(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Register_booking(request):
-    if not hasattr(request.user, 'role') or (request.user.role != 'ADMIN' and request.user.role != 'USER'):
+    user = request.user
+    if not hasattr(user, 'role') or (user.role != 'ADMIN' and user.role != 'DOCTOR'):
         return Response({
-            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc USER để thực hiện hành động này.',
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
     serializer = DataSerializer_booking(data=request.data)
@@ -315,21 +316,28 @@ def Register_booking(request):
         try:
             with transaction.atomic():
                 account = serializer.validated_data.get('account')
+                doctor_phone = serializer.validated_data.get('Doctor_phone')
+                
+                if user.role == 'DOCTOR' and user.phone != doctor_phone:
+                    return Response({
+                        'message': 'Unauthorized: Số điện thoại của bạn không khớp với Doctor_phone.',
+                    }, status=status.HTTP_403_FORBIDDEN)
+                
                 try:
-                    user = Data.objects.get(phone=account)
+                    user_data = Data.objects.get(phone=account)
                 except Data.DoesNotExist:
                     return Response({
                         'message': 'Đặt lịch không thành công.',
                         'error': f'Số điện thoại {account} không tồn tại trong hệ thống.'
                     }, status=status.HTTP_400_BAD_REQUEST)
-                if user.isBooking:
+                if user_data.isBooking:
                     return Response({
                         'message': 'Đặt lịch không thành công.',
                         'error': f'Người dùng với số điện thoại {account} đã có lịch hẹn. Vui lòng hoàn thành hoặc hủy lịch hẹn hiện tại trước khi đặt lịch mới.'
                     }, status=status.HTTP_400_BAD_REQUEST)
                 booking = serializer.save()
-                user.isBooking = True
-                user.save()
+                user_data.isBooking = True
+                user_data.save()
                 response_serializer = DataSerializer_booking(booking)
                 return Response({
                     'message': 'Đặt lịch thành công!',
@@ -389,12 +397,20 @@ def delete_booking(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def update_booking(request):
-    if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'USER']:
+    user = request.user
+    if not hasattr(user, 'role') or (user.role != 'ADMIN' and user.role != 'DOCTOR'):
         return Response({
-            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc USER để thực hiện hành động này.',
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
         }, status=status.HTTP_401_UNAUTHORIZED)
 
     account = request.data.get('account')
+    doctor_phone = request.data.get('Doctor_phone')
+    
+    if user.role == 'DOCTOR' and user.phone != doctor_phone:
+        return Response({
+            'message': 'Unauthorized: Số điện thoại của bạn không khớp với Doctor_phone.',
+        }, status=status.HTTP_403_FORBIDDEN)
+
     if not account:
         return Response({
             'message': 'Thiếu thông tin account để tìm booking.',
@@ -406,11 +422,6 @@ def update_booking(request):
         return Response({
             'message': f'Không tìm thấy lịch hẹn cho account {account}.',
         }, status=status.HTTP_404_NOT_FOUND)
-
-    if request.user.role == 'USER' and booking.account != request.user.phone:
-        return Response({
-            'message': 'Unauthorized: Bạn không có quyền cập nhật lịch hẹn này.',
-        }, status=status.HTTP_403_FORBIDDEN)
 
     serializer = BookingSerializer(booking, data=request.data, partial=True)
     if serializer.is_valid():
@@ -424,7 +435,6 @@ def update_booking(request):
         'message': 'Cập nhật không thành công.',
         'errors': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def Update_user(request):
@@ -469,19 +479,43 @@ def Update_user(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_result(request):
-    Result = ResultSerializer(data=request.data)
-    if Result.is_valid():
-        Result.save()
+    user = request.user
+    if not hasattr(user, 'role') or (user.role != 'ADMIN' and user.role != 'DOCTOR'):
+        return Response({
+            'message': 'Unauthorized: Bạn cần quyền ADMIN hoặc DOCTOR để thực hiện hành động này.',
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+    result_serializer = ResultSerializer(data=request.data)
+    if result_serializer.is_valid():
+        result = result_serializer.save()
+
+        account = result.account
+        doctor_phone = request.data.get('Doctor_phone')
+        
+        if user.role == 'DOCTOR' and user.phone != doctor_phone:
+            return Response({
+                'message': 'Unauthorized: Số điện thoại của bạn không khớp với Doctor_phone.',
+            }, status=status.HTTP_403_FORBIDDEN)
+
+        try:
+            user_data = Data.objects.get(phone=account)
+            user_data.isBooking = False
+            user_data.save()
+        except Data.DoesNotExist:
+            return Response({
+                'message': 'Tạo kết quả thành công, nhưng không tìm thấy tài khoản để cập nhật isBooking.',
+                'data': result_serializer.data
+            }, status=status.HTTP_201_CREATED)
+        
         return Response({
             'message': 'Tạo kết quả thành công!',
-            'data': Result.data
+            'data': result_serializer.data
         }, status=status.HTTP_201_CREATED)
+    
     return Response({
         'message': 'Tạo kết quả không thành công.',
-        'errors': Result.errors
-    }, status=status.HTTP_400_BAD_REQUEST)
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
+        'errors': result_serializer.errors
+    }, status=status.HTTP_400_BAD_REQUEST)@permission_classes([IsAuthenticated])
 def delete_result(request):
     if not hasattr(request.user, 'role') or request.user.role not in ['ADMIN', 'DOCTOR']:
         return Response({
